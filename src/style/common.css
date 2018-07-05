@@ -1,0 +1,239 @@
+/* 全局样式 */
+body{
+    /* padding-left:384px; */
+    box-sizing: border-box;
+}
+.chatBoxInner{
+    width:100%;
+    height: 100vh;
+    position:relative;
+}
+.portrait {
+    display: inline-block;
+    color: white;
+    text-align: center;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: inherit;
+    font-family:"Helvetica Neue Light", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+    background-color: rgb(240, 133, 124);
+}
+.portrait[odd-even='0'][data-sex='1']{
+    background: #6BB5CE;
+}
+.portrait[odd-even='0'][data-sex='0']{
+    background: #FF943E;
+}
+.portrait[odd-even='1'][data-sex='1']{
+    background: #78C06E;
+}
+.portrait[odd-even='1'][data-sex='0']{
+    background: #F65E5E;
+}
+/* 点提示 */
+.Presence {
+    border-radius: 50%;
+    display: inline-block;
+    background-color: #20e600;
+}
+
+.Presence--stacked {
+    position: absolute;
+    right: -2px;
+    bottom: 2px;
+    margin: 0;
+    width: 12px;
+    height: 12px;
+    border: 1px solid #00a0ff;
+}
+.offline .Presence {
+    background-color: #8e969f;
+}
+/* iconfont */
+@font-face {font-family: "iconfont";
+    src: url('../../static/font/iconfont.eot'); /* IE9*/
+    src: url('../../static/font/iconfont.eot#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('../../static/font/iconfont.woff') format('woff'), /* chrome, firefox */
+    url('../../static/font/iconfont.ttf') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+    url('../../static/font/iconfont.svg#iconfont') format('svg'); /* iOS 4.1- */
+}
+
+.iconfont {
+    font-family:"iconfont" !important;
+    font-size:16px;
+    font-style:normal;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-stroke-width: 0.2px;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* 选择框 */
+.aui-checkbox{
+    width: 22px;
+    min-height:22px;
+    height: 22px;
+    margin:0px;
+    outline: none !important;
+    font-size: 20px;
+    border: 1px solid #ddd;
+    -webkit-appearance: none;
+    background-color: #ffffff;
+    transition: background-color ease 0.1s;
+    position:relative;
+}
+.aui-checkbox[type=radio]{
+    border-radius: 50%;
+}
+.aui-checkbox[type=checkbox]{
+    border-radius: 4px;
+}
+.aui-checkbox:checked {
+    background-color: #38ADFF;
+    /*border: solid 1px #38ADFF;*/
+    border: 0px;
+    text-align: center;
+}
+.aui-checkbox:checked:before {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    display: inline-block;
+    font-family: "iconfont";
+    content: "\e6ad";
+    color: #ffffff;
+}
+.aui-checkbox:checked:after {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    display: inline-block;
+    font-family: "iconfont";
+    content: "\e6ad";
+    color: #ffffff;
+}
+.aui-checkbox:disabled {
+    border: solid 1px #d9d9d9;
+    background-color:#FFFFFF;
+}
+.aui-checkbox:disabled:before {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    display: inline-block;
+    font-family: "iconfont";
+    content: "";
+    color: #ffffff;
+}
+.aui-checkbox:disabled:after {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    display: inline-block;
+    font-family: "iconfont";
+    content: "";
+    color: #ffffff;
+}
+.aui-checkbox:checked:disabled {
+    background-color: #d9d9d9;
+    border: 0px;
+    /*border: solid 1px #d9d9d9;*/
+}
+.aui-checkbox:checked:disabled:before {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    display: inline-block;
+    font-family: "iconfont";
+    content: "\e6ad";
+    color: #ffffff;
+}
+.aui-checkbox:checked:disabled:after {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    display: inline-block;
+    font-family: "iconfont";
+    content: "\e6ad";
+    color: #ffffff;
+}
+.aui-checkbox[noAllSelect=true]{
+    background-color: #38ADFF;
+    border: 0px;
+    text-align: center;
+}
+.aui-checkbox[noAllSelect=true]:before {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    display: inline-block;
+    font-family: "iconfont";
+    content: "\e6fe";
+    color: #ffffff;
+}
+.aui-checkbox[noAllSelect=true]:after {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    display: inline-block;
+    font-family: "iconfont";
+    content: "\e6fe";
+    color: #ffffff;
+}
+/* elementUI dialog修改 */
+.is-fullscreen{
+    background: rgba(0, 0, 0, .1) !important;
+}
+.is-fullscreen .el-dialog__header{
+    display: none;
+}
+.is-fullscreen .el-dialog__body{
+    height:100%;
+}
+.items .el-input__inner{
+    padding:0 5px;
+}
+/* .templateDetail .el-input__inner:disabled{
+    color:#606266 !important;
+} */
+/* 幼儿出勤cell背景样式 */
+.note-attendance-bg-red{
+    background-color: #ffb6c1 !important;
+}
+.note-attendance-bg-gray{
+    background-color: #d3d3d3 !important;
+}
+.note-attendance-bg-green{
+    background-color: #90ee90 !important;
+}
+.note-attendance-bg-black{
+    background-color: #696969 !important;
+}
+.note-attendance-bg-blue{
+    background-color: #38adff !important;
+    color: #ffffff;
+}
+.note-attendance-bg-yellow{
+    background-color: #FF9D00 !important;
+    color: #ffffff;
+}
+.note-attendance-height{
+    padding:8px 0 !important;
+    /* height:40px !important;
+    min-height: 30px !important; */
+}
