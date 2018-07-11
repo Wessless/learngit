@@ -124,7 +124,10 @@ export default {
     height: 34px;
     display: inline-block;
     font-size: 14px;
-    position: relative;
+    position: absolute;
+    left:50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
 }
 
 .box_hd .title .title_name {

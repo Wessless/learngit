@@ -211,7 +211,7 @@ body{
 /* .templateDetail .el-input__inner:disabled{
     color:#606266 !important;
 } */
-/* 幼儿出勤cell背景样式 */
+/* 幼儿出勤cell样式 */
 .note-attendance-bg-red{
     background-color: #ffb6c1 !important;
 }
@@ -234,6 +234,4 @@ body{
 }
 .note-attendance-height{
     padding:8px 0 !important;
-    /* height:40px !important;
-    min-height: 30px !important; */
 }

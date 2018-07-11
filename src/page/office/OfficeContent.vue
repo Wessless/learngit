@@ -2,7 +2,7 @@
     <div class="officeContent">
         <div class="officeItem" v-for="item in officeList" :key="item.Num" @click="toUrl(item)">
             <img :src="'/static/images/office/'+item.Num+'.png'" alt="">
-            <div class="title">{{ item.MENU_NM }}</div>
+            <div class="title">{{ item.MenuName?item.MenuName:item.MENU_NM }}</div>
         </div>
     </div>
 </template>
@@ -32,8 +32,29 @@ export default {
             for(let i=0;i<this.itemList.length;i++){
                 let obj = this.itemList[i];
                 if(obj.Num[0]==num){
-                    if(menus[obj.Num]){
+                    if(menus[obj.Num]){// 是否在officeMenu中
+                        // 如果是幼儿管理权限添加新生录入和新生分班
+                        if(obj.Num=="6019"){
+                            resultArr.push({
+                                MENU_NM:"新生录入",
+                                MENU_URL:"/image/firstpage/1-3_menu ico-321.png",
+                                Num:"6019_01",
+                                TITLE_IMAGE:"",
+                                Router: "/addNewChild"
+                            });
+                            resultArr.push({
+                                MENU_NM:"新生分班",
+                                MENU_URL:"/image/firstpage/1-3_menu ico-321.png",
+                                Num:"6019_02",
+                                TITLE_IMAGE:"",
+                                Router: "/assignChild"
+                            });
+                        }
+                        // 将路由和名字放到数组对象中
                         obj.Router = menus[obj.Num].router;
+                        if(menus[obj.Num].MenuName){
+                            obj.MenuName = menus[obj.Num].MenuName;
+                        }
                         resultArr.push(obj);
                     }
                 }

@@ -18,6 +18,11 @@ import ExamineTemplateDetail from '@/page/office/examineTemplate/ExamineTemplate
 import StaffInfoList from '@/page/office/staffInfo/StaffInfoList'
 import StaffInfoDetail from '@/page/office/staffInfo/StaffInfoDetail'
 import NoteAttendanceList from '@/page/office/noteAttendance/NoteAttendanceList'
+import ChildInfoList from '@/page/office/childInfo/ChildInfoList'
+import ChildInfoDetail from '@/page/office/childInfo/ChildInfoDetail'
+import EditFamilyMember from '@/page/office/childInfo/EditFamilyMember'
+import FamilyMemberInfo from '@/page/office/childInfo/FamilyMemberInfo'
+import AddNewChildList from '@/page/office/addNewChild/AddNewChildList'
 
 Vue.use(Router)
 
@@ -150,6 +155,46 @@ export default new Router({
           path:"office/:id/noteAttendance",
           meta: { pageType: "office" },
           component: NoteAttendanceList
+        },
+        {
+          path:"office/:id/childInfo",
+          meta: { pageType: "office" },
+          component: ChildInfoList
+        },
+        {
+          path:"office/:id/childInfo/update/:childID",
+          meta: { pageType: "office",type:"update" },
+          component: ChildInfoDetail
+        },
+        {
+          path:"office/:id/childInfo/familyMember/:childID",
+          meta: { pageType: "office" },
+          component: EditFamilyMember
+        },
+        {
+          path:"office/:id/childInfo/familyMember/:childID/addFamilyMember/",
+          meta: { pageType: "office",type:"add" },
+          component: FamilyMemberInfo
+        },
+        {
+          path:"office/:id/childInfo/familyMember/:childID/updateFamilyMember/:familyMemberID",
+          meta: { pageType: "office",type:"update" },
+          component: FamilyMemberInfo
+        },
+        {
+          path:"office/:id/addNewChild",
+          meta: { pageType: "office" },
+          component: AddNewChildList
+        },
+        {
+          path:"office/:id/addNewChild/add",
+          meta: { pageType: "office",type:"add" },
+          component: ChildInfoDetail
+        },
+        {
+          path:"office/:id/addNewChild/update/:childID",
+          meta: { pageType: "office",type:"update" },
+          component: ChildInfoDetail
         },
       ]
     }

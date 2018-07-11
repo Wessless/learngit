@@ -4,19 +4,19 @@
         <el-tabs type="border-card" id="staffInfoTabs" v-model="tabs.selectedTab" @tab-click="handleClick" class="tab">
             <el-tab-pane label="基本信息" name="first">
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">姓名：</div></el-col>
+                    <el-col :span="4"><div class="title">姓名</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.staffName" size="small" placeholder="请输入姓名"></el-input></el-col>
                     <el-col :span="4"><div class="redColor">*必填</div></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">性别：</div></el-col>
+                    <el-col :span="4"><div class="title">性别</div></el-col>
                     <el-col :span="12">
                         <el-radio v-model="staffInfo.sex" label="1">男</el-radio>
                         <el-radio v-model="staffInfo.sex" label="0">女</el-radio>
                     </el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">出生日期：</div></el-col>
+                    <el-col :span="4"><div class="title">出生日期</div></el-col>
                     <el-col :span="12">
                         <el-date-picker
                             v-model="staffInfo.birthday"
@@ -30,15 +30,15 @@
                     </el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">民族：</div></el-col>
+                    <el-col :span="4"><div class="title">民族</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.nation" size="small" placeholder="请输入民族"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">身份证号码：</div></el-col>
+                    <el-col :span="4"><div class="title">身份证号码</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.identityNumber" size="small" placeholder="请输入身份证号码"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">身份证有效期：</div></el-col>
+                    <el-col :span="4"><div class="title">身份证有效期</div></el-col>
                     <el-col :span="12">
                         <el-date-picker
                             v-model="staffInfo.identityValidity"
@@ -52,7 +52,7 @@
                     </el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">身份证扫描件：</div></el-col>
+                    <el-col :span="4"><div class="title">身份证扫描件</div></el-col>
                     <el-col :span="12">
                         <el-button size="small" type="primary" @click="clickUploadIDNumber">点击上传</el-button>
                         <input name="file" type="file" id="staffInfoDetailUploadFile" style="display:none" accept=".png,.jpg,.jpeg" @change="IDNumberFileChange"/>
@@ -60,25 +60,25 @@
                     </el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">手机：</div></el-col>
+                    <el-col :span="4"><div class="title">手机</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.mobile" size="small" placeholder="请输入手机号"></el-input></el-col>
                     <el-col :span="4"><div class="redColor">*必填</div></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">员工编号：</div></el-col>
+                    <el-col :span="4"><div class="title">员工编号</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.staffNum" size="small" placeholder="请输入员工编号"></el-input></el-col>
                     <el-col :span="4"><div class="redColor">*必填</div></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">员工卡号：</div></el-col>
+                    <el-col :span="4"><div class="title">员工卡号</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.cardID" size="small" placeholder="请输入员工卡号"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">COS用户名：</div></el-col>
+                    <el-col :span="4"><div class="title">COS用户名</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.cosUserName" size="small" placeholder="请输入COS用户名"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">部门：</div></el-col>
+                    <el-col :span="4"><div class="title">部门</div></el-col>
                     <el-col :span="12">
                         <!-- <el-input v-model="staffInfo.departmentID" size="small" placeholder="请输入部门"></el-input> -->
                         <el-select v-model="staffInfo.departmentID" multiple size="small" style="width:100%;" placeholder="请选择部门">
@@ -93,7 +93,7 @@
                     <el-col :span="4"><div class="redColor">*必填</div></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">角色：</div></el-col>
+                    <el-col :span="4"><div class="title">角色</div></el-col>
                     <el-col :span="12">
                         <el-select v-model="staffInfo.roleID" size="small" style="width:100%;" placeholder="请选择角色">
                             <el-option
@@ -107,21 +107,21 @@
                     <el-col :span="4"><div class="redColor">*必填</div></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg bankBg">
-                    <el-col :span="4"><div class="title">是否参与工资计算：</div></el-col>
+                    <el-col :span="4"><div class="title">是否参与工资计算</div></el-col>
                     <el-col :span="12" style="display:flex;align-items:center;min-height:32px;">
                         <el-checkbox v-model="staffInfo.isSalaryNotIncluded" style="margin-bottom:0;">不参与</el-checkbox>
                     </el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg bankBg">
-                    <el-col :span="4"><div class="title">工资开户行：</div></el-col>
+                    <el-col :span="4"><div class="title">工资开户行</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.salaryBank" size="small" placeholder="请输入工资开户行"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg bankBg">
-                    <el-col :span="4"><div class="title">工资卡号：</div></el-col>
+                    <el-col :span="4"><div class="title">工资卡号</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.salaryCardNum" size="small" placeholder="请输入工资卡号"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg timeBg" style="margin-top:10px;padding-top:10px;">
-                    <el-col :span="4"><div class="title">入职时间：</div></el-col>
+                    <el-col :span="4"><div class="title">入职时间</div></el-col>
                     <el-col :span="12">
                         <el-date-picker
                             v-model="staffInfo.beStaff"
@@ -136,7 +136,7 @@
                     <el-col :span="4"><div class="redColor">*必填</div></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg timeBg">
-                    <el-col :span="4"><div class="title">转正时间：</div></el-col>
+                    <el-col :span="4"><div class="title">转正时间</div></el-col>
                     <el-col :span="12">
                         <el-date-picker
                             v-model="staffInfo.turnDate"
@@ -150,13 +150,13 @@
                     </el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg timeBg">
-                    <el-col :span="4"><div class="title">本公司工龄：</div></el-col>
+                    <el-col :span="4"><div class="title">本公司工龄</div></el-col>
                     <el-col :span="12">
                         {{ companyYear }}
                     </el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg timeBg">
-                    <el-col :span="4"><div class="title">离职时间：</div></el-col>
+                    <el-col :span="4"><div class="title">离职时间</div></el-col>
                     <el-col :span="9">
                         <el-date-picker
                             v-model="staffInfo.notBeStaff"
@@ -178,63 +178,63 @@
             </el-tab-pane>
             <el-tab-pane label="一般信息" name="second">
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">简历编号：</div></el-col>
+                    <el-col :span="4"><div class="title">简历编号</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.resumeNum" size="small" placeholder="请输入简历编号"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">住址：</div></el-col>
+                    <el-col :span="4"><div class="title">住址</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.address" size="small" placeholder="请输入住址"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">距单位距离：</div></el-col>
+                    <el-col :span="4"><div class="title">距单位距离</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.distance" size="small" placeholder="请输入距单位距离"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">住所电话：</div></el-col>
+                    <el-col :span="4"><div class="title">住所电话</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.tel" size="small" placeholder="请输入住所电话"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">公司分机号：</div></el-col>
+                    <el-col :span="4"><div class="title">公司分机号</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.telephoneExtension" size="small" placeholder="请输入公司分机号"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">公司电子邮箱：</div></el-col>
+                    <el-col :span="4"><div class="title">公司电子邮箱</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.mailBox" size="small" placeholder="请输入公司电子邮箱"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">个人电子邮箱：</div></el-col>
+                    <el-col :span="4"><div class="title">个人电子邮箱</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.personEmail" size="small" placeholder="个人电子邮箱"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">QQ：</div></el-col>
+                    <el-col :span="4"><div class="title">QQ</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.QQ" size="small" placeholder="请输入QQ"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">微信：</div></el-col>
+                    <el-col :span="4"><div class="title">微信</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.wechat" size="small" placeholder="请输入微信"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">Skype/YY/其他：</div></el-col>
+                    <el-col :span="4"><div class="title">Skype/YY/其他</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.otherNo" size="small" placeholder="请输入其他联系方式"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">紧急联络方式：</div></el-col>
+                    <el-col :span="4"><div class="title">紧急联络方式</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.urgencyTelNo" size="small" placeholder="请输入紧急联络方式"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">政治面貌：</div></el-col>
+                    <el-col :span="4"><div class="title">政治面貌</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.political" size="small" placeholder="请输入政治面貌"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">婚姻状况：</div></el-col>
+                    <el-col :span="4"><div class="title">婚姻状况</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.isMarry" size="small" placeholder="请输入婚姻状况"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">户口所在地：</div></el-col>
+                    <el-col :span="4"><div class="title">户口所在地</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.hometown" size="small" placeholder="请输入户口所在地"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">户口性质：</div></el-col>
+                    <el-col :span="4"><div class="title">户口性质</div></el-col>
                     <el-col :span="12">
                         <el-select v-model="staffInfo.homeNature" size="small" style="width:100%;" placeholder="请选择户口性质">
                             <el-option key="1" label="农业" value="1"></el-option>
@@ -243,7 +243,7 @@
                     </el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">档案调入时间：</div></el-col>
+                    <el-col :span="4"><div class="title">档案调入时间</div></el-col>
                     <el-col :span="12">
                         <el-date-picker
                             v-model="staffInfo.fileTurnInDate"
@@ -257,11 +257,11 @@
                     </el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">存档户名：</div></el-col>
+                    <el-col :span="4"><div class="title">存档户名</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.filePersonName" size="small" placeholder="请输入存档户名"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">保险转入时间：</div></el-col>
+                    <el-col :span="4"><div class="title">保险转入时间</div></el-col>
                     <el-col :span="12">
                         <el-date-picker
                             v-model="staffInfo.insuranceTurnInDate"
@@ -275,43 +275,43 @@
                     </el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">转入单位：</div></el-col>
+                    <el-col :span="4"><div class="title">转入单位</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.turnInPlace" size="small" placeholder="请输入转入单位"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">身高：</div></el-col>
+                    <el-col :span="4"><div class="title">身高</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.bodyHight" size="small" placeholder="请输入身高"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">体重：</div></el-col>
+                    <el-col :span="4"><div class="title">体重</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.bodyWeight" size="small" placeholder="请输入体重"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">视力：</div></el-col>
+                    <el-col :span="4"><div class="title">视力</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.sight" size="small" placeholder="请输入视力"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">血型：</div></el-col>
+                    <el-col :span="4"><div class="title">血型</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.bloodType" size="small" placeholder="请输入血型"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">健康状况：</div></el-col>
+                    <el-col :span="4"><div class="title">健康状况</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.isHealth" size="small" placeholder="请输入健康状况"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">学历：</div></el-col>
+                    <el-col :span="4"><div class="title">学历</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.degree" size="small" placeholder="请输入学历"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">毕业学校：</div></el-col>
+                    <el-col :span="4"><div class="title">毕业学校</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.graduateSchool" size="small" placeholder="请输入毕业学校"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">技术职称：</div></el-col>
+                    <el-col :span="4"><div class="title">技术职称</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.jobName" size="small" placeholder="请输入技术职称"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">参加工作时间：</div></el-col>
+                    <el-col :span="4"><div class="title">参加工作时间</div></el-col>
                     <el-col :span="12">
                         <el-date-picker
                             v-model="staffInfo.jobInTime"
@@ -452,34 +452,34 @@
             </el-tab-pane>
             <el-tab-pane label="家庭信息" name="forth">
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">配偶姓名：</div></el-col>
+                    <el-col :span="4"><div class="title">配偶姓名</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.spouse" size="small" placeholder="请输入配偶姓名"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">配偶工作单位：</div></el-col>
+                    <el-col :span="4"><div class="title">配偶工作单位</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.spouseWorkSpace" size="small" placeholder="请输入配偶工作单位"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">配偶工作地址：</div></el-col>
+                    <el-col :span="4"><div class="title">配偶工作地址</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.spouseWorkAddress" size="small" placeholder="请输入配偶工作地址"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">配偶联系方式：</div></el-col>
+                    <el-col :span="4"><div class="title">配偶联系方式</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.spouseTel" size="small" placeholder="请输入配偶联系方式"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg topblock">
-                    <el-col :span="4"><div class="title">子女姓名：</div></el-col>
+                    <el-col :span="4"><div class="title">子女姓名</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.childName1" size="small" placeholder="请输入子女姓名"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">子女性别：</div></el-col>
+                    <el-col :span="4"><div class="title">子女性别</div></el-col>
                     <el-col :span="12">
                         <el-radio v-model="staffInfo.sexManChild1" label="1">男</el-radio>
                         <el-radio v-model="staffInfo.sexManChild1" label="0">女</el-radio>
                     </el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">子女出生日期：</div></el-col>
+                    <el-col :span="4"><div class="title">子女出生日期</div></el-col>
                     <el-col :span="12">
                         <el-date-picker
                             v-model="staffInfo.childBirthday1"
@@ -493,26 +493,26 @@
                     </el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">子女教育阶段：</div></el-col>
+                    <el-col :span="4"><div class="title">子女教育阶段</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.childGrade1" size="small" placeholder="请输入子女教育阶段"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">子女就读学校：</div></el-col>
+                    <el-col :span="4"><div class="title">子女就读学校</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.childSchool1" size="small" placeholder="请输入子女就读学校"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg topblock">
-                    <el-col :span="4"><div class="title">子女姓名：</div></el-col>
+                    <el-col :span="4"><div class="title">子女姓名</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.childName2" size="small" placeholder="请输入子女姓名"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">子女性别：</div></el-col>
+                    <el-col :span="4"><div class="title">子女性别</div></el-col>
                     <el-col :span="12">
                         <el-radio v-model="staffInfo.sexManChild2" label="1">男</el-radio>
                         <el-radio v-model="staffInfo.sexManChild2" label="0">女</el-radio>
                     </el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">子女出生日期：</div></el-col>
+                    <el-col :span="4"><div class="title">子女出生日期</div></el-col>
                     <el-col :span="12">
                         <el-date-picker
                             v-model="staffInfo.childBirthday2"
@@ -526,26 +526,26 @@
                     </el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">子女教育阶段：</div></el-col>
+                    <el-col :span="4"><div class="title">子女教育阶段</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.childGrade2" size="small" placeholder="请输入子女教育阶段"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">子女就读学校：</div></el-col>
+                    <el-col :span="4"><div class="title">子女就读学校</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.childSchool2" size="small" placeholder="请输入子女就读学校"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg topblock">
-                    <el-col :span="4"><div class="title">子女姓名：</div></el-col>
+                    <el-col :span="4"><div class="title">子女姓名</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.childName3" size="small" placeholder="请输入子女姓名"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">子女性别：</div></el-col>
+                    <el-col :span="4"><div class="title">子女性别</div></el-col>
                     <el-col :span="12">
                         <el-radio v-model="staffInfo.sexManChild3" label="1">男</el-radio>
                         <el-radio v-model="staffInfo.sexManChild3" label="0">女</el-radio>
                     </el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">子女出生日期：</div></el-col>
+                    <el-col :span="4"><div class="title">子女出生日期</div></el-col>
                     <el-col :span="12">
                         <el-date-picker
                             v-model="staffInfo.childBirthday3"
@@ -559,17 +559,17 @@
                     </el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">子女教育阶段：</div></el-col>
+                    <el-col :span="4"><div class="title">子女教育阶段</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.childGrade3" size="small" placeholder="请输入子女教育阶段"></el-input></el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">子女就读学校：</div></el-col>
+                    <el-col :span="4"><div class="title">子女就读学校</div></el-col>
                     <el-col :span="12"><el-input v-model="staffInfo.childSchool3" size="small" placeholder="请输入子女就读学校"></el-input></el-col>
                 </el-row>
             </el-tab-pane>
             <el-tab-pane label="备注信息" name="fifth">
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">备注：</div></el-col>
+                    <el-col :span="4"><div class="title">备注</div></el-col>
                     <el-col :span="12">
                         <el-input
                             type="textarea"
@@ -582,7 +582,7 @@
             </el-tab-pane>
             <el-tab-pane label="审批设定" name="sixth">
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">财务负责人：</div></el-col>
+                    <el-col :span="4"><div class="title">财务负责人</div></el-col>
                     <el-col :span="6">
                         <el-select v-model="staffInfo.financeSignManager1" filterable placeholder="请选择财务负责人">
                             <el-option
@@ -615,7 +615,7 @@
                     </el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">考勤负责人：</div></el-col>
+                    <el-col :span="4"><div class="title">考勤负责人</div></el-col>
                     <el-col :span="12">
                         <el-select v-model="staffInfo.timeScheduleManager" filterable placeholder="请选择考勤负责人">
                             <el-option
@@ -628,7 +628,7 @@
                     </el-col>
                 </el-row>
                 <el-row type="flex" class="row-bg">
-                    <el-col :span="4"><div class="title">工作计划负责人：</div></el-col>
+                    <el-col :span="4"><div class="title">工作计划负责人</div></el-col>
                     <el-col :span="12">
                         <el-select v-model="staffInfo.dailyManager" filterable placeholder="请选择工作计划负责人">
                             <el-option
@@ -678,7 +678,7 @@ export default {
                 nation:"",
                 identityValidity:"",
                 cosUserName:"",// 无
-                isSalaryNotIncluded:true,// 是否参与工资计算 1:不参加，0：参加
+                isSalaryNotIncluded:true,// 是否参与工资计算 1:不参加，0参加
                 salaryBank:"",
                 salaryCardNum:"",
                 hasLeaveCompany:false,
@@ -1310,6 +1310,14 @@ export default {
     height: 100%;
     display: flex;
     align-items: center;
+    flex-direction: row-reverse;
+    text-align: right;
+    font-size: 14px;
+    color: #606266;
+    font-weight: 700;
+    padding: 0 16px 0 0;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
 }
 .redColor{
     height: 100%;

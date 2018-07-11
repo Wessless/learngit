@@ -188,9 +188,9 @@ export default {
                 content:"",
                 name:"6",
                 url:"/mainpage/office/6",
-                imgUrl:"static/images/office/administrative.png",
+                imgUrl:"static/images/office/childAdmin.png",
                 styleObj:{
-                    background:"#932cd8"
+                    background:"#42CBFA"
                 }
             });
         }

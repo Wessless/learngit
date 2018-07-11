@@ -777,6 +777,22 @@ export const getChildAttsByDate = (staffID,beginDate,endDate,classID) => {
     });
 }
 
+// 获得班级下一天幼儿的出勤
+export const getClassChildAtts = (pageNo,pageSize,attDate,staffID,classID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getClassChildAtts',
+            pageNo,
+            pageSize,
+            attDate,
+            staffID,
+            classID
+        }
+    });
+}
+
 // 按月划考勤
 export const updateChilAtts = (attData) => {
     return axios({
@@ -787,6 +803,271 @@ export const updateChilAtts = (attData) => {
         },
         data:{
             attData
+        }
+    });
+}
+
+// 根据classID获取班级下的所有幼儿
+export const getChildsByClassID = (classID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getChildsByClassID',
+            classID
+        }
+    });
+}
+
+// 根据childID获取幼儿信息
+export const getChildByChildID = (childID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getChildByChildID',
+            childID
+        }
+    });
+}
+
+// 根据childID获取幼儿家庭成员
+export const getParentsByChildID = (childID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getParentsByChildID',
+            childID
+        }
+    });
+}
+
+// 获取不同状态的班级
+export const getClassesByStatus = (staffID,status) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getClassesByStatus',
+            staffID,
+            status
+        }
+    });
+}
+
+// 获取家长信息
+export const findParentByID = (ID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'findParentByID',
+            ID
+        }
+    });
+}
+
+// 添加或修改家庭成员
+export const addOrUpdateParent = ({id,staffID,childID,parentName,sex,relation,address,phoneNum,mobileNum,qq,career,cardID,email,remark}) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'addOrUpdateParent'
+        },
+        data:{
+            id,
+            staffID,
+            childID,
+            parentName,
+            sex,
+            relation,
+            address,
+            phoneNum,
+            mobileNum,
+            qq,
+            career,
+            cardID,
+            email,
+            remark
+        }
+    });
+}
+
+// 删除家庭成员
+export const delParent = (staffID,parentID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'delParent'
+        },
+        data:{
+            staffID,
+            parentID
+        }
+    });
+}
+
+// 修改幼儿信息
+export const updateChild = ({
+        childID,
+        childNum,
+        childName,
+        sexStatus,
+        birthday,
+        connectPeople,
+        phoneNum,
+        remark,
+        discountUntil,
+        mealFeeTypeID,
+        tuitionTypeID,
+        mealFeeRefundTypeID,
+        tuitionRefundTypeID,
+        discountMealFee,
+        discountTuition,
+        insuranceExpiryDate,
+        openBankId,
+        carsNO,
+        usrName,
+        certType,
+        certId,
+        childNation,
+        childHuji,
+        identityType,
+        identityCard
+    }) => {
+
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'updateChild'
+        },
+        data:{
+            childID,
+            childNum,
+            childName,
+            sexStatus,
+            birthday,
+            connectPeople,
+            phoneNum,
+            remark,
+            discountUntil,
+            mealFeeTypeID,
+            tuitionTypeID,
+            mealFeeRefundTypeID,
+            tuitionRefundTypeID,
+            discountMealFee,
+            discountTuition,
+            insuranceExpiryDate,
+            openBankId,
+            carsNO,
+            usrName,
+            certType,
+            certId,
+            childNation,
+            childHuji,
+            identityType,
+            identityCard
+        }
+    });
+}
+
+// 删除幼儿
+export const delChild = (staffID,childID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'delChild'
+        },
+        data:{
+            staffID,
+            childID
+        }
+    });
+}
+
+// 幼儿上传头像
+export const addChildPhoto = (childID,file) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'addChildPhoto'
+        },
+        data:{
+            childID
+        },
+        uploadFile:{
+            file:file
+        }
+    });
+}
+
+// 查看幼儿学籍
+export const getChildRecord = (childID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getChildRecord',
+            childID
+        }
+    });
+}
+
+// 幼儿转班
+export const changeClass = (childID,nowClassID,changeClassID,turnDate) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'changeClass'
+        },
+        data:{
+            childID,
+            nowClassID,
+            changeClassID,
+            turnDate
+        }
+    });
+}
+
+// 幼儿退学
+export const quitSchool = (childID,classID,turnDate,remark) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'quitSchool'
+        },
+        data:{
+            childID,
+            classID,
+            turnDate,
+            remark
+        }
+    });
+}
+
+/**
+ * 根据specialFeeType获得缴费科目
+ * @param specialFeeType 
+ * MEAL_FEE：餐费,
+ * TUITION：保育费,
+ * TUITION_REFUND：保育费退费,
+ * MEAL_FEE_REFUND：餐费退费
+ */
+export const getPaymentsByType = (specialFeeType) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getPaymentsByType',
+            specialFeeType
         }
     });
 }
