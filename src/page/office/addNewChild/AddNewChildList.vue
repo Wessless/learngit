@@ -1,5 +1,5 @@
 <template>
-    <div class="childInfo">
+    <div class="addNewChild">
         <chat-header :showBack="true" :title="'新生录入'" :showRightBtn="false"></chat-header>
         <div style="width:100%;padding-top:54px;padding-bottom:20px;" id="staffInfoBtns">
             <el-form :inline="true" class="demo-form-inline">
@@ -9,9 +9,8 @@
             </el-form>
         </div>
         <div class="childInfoList">
-            <child-info-item v-for="(item,index) in allChildList" :key="index" :item="item" :type="formInline.radio" @clickDelete="clickDelete"></child-info-item>
+            <child-info-item v-for="(item,index) in allChildList" :key="index" :item="item" :type="formInline.radio" :isAddChild="true" @clickDelete="clickDelete"></child-info-item>
         </div>
-        <!-- <scroll-top></scroll-top> -->
         <el-dialog
             title="提示"
             :visible.sync="dialogVisible"
@@ -31,7 +30,6 @@ import { getChildsByClassID,getClasses,getClassesByStatus,delChild } from '@/js/
 import { showLoading,closeLoading } from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
 import ChatHeader from '@/components/chat/ChatHeader'
-import ScrollTop from '@/components/chat/ScrollTop'
 import childInfoItem from '@/page/office/childInfo/ChildInfoItem'
 
 export default {
@@ -51,12 +49,12 @@ export default {
     },
     components:{
         ChatHeader,
-        ScrollTop,
         childInfoItem
     },
     mounted(){
         // this.getClassesByStatus();
-        this.getChildsByClassID(loading);
+        // this.getChildsByClassID(loading);
+        this.reloadList();
     },
     computed:{
         ...mapState([
@@ -89,7 +87,7 @@ export default {
             this.getChildsByClassID(loading);
         },
         getChildsByClassID(loading){
-            getChildsByClassID(-2).then((result)=>{
+            getChildsByClassID('-2').then((result)=>{
                 if(loading){
                     closeLoading(loading);
                 }
@@ -135,7 +133,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 
 <style scoped>
-.childInfo{
+.addNewChild{
     padding:20px;
     display: flex;
     flex-direction: row;

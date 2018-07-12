@@ -1,5 +1,5 @@
 <template>
-    <div class="childItem">
+    <div class="childItem" :class="{isSelect:item.selected}">
         <div class="headImage"><img :src="imagePath" alt=""></div>
         <div class="headTitle">
             <!-- <span class="iconfont moneyIcon" v-if="item.IsSalaryNotIncluded=='1'" style="color:#999">&#xe72e;</span>
@@ -8,7 +8,7 @@
             <span class="sex iconfont" v-if="sex=='1'" style="color:#f817a6">&#xe72c;</span>
             <span class="sex iconfont" v-if="sex=='0'" style="color:#38adff">&#xe72b;</span>
         </div>
-        <div class="sortblock">
+        <div class="sortblock" v-show="!isAssignChild">
             <span class="item" @click.stop="editFamilyMember">编辑家庭成员</span>
             <!-- <span class="item" v-if="item.Mobile!=''"><span class="iconfont" style="color:#38adff;">&#xe7f4;</span>{{ item.Mobile }}</span>
             <span class="item" v-show="item.DepartmentName!=''">{{ item.DepartmentName }}</span> -->
@@ -16,19 +16,20 @@
         <div class="title">学号：{{ item.ChildNum }}</div>
         <div class="title">出生年月：{{ item.ChildBirthday.split(" ")[0] }}</div>
         <div class="title">民族：{{ item.ChildNation }}</div>
-        <div class="title" v-show="!isAddChild">通知人：{{ item.ConnectPeople }}</div>
-        <div class="title" v-show="!isAddChild">通知手机：{{ item.ConnectPhone }}</div>
-        <div class="title" v-show="!isAddChild">保险失效日期：<span :class="{'red':insuranceExpiryDateColor}">{{ insuranceExpiryDate }}</span></div>
-        <div class="bottomBtns" v-show="!isAddChild">
+        <div class="title" v-show="!isAddChild&&!isAssignChild">通知人：{{ item.ConnectPeople }}</div>
+        <div class="title" v-show="!isAddChild&&!isAssignChild">通知手机：{{ item.ConnectPhone }}</div>
+        <div class="title" v-show="!isAddChild&&!isAssignChild">保险失效日期：<span :class="{'red':insuranceExpiryDateColor}">{{ insuranceExpiryDate }}</span></div>
+        <div class="bottomBtns" v-show="!isAddChild&&!isAssignChild">
             <div class="bottomBtn" v-show="type=='0'" @click.stop="quitSchool">退学</div>
             <div class="bottomBtn" v-show="type=='0'" @click.stop="changeClass">转班</div>
             <div class="bottomBtn" v-show="type=='2'" @click.stop="changeClassBack">恢复学籍</div>
             <div class="bottomBtn" @click.stop="childRecord">查看学籍</div>
         </div>
-        <div class="bottomBtns">
+        <div class="bottomBtns" v-show="!isAssignChild">
             <div class="bottomBtn" @click.stop="deleteChild">删除</div>
             <div class="bottomBtn" @click.stop="changeChild">修改</div>
         </div>
+        <div class="checkboxSelect" v-show="isAssignChild"><el-checkbox v-model="item.selected"></el-checkbox></div>
         <!-- <div class="deleteChild" @click.stop="deleteChild">删除</div>
         <div class="changeChild" @click.stop="changeChild">修改</div> -->
     </div>
@@ -52,7 +53,11 @@ export default {
         isAddChild:{// 是否是新生录入
             type:Boolean,
             default:false
-        }
+        },
+        isAssignChild:{// 是否是新生分班
+            type:Boolean,
+            default:false
+        },
     },
     data(){
         return {
@@ -265,5 +270,14 @@ export default {
 }
 .red{
     color: #e51c23;
+}
+.checkboxSelect{
+    position: absolute;
+    top:10px;
+    left:10px;
+    padding:0 3px;
+}
+.isSelect{
+    border-color: #38adff !important;
 }
 </style>

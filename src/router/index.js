@@ -23,6 +23,8 @@ import ChildInfoDetail from '@/page/office/childInfo/ChildInfoDetail'
 import EditFamilyMember from '@/page/office/childInfo/EditFamilyMember'
 import FamilyMemberInfo from '@/page/office/childInfo/FamilyMemberInfo'
 import AddNewChildList from '@/page/office/addNewChild/AddNewChildList'
+import AssignChildList from '@/page/office/assignChild/AssignChildList'
+import ClassManagementList from '@/page/office/classManagement/ClassManagementList'
 
 Vue.use(Router)
 
@@ -41,160 +43,192 @@ export default new Router({
       path: '/mainpage',
       name: 'MainPage',
       component: MainPage,
-      children:[
+      children: [
         {
           path: '/',
           redirect: 'conversation',
         },
         {
-          path:"conversation",
+          path: "conversation",
           meta: { pageType: "conversation" }
         },
         {
-          path:"friendList",
+          path: "friendList",
           meta: { pageType: "friendList" }
         },
         {// 创建群组
-          path:"friendList/createGroup",
+          path: "friendList/createGroup",
           meta: { pageType: "friendList" },
           component: CreateGroup
         },
         {// 员工信息
-          path:"friendList/staffInfo",
+          path: "friendList/staffInfo",
           meta: { pageType: "friendList" },
           component: StaffInfo
         },
         {// 群组信息
-          path:"friendList/groupInfo",
+          path: "friendList/groupInfo",
           meta: { pageType: "friendList" },
           component: GroupInfo
         },
         {
-          path:"cloudDisk",
+          path: "cloudDisk",
           meta: { pageType: "cloudDisk" }
         },
         {
-          path:"cloudDisk/mydisk",
+          path: "cloudDisk/mydisk",
           redirect: 'cloudDisk/mydisk/-1',
         },
         {
-          path:"cloudDisk/mydisk/:id",
-          meta: { pageType: "cloudDisk", childCompName:"mydisk"},
+          path: "cloudDisk/mydisk/:id",
+          meta: { pageType: "cloudDisk", childCompName: "mydisk" },
           component: MyCloud
         },
         {
-          path:"cloudDisk/business",
-          meta: { pageType: "cloudDisk", childCompName:"business"},
+          path: "cloudDisk/business",
+          meta: { pageType: "cloudDisk", childCompName: "business" },
           component: BusinessFile
         },
         {
-          path:"office",
+          path: "office",
           meta: { pageType: "office" }
         },
         {
-          path:"office/:id",
+          path: "office/:id",
           meta: { pageType: "office" },
           component: OfficeContent
         },
         {
-          path:"office/:id/expensePayment",
+          path: "office/:id/expensePayment",
           meta: { pageType: "office" },
           component: ExpensePaymentList
         },
         {
-          path:"office/:id/expensePayment/:expenseID",
+          path: "office/:id/expensePayment/:expenseID",
           meta: { pageType: "office" },
           component: ExpensePaymentDetail
         },
         {
-          path:"office/:id/borrowPayment",
+          path: "office/:id/borrowPayment",
           meta: { pageType: "office" },
           component: BorrowPaymentList
         },
         {
-          path:"office/:id/borrowPayment/:borrowID",
+          path: "office/:id/borrowPayment/:borrowID",
           meta: { pageType: "office" },
           component: BorrowPaymentDetail
         },
+        // 考核模板
         {
-          path:"office/:id/examineTemplate",
+          path: "office/:id/examineTemplate",
           meta: { pageType: "office" },
           component: ExamineTemplateList
         },
         {
-          path:"office/:id/examineTemplate/add",
-          meta: { pageType: "office",type:"add" },
+          path: "office/:id/examineTemplate/add",
+          meta: { pageType: "office", type: "add" },
           component: ExamineTemplateDetail
         },
         {
-          path:"office/:id/examineTemplate/update/:templateID",
-          meta: { pageType: "office",type:"update" },
+          path: "office/:id/examineTemplate/update/:templateID",
+          meta: { pageType: "office", type: "update" },
           component: ExamineTemplateDetail
         },
         {
-          path:"office/:id/examineTemplate/detail/:templateID",
-          meta: { pageType: "office",type:"detail" },
+          path: "office/:id/examineTemplate/detail/:templateID",
+          meta: { pageType: "office", type: "detail" },
           component: ExamineTemplateDetail
         },
+        // 员工信息
         {
-          path:"office/:id/staffInfo",
+          path: "office/:id/staffInfo",
           meta: { pageType: "office" },
           component: StaffInfoList
         },
         {
-          path:"office/:id/staffInfo/add",
-          meta: { pageType: "office",type:"add" },
+          path: "office/:id/staffInfo/add",
+          meta: { pageType: "office", type: "add" },
           component: StaffInfoDetail
         },
         {
-          path:"office/:id/staffInfo/update/:staffID",
-          meta: { pageType: "office",type:"update" },
+          path: "office/:id/staffInfo/update/:staffID",
+          meta: { pageType: "office", type: "update" },
           component: StaffInfoDetail
         },
+        // 幼儿出勤
         {
-          path:"office/:id/noteAttendance",
+          path: "office/:id/noteAttendance",
           meta: { pageType: "office" },
           component: NoteAttendanceList
         },
+        // 幼儿管理
         {
-          path:"office/:id/childInfo",
+          path: "office/:id/childInfo",
           meta: { pageType: "office" },
           component: ChildInfoList
         },
         {
-          path:"office/:id/childInfo/update/:childID",
-          meta: { pageType: "office",type:"update" },
+          path: "office/:id/childInfo/update/:childID",
+          meta: { pageType: "office", type: "update" },
           component: ChildInfoDetail
         },
         {
-          path:"office/:id/childInfo/familyMember/:childID",
+          path: "office/:id/childInfo/familyMember/:childID",
           meta: { pageType: "office" },
           component: EditFamilyMember
         },
         {
-          path:"office/:id/childInfo/familyMember/:childID/addFamilyMember/",
-          meta: { pageType: "office",type:"add" },
+          path: "office/:id/childInfo/familyMember/:childID/addFamilyMember/",
+          meta: { pageType: "office", type: "add" },
           component: FamilyMemberInfo
         },
         {
-          path:"office/:id/childInfo/familyMember/:childID/updateFamilyMember/:familyMemberID",
-          meta: { pageType: "office",type:"update" },
+          path: "office/:id/childInfo/familyMember/:childID/updateFamilyMember/:familyMemberID",
+          meta: { pageType: "office", type: "update" },
           component: FamilyMemberInfo
         },
+        // 新生录入
         {
-          path:"office/:id/addNewChild",
+          path: "office/:id/addNewChild",
           meta: { pageType: "office" },
           component: AddNewChildList
         },
         {
-          path:"office/:id/addNewChild/add",
-          meta: { pageType: "office",type:"add" },
+          path: "office/:id/addNewChild/add",
+          meta: { pageType: "office", type: "add" },
           component: ChildInfoDetail
         },
         {
-          path:"office/:id/addNewChild/update/:childID",
-          meta: { pageType: "office",type:"update" },
+          path: "office/:id/addNewChild/update/:childID",
+          meta: { pageType: "office", type: "update" },
           component: ChildInfoDetail
+        },
+        {
+          path: "office/:id/addNewChild/familyMember/:childID",
+          meta: { pageType: "office" },
+          component: EditFamilyMember
+        },
+        {
+          path: "office/:id/addNewChild/familyMember/:childID/addFamilyMember/",
+          meta: { pageType: "office", type: "add" },
+          component: FamilyMemberInfo
+        },
+        {
+          path: "office/:id/addNewChild/familyMember/:childID/updateFamilyMember/:familyMemberID",
+          meta: { pageType: "office", type: "update" },
+          component: FamilyMemberInfo
+        },
+        // 新生分班
+        {
+          path: "office/:id/assignChild",
+          meta: { pageType: "office" },
+          component: AssignChildList
+        },
+        // 班级管理
+        {
+          path: "office/:id/classManagement",
+          meta: { pageType: "office" },
+          component: ClassManagementList
         },
       ]
     }

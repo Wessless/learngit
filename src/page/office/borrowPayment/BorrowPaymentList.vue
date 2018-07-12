@@ -21,7 +21,7 @@
                 </el-form-item>
             </el-form>
         </div>
-        <div class="borrowList" v-infinite-scroll="loadList" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
+        <div class="borrowList" v-infinite-scroll="loadList" :infinite-scroll-disabled="!hasData" infinite-scroll-distance="10">
             <borrow-payment-item v-for="item in borrowList" :key="item.num" :item="item" @clickPayMoney="clickPayMoney"></borrow-payment-item>
         </div>
         <el-dialog :visible.sync="dialogFormVisible">
@@ -219,6 +219,7 @@ export default {
     overflow: scroll;
     background: #fafafa;
     position: relative;
+    max-height: 100vh;
 }
 /* .borrowList{
     display: flex;

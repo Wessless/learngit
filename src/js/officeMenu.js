@@ -113,13 +113,17 @@ export default () => {
         "5004": {
             router:""
         },
+        "6004": {
+            router:"/classManagement"
+        },
         "6010": {
             router:"/noteAttendance"
         },
         "6019": {
             router:"/childInfo",
             MenuName:"幼儿信息"
-        }
+        },
+        
     }
     return officeMenu
 }

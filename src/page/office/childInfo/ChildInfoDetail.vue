@@ -26,7 +26,7 @@
             </el-form-item>
             <el-form-item label="保险失效日期">
                 <el-date-picker
-                    v-model="form.ChildBirthday"
+                    v-model="form.InsuranceExpiryDate"
                     type="date"
                     format="yyyy-MM-dd"
                     value-format="yyyy-MM-dd"
@@ -180,7 +180,7 @@
 
 <script>
 
-import { updateChild,getChildByChildID,getPaymentsByType,addChildPhoto } from '@/js/api'
+import { addNewChild,updateChild,getChildByChildID,getPaymentsByType,addChildPhoto,getChildNum } from '@/js/api'
 import { showLoading,closeLoading,IdentityCodeValid,PhoneNumValid,imageCompress} from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
 import ChatHeader from '@/components/chat/ChatHeader'
@@ -222,7 +222,8 @@ export default {
             mealFeeRefundType:[],
             tuitionType:[],
             tuitionRefundType:[],
-            uploadPath:""
+            uploadPath:"",
+            childInfoFile:null
         }
     },
     components:{
@@ -259,23 +260,26 @@ export default {
             document.getElementById("childInfoUploadFile").click();
         },
         childInfoFileChange(e){
-            let childID = this.$route.params.childID;
+            // let childID = this.$route.params.childID;
             let file = e.target.files[0];
-            this.familyMemberFile = file;
+            this.childInfoFile = file;
             // this.familyMemberFileName = file.name;
             imageCompress(file,0.5,(base64)=>{
                 let base64Image = base64;
                 this.uploadPath = base64Image;
             });
-            addChildPhoto(childID,file).then((result)=>{
-                if(result.data.status==1){
+        },
+        addChildPhoto(childID){
+            addChildPhoto(childID,this.childInfoFile).then((result)=>{
+                if(result.data.statu==1){
                     this.$message({
                         message:"上传成功",
                         type:"success"
                     });
+                    window.history.go(-1);
                 }else{
                     this.$message.error({
-                        message:"上传成功"
+                        message:"上传失败"
                     });
                 }
             });
@@ -359,7 +363,7 @@ export default {
         },
         // 点击确认保存模板
         confirm(){
-            let childID = this.$route.params.childID;
+            let childID = this.$route.params.childID?this.$route.params.childID:"";
             let childNum = this.form.ChildNum;
             let childName = this.form.ChildName;
             let sexStatus = this.form.ChildSex;
@@ -395,18 +399,18 @@ export default {
                 });
 				return false;
 			}
-			if (birthday == "") {
-                this.$message.error({
-                    message:"请输入幼儿生日！"
-                });
-				return false;
-			}
-			if (childNation == "") {
-                this.$message.error({
-                    message:"请输入幼儿民族！"
-                });
-				return false;
-			}
+			// if (birthday == "") {
+            //     this.$message.error({
+            //         message:"请输入幼儿生日！"
+            //     });
+			// 	return false;
+			// }
+			// if (childNation == "") {
+            //     this.$message.error({
+            //         message:"请输入幼儿民族！"
+            //     });
+			// 	return false;
+			// }
 			if (phoneNum == "") {
                 this.$message.error({
                     message:"请输入手机号！"
@@ -440,46 +444,105 @@ export default {
                 });
 				return false;
             }
-            
-            updateChild({
-                childID,
-                childNum,
-                childName,
-                sexStatus,
-                birthday,
-                connectPeople,
-                phoneNum,
-                remark,
-                discountUntil,
-                mealFeeTypeID,
-                tuitionTypeID,
-                mealFeeRefundTypeID,
-                tuitionRefundTypeID,
-                discountMealFee,
-                discountTuition,
-                insuranceExpiryDate,
-                openBankId,
-                carsNO,
-                usrName,
-                certType,
-                certId,
-                childNation,
-                childHuji,
-                identityType,
-                identityCard
-            }).then((result)=>{
-                if(result.data.childid){
-                    this.$message({
-                        message:"修改成功",
-                        type:"success"
-                    });
-                    window.history.go(-1);
-                }else{
-                    this.$message.error({
-                        message:"修改失败"
-                    });
-                }
-            });
+            let loading = showLoading();
+            if(this.$route.meta.type=="update"){
+                updateChild({
+                    childID,
+                    childNum,
+                    childName,
+                    sexStatus,
+                    birthday,
+                    connectPeople,
+                    phoneNum,
+                    remark,
+                    discountUntil,
+                    mealFeeTypeID,
+                    tuitionTypeID,
+                    mealFeeRefundTypeID,
+                    tuitionRefundTypeID,
+                    discountMealFee,
+                    discountTuition,
+                    insuranceExpiryDate,
+                    openBankId,
+                    carsNO,
+                    usrName,
+                    certType,
+                    certId,
+                    childNation,
+                    childHuji,
+                    identityType,
+                    identityCard
+                }).then((result)=>{
+                    closeLoading(loading);
+                    if(result.data.childid){
+                        this.$message({
+                            message:"修改成功",
+                            type:"success"
+                        });
+                        if(this.childInfoFile){
+                            this.addChildPhoto(result.data.childid);
+                        }else{
+                            window.history.go(-1);
+                        }
+                    }else{
+                        this.$message.error({
+                            message:"修改失败"
+                        });
+                    }
+                });
+            }else if(this.$route.meta.type=="add"){
+                getChildNum()
+                .then((result)=>{
+                    childNum = result.data.childnum;
+                    return addNewChild({
+                        childNum,
+                        childName,
+                        sexStatus,
+                        birthday,
+                        connectPeople,
+                        phoneNum,
+                        remark,
+                        discountUntil,
+                        mealFeeTypeID,
+                        tuitionTypeID,
+                        mealFeeRefundTypeID,
+                        tuitionRefundTypeID,
+                        discountMealFee,
+                        discountTuition,
+                        insuranceExpiryDate,
+                        openBankId,
+                        carsNO,
+                        usrName,
+                        certType,
+                        certId,
+                        childNation,
+                        childHuji,
+                        identityType,
+                        identityCard
+                    })
+                })
+                .then((result)=>{
+                    closeLoading(loading);
+                    if(result.data.childid){
+                        this.$message({
+                            message:"添加成功",
+                            type:"success"
+                        });
+                        if(this.childInfoFile){
+                            this.addChildPhoto(result.data.childid);
+                        }else{
+                            window.history.go(-1);
+                        }
+                    }else{
+                        this.$message.error({
+                            message:"添加失败"
+                        });
+                    }
+                })
+                .catch((err)=>{
+                    closeLoading(loading);
+                });
+            }
         }
     }
 }

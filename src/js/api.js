@@ -910,6 +910,81 @@ export const delParent = (staffID,parentID) => {
     });
 }
 
+// 新增幼儿时获取childNum
+export const getChildNum = () => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getChildNum'
+        }
+    });
+}
+
+// 添加幼儿（新生录入）
+export const addNewChild = ({
+        // childID,
+        childNum,
+        childName,
+        sexStatus,
+        birthday,
+        connectPeople,
+        phoneNum,
+        remark,
+        discountUntil,
+        mealFeeTypeID,
+        tuitionTypeID,
+        mealFeeRefundTypeID,
+        tuitionRefundTypeID,
+        discountMealFee,
+        discountTuition,
+        insuranceExpiryDate,
+        openBankId,
+        carsNO,
+        usrName,
+        certType,
+        certId,
+        childNation,
+        childHuji,
+        identityType,
+        identityCard
+    }) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'addNewChild'
+        },
+        data:{
+            // childID,
+            childNum,
+            childName,
+            sexStatus,
+            birthday,
+            connectPeople,
+            phoneNum,
+            remark,
+            discountUntil,
+            mealFeeTypeID,
+            tuitionTypeID,
+            mealFeeRefundTypeID,
+            tuitionRefundTypeID,
+            discountMealFee,
+            discountTuition,
+            insuranceExpiryDate,
+            openBankId,
+            carsNO,
+            usrName,
+            certType,
+            certId,
+            childNation,
+            childHuji,
+            identityType,
+            identityCard
+        }
+    });
+}
+
 // 修改幼儿信息
 export const updateChild = ({
         childID,
@@ -1048,6 +1123,23 @@ export const quitSchool = (childID,classID,turnDate,remark) => {
             childID,
             classID,
             turnDate,
+            remark
+        }
+    });
+}
+
+// 幼儿新生分班
+export const newKindergartenChildrenToClass = (childIDs,classID,dataFrom,remark) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'newKindergartenChildrenToClass'
+        },
+        data:{
+            childIDs,
+            classID,
+            dataFrom,
             remark
         }
     });

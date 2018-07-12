@@ -28,7 +28,6 @@
         <div class="childInfoList">
             <child-info-item v-for="(item,index) in allChildList" :key="index" :item="item" :type="formInline.radio" @clickDelete="clickDelete" @childRecord="childRecord" @changeClass="clickChangeClass" @quitSchool="clickQuitSchool" @changeClassBack="clickChangeClass"></child-info-item>
         </div>
-        <!-- <scroll-top></scroll-top> -->
         <el-dialog
             title="提示"
             :visible.sync="dialogVisible"
@@ -53,8 +52,8 @@
             :title="changeClassTitle"
             :visible.sync="changeClassDialogVisible"
             width="30%">
-            <el-form :model="changeClassForm">
-                <el-form-item label="转班日期" :label-width="'80'">
+            <el-form :model="changeClassForm" label-width="70px">
+                <el-form-item label="转班日期" >
                     <el-date-picker
                         v-model="changeClassForm.turnDate"
                         type="date"
@@ -62,11 +61,11 @@
                         value-format="yyyy-MM-dd"
                         size="medium"
                         placeholder="请选择转班日期"
-                        style="width:218px;">
+                        style="width:100%;">
                     </el-date-picker>
                 </el-form-item>
-                <el-form-item label="班级名称" :label-width="'80'">
-                    <el-select v-model="changeClassForm.changeClassID" size="medium" placeholder="请选择班级">
+                <el-form-item label="班级名称" >
+                    <el-select v-model="changeClassForm.changeClassID" size="medium" placeholder="请选择班级" style="width:100%;">
                         <!-- <el-option label="区域一" value="shanghai"></el-option> -->
                         <el-option
                             v-for="item in myAllClasses"
@@ -87,8 +86,8 @@
             title="退学"
             :visible.sync="quitSchoolDialogVisible"
             width="30%">
-            <el-form :model="changeClassForm">
-                <el-form-item label="退学日期" :label-width="'80'">
+            <el-form :model="changeClassForm" label-width="70px">
+                <el-form-item label="退学日期" >
                     <el-date-picker
                         v-model="quitSchoolForm.turnDate"
                         type="date"
@@ -96,16 +95,16 @@
                         value-format="yyyy-MM-dd"
                         size="medium"
                         placeholder="请选择退学日期"
-                        style="width:218px;">
+                        style="width:100%;">
                     </el-date-picker>
                 </el-form-item>
-                <el-form-item label="备注" :label-width="'80'">
+                <el-form-item label="备注" >
                     <el-input
                         placeholder="请输入备注"
                         v-model="quitSchoolForm.remark"
                         type="textarea"
                         :rows="4"
-                        style="width:218px;margin-left:28px;">
+                        style="width:100%;">
                     </el-input>
                 </el-form-item>
             </el-form>
@@ -114,39 +113,6 @@
                 <el-button type="primary" @click="quitSchool">确 定</el-button>
             </span>
         </el-dialog>
-        <!-- <el-dialog
-            title="恢复学籍"
-            :visible.sync="changeClassDialogVisible"
-            width="30%">
-            <el-form :model="changeClassForm">
-                <el-form-item label="转班日期" :label-width="'80'">
-                    <el-date-picker
-                        v-model="changeClassForm.turnDate"
-                        type="date"
-                        format="yyyy-MM-dd"
-                        value-format="yyyy-MM-dd"
-                        size="medium"
-                        placeholder="请选择转班日期"
-                        style="width:218px;">
-                    </el-date-picker>
-                </el-form-item>
-                <el-form-item label="班级名称" :label-width="'80'">
-                    <el-select v-model="changeClassForm.changeClassID" size="medium" placeholder="请选择班级">
-                        <el-option
-                            v-for="item in myAllClasses"
-                            :key="item.ID"
-                            :label="item.ClassName"
-                            :disabled="item.ID==formInline.classID"
-                            :value="item.ID">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="changeClassDialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="changeClass">确 定</el-button>
-            </span>
-        </el-dialog> -->
     </div>
 </template>
 
@@ -156,7 +122,6 @@ import { getChildsByClassID,getClasses,getClassesByStatus,delChild,getChildRecor
 import { showLoading,closeLoading } from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
 import ChatHeader from '@/components/chat/ChatHeader'
-import ScrollTop from '@/components/chat/ScrollTop'
 import childInfoItem from '@/page/office/childInfo/ChildInfoItem'
 
 export default {
@@ -190,7 +155,6 @@ export default {
     },
     components:{
         ChatHeader,
-        ScrollTop,
         childInfoItem
     },
     mounted(){

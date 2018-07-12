@@ -21,7 +21,7 @@
                 </el-form-item>
             </el-form>
         </div>
-        <div class="expenseList" v-infinite-scroll="loadList" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
+        <div class="expenseList" v-infinite-scroll="loadList" :infinite-scroll-disabled="!hasData" infinite-scroll-distance="10">
             <expense-payment-item v-for="item in expenseList" :key="item.num" :item="item" @clickPayMoney="clickPayMoney"></expense-payment-item>
         </div>
         <el-dialog :visible.sync="dialogFormVisible">
@@ -219,6 +219,7 @@ export default {
     overflow: scroll;
     background: #fafafa;
     position: relative;
+    max-height: 100vh;
 }
 /* .expenseList{
     display: flex;

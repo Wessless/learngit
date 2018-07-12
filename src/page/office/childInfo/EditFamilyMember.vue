@@ -15,7 +15,6 @@
             <family-member-item v-for="(item,index) in familyList" :key="index" :item="item" @clickDelete="clickDelete"></family-member-item>
             <!-- <child-info-item v-for="(item,index) in allChildList" :key="index" :item="item" @clickDelete="clickDelete"></child-info-item> -->
         </div>
-        <!-- <scroll-top></scroll-top> -->
         <el-dialog
             title="提示"
             :visible.sync="dialogVisible"
@@ -35,7 +34,6 @@ import { getChildByChildID,getParentsByChildID,delParent } from '@/js/api'
 import { showLoading,closeLoading } from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
 import ChatHeader from '@/components/chat/ChatHeader'
-import ScrollTop from '@/components/chat/ScrollTop'
 import FamilyMemberItem from '@/page/office/childInfo/FamilyMemberItem'
 
 export default {
@@ -55,7 +53,6 @@ export default {
     },
     components:{
         ChatHeader,
-        ScrollTop,
         FamilyMemberItem
     },
     mounted(){

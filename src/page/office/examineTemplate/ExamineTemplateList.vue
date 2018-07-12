@@ -18,7 +18,7 @@
                 </el-form-item> -->
             </el-form>
         </div>
-        <div class="templateList" v-infinite-scroll="loadList" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
+        <div class="templateList" v-infinite-scroll="loadList" :infinite-scroll-disabled="!hasData" infinite-scroll-distance="10">
             <examine-template-item v-for="item in templateList" :key="item.TemplateID" :item="item"></examine-template-item>
         </div>
         <el-dialog :visible.sync="dialogFormVisible">
@@ -246,6 +246,7 @@ export default {
     overflow: scroll;
     background: #fafafa;
     position: relative;
+    max-height: 100vh;
 }
 /* .templateList{
     display: flex;
