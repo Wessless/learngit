@@ -18,7 +18,8 @@
                 </el-form-item> -->
             </el-form>
         </div>
-        <div class="templateList" v-infinite-scroll="loadList" :infinite-scroll-disabled="!hasData" infinite-scroll-distance="10">
+        <no-data :isShow="isNoData"></no-data>
+        <div class="templateList" v-infinite-scroll="loadList" infinite-scroll-disabled="isDisabled" infinite-scroll-distance="10">
             <examine-template-item v-for="item in templateList" :key="item.TemplateID" :item="item"></examine-template-item>
         </div>
         <el-dialog :visible.sync="dialogFormVisible">
@@ -58,11 +59,12 @@
 
 <script>
 
-import { getChargeBill,getBankAccount,payChargeBill,getTemplate,setTemplateInvalid } from '@/js/api'
-import { showLoading,closeLoading } from '@/config/utils'
+import { getBankAccount,payChargeBill,getTemplate,setTemplateInvalid } from '@/js/api'
+import { showLoading,closeLoading,alertError } from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
 import ChatHeader from '@/components/chat/ChatHeader'
 import examineTemplateItem from '@/page/office/examineTemplate/ExamineTemplateItem'
+import NoData from '@/components/chat/NoData'
 
 export default {
     name: 'ExamineTemplate',
@@ -72,11 +74,12 @@ export default {
                 pointType:'5',
                 showLoseTemplate:false,
             },
+            isNoData:false,
             templateList:[],
             bankList:[],
             pageSize:21,
             currentPage:1,
-            hasData:true,
+            isDisabled:false,
             dialogFormVisible: false,
             form: {
                 payDate:'',
@@ -89,6 +92,7 @@ export default {
         }
     },
     components:{
+        NoData,
         ChatHeader,
         examineTemplateItem
     },
@@ -126,20 +130,24 @@ export default {
     },
     methods:{
         loadList(reload){
+            console.log("load");
             let pointType = this.formInline.pointType;
             let isValid = this.formInline.showLoseTemplate ? "0" : "1";
             if(reload){
                 this.currentPage = 1;
-                this.hasData = true;
+                this.isDisabled = false;
             }
-            if(this.hasData){
+            if(!this.isDisabled){
+                this.isDisabled = true;
                 let loading = showLoading();
                 getTemplate(this.currentPage,this.pageSize,pointType,isValid).then((result)=>{
                     if(reload){
                         this.templateList = [];
                     }
                     if(result.data.totalCount<this.currentPage*this.pageSize){
-                        this.hasData = false;
+                        this.isDisabled = true;
+                    }else{
+                        this.isDisabled = false;
                     }
                     closeLoading(loading);
                     this.currentPage++;
@@ -147,12 +155,21 @@ export default {
                         result.data.data[i].selected = false;
                         this.templateList.push(result.data.data[i]);
                     }
+                    if(this.templateList.length==0){
+                        this.isNoData = true;
+                    }else{
+                        this.isNoData = false;
+                    }
+                }).catch((err)=>{
+                    alertError(this,"1203");
                 });
             }
         },
         loadBank(){
             getBankAccount().then((result)=>{
                 this.bankList = result.data.data;
+            }).catch((err)=>{
+                alertError(this,"1164");
             });
         },
         clickPayMoney(item){
@@ -228,6 +245,8 @@ export default {
                     });
                 }
                 
+            }).catch((err)=>{
+                alertError(this,"2134");
             });
         }
     }

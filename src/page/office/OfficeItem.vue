@@ -188,16 +188,17 @@ export default {
 
 /*  */ 
 .chatList .portrait{
-  height: 45px;
-  width: 45px;
-  font-size: 24px;
-  line-height: 45px;
-  text-align: center;
-  background: #38adff;
+    height: 45px;
+    width: 45px;
+    font-size: 24px;
+    line-height: 45px;
+    text-align: center;
+    background: #38adff;
+    display: flex;
 }
 .chatList .portrait img{
-  height: 100%;
-  width: 100%;
+    height: 100%;
+    width: 100%;
 }
 .chatList:hover {
     background: #ebf2f7;

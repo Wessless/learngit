@@ -269,6 +269,16 @@ export const closeLoading = (loadingInstance)=>{
     loadingInstance.close();
 };
 
+export const alertError = (vueDom,errCode,elseObj) => {
+    vueDom.$alert('错误码：'+errCode, '错误', {
+        confirmButtonText: '确定',
+        closeOnClickModal: true,
+        type:"error",
+        callback: action => {
+        }
+    });
+}
+
 /**
  * 印章
  */
@@ -473,3 +483,79 @@ export const IdentityCodeValid = (code)=>{
     }
     return pass;
 };
+
+/**
+ * 时间格式转换
+ */
+export function dateTimeFormatter (date ,format) {
+    // 时间格式化辅助函数 date:毫秒数 format:'yyyy-MM-dd hh:mm:ss'
+    if (!date || date == "") {
+        return ""
+    }
+  
+    if (typeof date === "string") {
+        var mts = date.match(/(\/Date\((\d+)\)\/)/)
+        if (mts && mts.length >= 3) {
+            date = parseInt(mts[2])
+        }
+    }else if (typeof date === "number") {
+        date = new Date(date);
+    }
+
+    
+    if (!date || date.toUTCString() == "Invalid Date") {
+        return ""
+    }
+  
+    var map = {
+        "M": date.getMonth() + 1, //月份
+        "d": date.getDate(), //日
+        "h": date.getHours(), //小时
+        "m": date.getMinutes(), //分
+        "s": date.getSeconds(), //秒
+        "q": Math.floor((date.getMonth() + 3) / 3), //季度
+        "S": date.getMilliseconds() //毫秒
+    }
+  
+    format = format.replace(/([yMdhmsqS])+/g, function(all, t){
+        var v = map[t]
+        if(v !== undefined){
+            if(all.length > 1){
+                v = '0' + v
+                v = v.substr(v.length-2)
+            }
+            return v
+        }
+        else if(t === 'y'){
+            return (date.getFullYear() + '').substr(4 - all.length)
+        }
+        return all
+    })
+  
+    return format
+}
+
+/**
+ * 获取后缀名图片
+ */
+export const getExtImagePath = (ext) => {
+    if(ext=="doc" || ext=="docx"){
+        return "static/images/doc.png";
+    }else if(ext=="xlsx" || ext=="xls"){
+        return "static/images/xlsx.png";
+    }else if(ext=="txt"){
+        return "static/images/txt.png";
+    }else if(ext=="mp3"){
+        return "static/images/mp3.png";
+    }else if(ext=="mp4"){
+        return "static/images/mp4.png";
+    }else if(ext=="jpg" || ext=="jpeg" || ext=="png" || ext=="bmp"){
+        return "static/images/pic.png";
+    }else if(ext=="pdf"){
+        return "static/images/pdf.png";
+    }else if(ext=="imageText"){
+        return "static/images/imageText.png";
+    }else{
+        return "static/images/undefined.png";
+    }
+}

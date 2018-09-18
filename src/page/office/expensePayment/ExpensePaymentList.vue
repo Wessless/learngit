@@ -21,7 +21,8 @@
                 </el-form-item>
             </el-form>
         </div>
-        <div class="expenseList" v-infinite-scroll="loadList" :infinite-scroll-disabled="!hasData" infinite-scroll-distance="10">
+        <no-data :isShow="isNoData"></no-data>
+        <div class="expenseList" v-infinite-scroll="loadList" infinite-scroll-disabled="isDisabled" infinite-scroll-distance="10">
             <expense-payment-item v-for="item in expenseList" :key="item.num" :item="item" @clickPayMoney="clickPayMoney"></expense-payment-item>
         </div>
         <el-dialog :visible.sync="dialogFormVisible">
@@ -62,10 +63,11 @@
 <script>
 
 import { getChargeBill,getBankAccount,payChargeBill } from '@/js/api'
-import { showLoading,closeLoading } from '@/config/utils'
+import { showLoading,closeLoading ,alertError} from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
 import ChatHeader from '@/components/chat/ChatHeader'
 import expensePaymentItem from '@/page/office/expensePayment/ExpensePaymentItem'
+import NoData from '@/components/chat/NoData'
 
 export default {
     name: 'ExpensePayment',
@@ -75,11 +77,12 @@ export default {
                 staffID: '',
                 staffs:[]
             },
+            isNoData:false,
             expenseList:[],
             bankList:[],
             pageSize:15,
             currentPage:1,
-            hasData:true,
+            isDisabled:false,
             dialogFormVisible: false,
             form: {
                 payDate:'',
@@ -92,6 +95,7 @@ export default {
         }
     },
     components:{
+        NoData,
         ChatHeader,
         expensePaymentItem
     },
@@ -136,9 +140,10 @@ export default {
             let fillStaffID = this.formInline.staffID ? this.formInline.staffID : "-1";
             if(reload){
                 this.currentPage = 1;
-                this.hasData = true;
+                this.isDisabled = false;
             }
-            if(this.hasData){
+            if(!this.isDisabled){
+                this.isDisabled = true;
                 let loading = showLoading();
                 getChargeBill(this.currentPage,this.pageSize,staffID,'-1','-1','-1','-1','-1','-1','-1','-1','-1','-1','-1',fillStaffID,'1','-1','-1','-1','-1','-1').then((result)=>{
                     if(reload){
@@ -146,19 +151,30 @@ export default {
                     }
                     console.log(result)
                     if(result.data.totalCount<this.currentPage*this.pageSize){
-                        this.hasData = false;
+                        this.isDisabled = true;
+                    }else{
+                        this.isDisabled = false;
                     }
                     closeLoading(loading);
                     this.currentPage++;
                     for(let i=0;i<result.data.data.length;i++){
                         this.expenseList.push(result.data.data[i]);
                     }
-                });
+                    if(this.expenseList.length==0){
+                        this.isNoData = true;
+                    }else{
+                        this.isNoData = false;
+                    }
+                }).catch((err)=>{
+                    alertError(this,"1174");
+            }   );
             }
         },
         loadBank(){
             getBankAccount().then((result)=>{
                 this.bankList = result.data.data;
+            }).catch((err)=>{
+                alertError(this,"1164");
             });
         },
         clickPayMoney(item){

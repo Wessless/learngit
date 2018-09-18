@@ -60,6 +60,7 @@ import { mapState,mapMutations } from 'vuex'
 import { couldSeeStaffMessage } from '@/js/api'
 import { rong_getConversation } from '@/js/rongCloud'
 import imageProxy from '@/components/chat/ImageProxy'
+import { alertError } from '@/config/utils'
 
 export default {
     name: 'UserSetting',
@@ -202,29 +203,50 @@ export default {
             if(result.data.result=="1"){
                 this.officeList = this.itemList;
             }
+        }).catch((err)=>{
+            alertError(this,"1215");
         });
     },
     updated(){
         couldSeeStaffMessage(this.userInfo.userStaffID,this.staffID).then((result)=>{
-            
             if(result.data.result=="1"){
                 this.officeList = this.itemList;
             }else{
                 this.officeList = [];
             }
+        }).catch((err)=>{
+            // alertError(this,"1215");
         });
     },
     methods:{
         ...mapMutations([
             'SET_CURRCONVERSATION',
             'SET_CURRFRIENDLIST',
+            'SET_BROWSERIMG'
         ]),
         toUrl(item){
             if(item.Router){
                 this.$router.push(this.$route.fullPath+item.Router);
             }else{
-                this.$message('敬请期待，请前往蜂堡办公系统APP版进行操作');
+                const h = this.$createElement;
+                this.$message({
+                    dangerouslyUseHTMLString: true,
+                    message:
+                        h('p', null, [
+                            h('span', null, '请前往蜂堡办公系统手机版进行操作 '),
+                            h('a', { style: 'color: #38adff',on:{ click:this.openQRCode } }, '下载手机版')
+                        ])
+                });
             }
+        },
+        openQRCode(){
+            this.SET_BROWSERIMG({
+                imgPath:"static/images/cos_qrcode.png",
+                styleObject:{
+                    width:"300px",
+                    height:"300px"
+                }
+            });
         },
         userEdit(){
             this.editable = true;

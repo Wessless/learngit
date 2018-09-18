@@ -3,16 +3,76 @@
         <!-- 预览图片 -->
         <el-dialog :visible.sync="browserImg.imgPath!=''" :fullscreen="true" :show-close="true">
             <div class="browser" @click="hideBrowserImg">
-                <div class="browserImg"><img class="browserImg" :style="browserImg.styleObject" :src="browserImg.imgPath" alt=""></div>
+                <div class="browserImg">
+                    <img class="browserImg" :style="browserImg.styleObject" :src="browserImg.imgPath" alt="">
+                    <div class="downloadQRCode" v-if="browserImg.download">
+                        <div @click.stop="download(browserImg.download.url)">{{browserImg.download.text}}</div>
+                    </div>
+                </div>
+            </div>
+        </el-dialog>
+        <!-- 预览多个二维码 -->
+        <el-dialog :visible.sync="showKindgardenQRCodeDialog" :fullscreen="true" :show-close="true">
+            <div class="qrcode" @click="showKindgardenQRCodeDialog = false">
+                <div class="qrcodeImage" v-for="(item,index) in qrcodeArr" :key="index">
+                    <img class="qrcodeImageDom" :src="item.url" alt="">
+                    <div class="kindgardenQRCode">
+                        <div>{{ item.name }}</div>
+                    </div>
+                </div>
+            </div>
+        </el-dialog>
+        <!-- 预览员工信息 -->
+        <el-dialog :visible.sync="showCurrUserInfo" :fullscreen="true" :show-close="true">
+            <div class="staffInfo">
+                <div class="staffInfoBlock">
+                    <div class="deleteBtn iconfont" @click="showCurrUserInfo = false">&#xe69a;</div>
+                    <div class="staffImage">
+                        <input  name="file" type="file" id="uploadSelfStaffImage" style="display:none" accept="image/png,image/gif,image/jpeg" @change="uploadImage"/>
+                        <img :src="imagePath" @click.stop="clickUploadImage" title="点击图片重新上传头像">
+                        <div class="headTitle">
+                            {{userInfo.userName}}
+                            <span class="sex iconfont" v-if="sex=='0'" style="color:#f817a6">&#xe72c;</span>
+                            <span class="sex iconfont" v-if="sex=='1'" style="color:#38adff">&#xe72b;</span>
+                        </div>
+                    </div>
+                    <div class="infoItem">
+                        <div class="title">手机</div>
+                        <div class="content">{{userInfo.mobile}}</div>
+                    </div>
+                    <div class="infoItem">
+                        <div class="title">部门</div>
+                        <div class="content">{{userInfo.DepartmentName}}</div>
+                    </div>
+                    <div class="infoItem">
+                        <div class="title">工号</div>
+                        <div class="content">{{userInfo.StaffNum}}</div>
+                    </div>
+                    <div class="infoItem">
+                        <div class="title">机构</div>
+                        <div class="content">{{cosName}}</div>
+                    </div>
+                    <div class="infoItem">
+                        <div class="title">角色</div>
+                        <div class="content">{{userInfo.userRole}}</div>
+                    </div>
+                    <div class="quitButton" @click="quitLogin">退出登录</div>
+                </div>
             </div>
         </el-dialog>
         <!-- 其他 -->
         <div class="main_inner clearfix">
             <div class="no_network"><span>{{ $t("message.mainPage.no_network") }}</span></div>
-            <main-header @changeFlag="changeFlag" :hideflag="hideflag" @changeMoreFlag="changeMoreFlag" :hideMoreflag="hideMoreflag" ></main-header>
+            <main-header @changeFlag="changeFlag" :hideflag="hideflag" @quitLogin="quitLogin" @changeMoreFlag="changeMoreFlag" @clickUserInfo="clickUserInfo" @showKindgardenQRCode="showKindgardenQRCode" :hideMoreflag="hideMoreflag" ></main-header>
             <friend-list></friend-list>
             <div class="elseComponent" style="padding-left:384px;">
-                <!-- <div class="emptyBox" v-if="!this.currConversation"></div> -->
+                <!-- <div class="emptyBox" v-if="!this.currConversation&&!this.currFriendList&&($route.meta.pageType=='conversation'||$route.meta.pageType=='friendList')">
+                    <div class="cosName">{{ cosName }}<br/>欢迎您！</div>
+                </div> -->
+                <!-- <div class="emptyBox" v-if="$route.meta.pageType=='office'&&$route.meta.isoffice">
+                    <img src="static/images/office.png" class="office" alt="">
+                </div> -->
+                <div class="showText" v-show="showText">{{ cosName+"蜂堡办公系统" }}</div>
                 <chat-box v-show="this.currConversation&&!this.currFriendList"></chat-box>
                 <!-- <friend-list-info v-show="!this.currConversation&&this.currFriendList"></friend-list-info>    -->
                 <router-view></router-view>
@@ -37,7 +97,6 @@
         <div class="load-container">
             <div class="loader">Loading...</div>
         </div>
-        <audio id="playsound" style="width: 0px;height: 0px;display: none;" src="../img/sms-received.mp3" controls="controls"></audio>
     </div>
 </template>
 
@@ -49,9 +108,10 @@ import mainHeader from '@/page/MainHeader'
 import friendList from '@/page/chat/FriendList'
 import userSetting from '@/page/user/UserSetting'
 import chatBox from '@/page/chat/ChatBox'
+import { downloadFile,addStaffPhoto,findAllStaffs } from '@/js/api'
 import {mapState, mapMutations} from 'vuex'
 import {aesEncrypt, aesDecrypt} from '@/config/AES';// AES加密解密算法
-import {_setSession, _getSession} from '@/config/utils';
+import {_setSession, _getSession,_removeSession} from '@/config/utils';
 
 
 export default {
@@ -59,7 +119,11 @@ export default {
     data :function() {
         return {
             hideflag:true,
-            hideMoreflag:true
+            hideMoreflag:true,
+            showText:false,
+            showCurrUserInfo:false,
+            showKindgardenQRCodeDialog:false,
+            qrcodeArr:[]
         }
     },
     computed:{
@@ -77,6 +141,32 @@ export default {
             //     return true;
             // }
             return this.uploadFile;
+        },
+        cosName(){
+            if(this.userInfo.cosName){
+                return this.userInfo.cosName;
+            }else{
+                return "";
+            }
+        },
+        sex(){
+            if(this.userInfo.userSex=="0"){
+                return '0';
+            }else{
+                return '1';
+            }
+        },
+        imagePath(){
+            // return "";
+            if(this.userInfo.imagePath){
+                return this.userInfo.imagePath.replace("../../../",this.userInfo.currProxy+'/COS'+this.userInfo.cosNum+'/');
+            }else{
+                if(this.userInfo.userSex=="0"){
+                    return "/static/images/staff_female.jpg";
+                }else{
+                    return "/static/images/staff_male.jpg";
+                }
+            }
         }
     },
     watch:{
@@ -95,6 +185,32 @@ export default {
         }
     },
     mounted(){
+        // this.$message({
+        //     dangerouslyUseHTMLString: true,
+        //     message:
+        //         h('p', null, [
+        //             h('span', null, cosName+'蜂堡办公系统'),
+        //             // h('a', { style: 'color: #38adff',on:{ click:this.openQRCode } }, '下载手机版')
+        //         ])
+        // });
+        if(this.cosName){
+            this.showText = true;
+            setTimeout(()=>{
+                this.showText = false;
+            },3000)
+            // this.$message({
+            //     message:this.cosName+"蜂堡办公系统",
+            //     duration:2000
+            // })
+            // const h = this.$createElement;
+            // this.$notify({
+            //     showClose:false,
+            //     message: h('span', { style: 'color: #38adff;font-size:18px;'}, this.cosName+"蜂堡办公系统"),
+            //     offset: 150,
+            //     duration:2000
+            // });
+        }
+        console.log(this.userInfo)
     },
     components:{
         mainHeader,
@@ -106,13 +222,22 @@ export default {
         ...mapMutations([
             'SAVE_USERINFO',
             'SET_UPLOADFILE',
-            'SET_BROWSERIMG'
+            'SET_BROWSERIMG',
+            'SET_SELFIMAGEPATH',
+            'SET_ALLSTAFFS',
         ]),
         changeFlag(val){// 点击加号显示隐藏添加列表
             this.hideflag = val;
         },
         changeMoreFlag(val){// 点击加号显示隐藏添加列表
             this.hideMoreflag = val;
+        },
+        clickUserInfo(){// 点击头像
+            this.showCurrUserInfo = true;
+        },
+        quitLogin(){
+            _removeSession('user_info');
+            this.$router.push('/login')
         },
         trueFlag(){// 点击其他区域隐藏添加列表
             this.hideflag = true;
@@ -123,6 +248,64 @@ export default {
         },
         hideBrowserImg(){
             this.SET_BROWSERIMG({imgPath:""});
+        },
+        clickUploadImage(){
+            document.getElementById("uploadSelfStaffImage").click();
+        },
+        findAllStaffs(){
+            findAllStaffs().then((result)=>{
+                this.SET_ALLSTAFFS(result.data.data);
+            })
+        },
+        uploadImage(e){
+            let file = e.target.files[0];
+            let staffID = this.userInfo.userStaffID;
+            addStaffPhoto(staffID,file).then((response) => {
+                console.log(response)
+                if(response.data.statu == 1){
+                    this.$message({
+                        message: '修改成功',
+                        type: 'success'
+                    });
+                    this.showCurrUserInfo = false;
+                    this.SET_SELFIMAGEPATH(response.data.path);
+                    let user_info = aesEncrypt(JSON.stringify(this.userInfo));
+                    _setSession('user_info',user_info);
+                    this.findAllStaffs();
+                }else{
+                    this.$message({
+                        message: '修改失败',
+                        type: 'error'
+                    });
+                }
+            }).catch((err)=>{
+                alertError(this,"2024");
+            });
+        },
+        download(url){
+            downloadFile(url).then((result)=>{
+                const content = result.data;
+                const blob = new Blob([content]);
+                const fileName = 'enrollment.zip';
+                if ('download' in document.createElement('a')) { // 非IE下载
+                    const elink = document.createElement('a');
+                    elink.download = fileName;
+                    elink.style.display = 'none';
+                    elink.href = URL.createObjectURL(blob);
+                    document.body.appendChild(elink);
+                    elink.click();
+                    URL.revokeObjectURL(elink.href); // 释放URL 对象
+                    document.body.removeChild(elink);
+                } else { // IE10+下载
+                    navigator.msSaveBlob(blob, fileName)
+                }
+            }).catch(()=>{
+                console.log("error")
+            });
+        },
+        showKindgardenQRCode(val){
+            this.qrcodeArr = val;
+            this.showKindgardenQRCodeDialog = true;
         }
     }
 }
@@ -149,11 +332,55 @@ export default {
     overflow: hidden;
 }
 
+.elseComponent > .emptyBox {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+}
+
+.emptyBox > .cosName{
+    position: absolute;
+    left:50%;
+    top:50%;
+    font-size: 36px;
+    text-align: center;
+    color: #333;
+    /* margin-top:-320px; */
+    transform: translateX(-50%) translateY(-50%);
+    -webkit-transform: translateX(-50%) translateY(-50%);
+}
+
+.elseComponent > .emptyBox > .center {
+    width:500px;
+    position: absolute;
+    left:50%;
+    top:50%;
+    /* margin-top:-70px; */
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+}
+
+.elseComponent > .emptyBox > .office {
+    width:600px;
+    position: absolute;
+    left:50%;
+    top:50%;
+    /* margin-top:-70px; */
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+}
+
+.elseComponent > .emptyBox > .topImg{
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+}
+
 .chatBox > .emptyBox {
     /*display: none;*/
     width: 847px;
     height: 640px;
-    /* background: url(../img/emptyBox.png) no-repeat; */
+    background: url(../img/emptyBox.png) no-repeat;
     background-size: cover;
     position: absolute;
     left: 50%;
@@ -172,7 +399,7 @@ export default {
 /**/
 .elseComponent{
     position: relative;
-    background-color: #f9fbfd;
+    background-color: #fafafa;
     padding-left:384px;
     min-height: 100vh;
 }
@@ -453,4 +680,146 @@ export default {
     display: table-cell;
     vertical-align: middle;
 } 
+.qrcode{
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.qrcodeImage{
+    display:flex;
+    padding:0 10px;
+    flex-direction: column;
+} 
+.qrcodeImageDom{
+    width:300px;
+    height: 300px;
+}
+.kindgardenQRCode{
+    padding-top:20px;
+    display: flex;
+    justify-content: center;
+}
+.kindgardenQRCode > div{
+    display: inline-block;
+    color:#38adff;
+}
+.downloadQRCode{
+    padding-top:20px;
+    display: flex;
+    justify-content: center;
+}
+.downloadQRCode > div{
+    display: inline-block;
+    color:#38adff;
+    cursor: pointer;
+}
+.showText{
+    display: inline-block;
+    padding:15px;
+    border:1px solid #38adff;
+    position: absolute;
+    left:50%;
+    top:50%;
+    font-size: 24px;
+    color: #38adff;
+    background: #ffffff;
+    border-radius: 10px;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    margin-left: 192px;
+}
+.staffInfo{
+    width:100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.deleteBtn{
+    position: absolute;
+    right:10px;
+    top:10px;
+    color: #fff;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+}
+.deleteBtn:hover{
+    color: red;
+}
+.staffInfoBlock{
+    height:400px;
+    width:300px;
+    background: #ffffff;
+    border-radius: 5px;
+    position: relative;
+}
+.staffImage{
+    padding:25px 0 25px 0;
+    background: #aaa;
+    border-radius: 5px 5px 0 0;
+    display: flex;
+    flex-direction: row;
+}
+.staffImage > img{
+    display: block;
+    margin-left:30px;
+    margin-right: 10px;
+    height:82px;
+    width:82px;
+    border-radius: 50%;
+    border:2px solid #ffffff;
+    overflow: hidden;
+    cursor: pointer;
+}
+.headTitle{
+    font-size:18px;
+    font-weight: 500;
+    white-space: nowrap;
+	text-overflow: ellipsis;
+	word-wrap: normal;
+	overflow: hidden;
+    text-align:center;
+    color: #fff;
+    margin-top:10px;
+}
+.sex{
+    padding-left:5px;
+    font-size:20px;
+}
+.moneyIcon{
+    padding-right:5px;
+}
+.infoItem{
+    display:flex;
+    flex-direction: row;
+    padding-top:10px;
+    font-size: 15px;
+    align-items: center;
+}
+.infoItem > .title{
+    padding:0 20px 0 30px;
+    color:#8f8f8f;
+}
+.infoItem > .content{
+    color: #333;
+    flex:1;
+    padding-right:10px;
+}
+.quitButton{
+    width:100%;
+    color:#e51c23;
+    position: absolute;
+    bottom:0;
+    text-align: center;
+    padding:8px 0;
+    border-top:1px solid #dddddd;
+    cursor: pointer;
+}
 </style>

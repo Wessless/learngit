@@ -21,7 +21,8 @@
                 </el-form-item>
             </el-form>
         </div>
-        <div class="borrowList" v-infinite-scroll="loadList" :infinite-scroll-disabled="!hasData" infinite-scroll-distance="10">
+        <no-data :isShow="isNoData"></no-data>
+        <div class="borrowList" v-infinite-scroll="loadList" infinite-scroll-disabled="isDisabled" infinite-scroll-distance="10">
             <borrow-payment-item v-for="item in borrowList" :key="item.num" :item="item" @clickPayMoney="clickPayMoney"></borrow-payment-item>
         </div>
         <el-dialog :visible.sync="dialogFormVisible">
@@ -62,10 +63,11 @@
 <script>
 
 import { getBookCharge,getBankAccount,payBookCharge } from '@/js/api'
-import { showLoading,closeLoading } from '@/config/utils'
+import { showLoading,closeLoading ,alertError} from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
 import ChatHeader from '@/components/chat/ChatHeader'
 import borrowPaymentItem from '@/page/office/borrowPayment/BorrowPaymentItem'
+import NoData from '@/components/chat/NoData'
 
 export default {
     name: 'BorrowPayment',
@@ -75,11 +77,12 @@ export default {
                 staffID: '',
                 staffs:[]
             },
+            isNoData:false,
             borrowList:[],
             bankList:[],
             pageSize:15,
             currentPage:1,
-            hasData:true,
+            isDisabled:false,
             dialogFormVisible: false,
             form: {
                 payDate:'',
@@ -92,11 +95,13 @@ export default {
         }
     },
     components:{
+        NoData,
         ChatHeader,
         borrowPaymentItem
     },
     mounted(){
         // this.showInfo();
+        
         this.loadBank();
         // 加载员工
         var staffs = [{
@@ -136,29 +141,40 @@ export default {
             let fillStaffID = this.formInline.staffID ? this.formInline.staffID : "-1";
             if(reload){
                 this.currentPage = 1;
-                this.hasData = true;
+                this.isDisabled = false;
             }
-            if(this.hasData){
+            if(!this.isDisabled){
+                this.isDisabled = true;
                 let loading = showLoading();
-                getBookCharge(this.currentPage,this.pageSize,staffID,'-1','-1','-1','-1','-1','-1','-1','-1','-1','-1','-1',fillStaffID,'1','-1','-1','-1','-1').then((result)=>{
+                getBookCharge(this.currentPage,this.pageSize,staffID,'-1','-1','-1','-1','-1','-1','-1','-1','-1','-1','-1','-1','-1',fillStaffID,'1','-1','-1','-1','-1').then((result)=>{
                     if(reload){
                         this.borrowList = [];
                     }
-                    console.log(result);
                     if(result.data.totalCount<this.currentPage*this.pageSize){
-                        this.hasData = false;
+                        this.isDisabled = true;
+                    }else{
+                        this.isDisabled = false;
                     }
                     closeLoading(loading);
                     this.currentPage++;
                     for(let i=0;i<result.data.data.length;i++){
                         this.borrowList.push(result.data.data[i]);
                     }
+                    if(this.borrowList.length==0){
+                        this.isNoData = true;
+                    }else{
+                        this.isNoData = false;
+                    }
+                }).catch((err)=>{
+                    alertError(this,"1177");
                 });
             }
         },
         loadBank(){
             getBankAccount().then((result)=>{
                 this.bankList = result.data.data;
+            }).catch((err)=>{
+                alertError(this,"1164");
             });
         },
         clickPayMoney(item){

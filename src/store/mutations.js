@@ -9,6 +9,10 @@ import {
 	SET_TOTALUNREADCOUNT,
 	SET_UPLOADFILE,
 	SET_BROWSERIMG,
+	SET_APPROVETABTYPE,
+	SET_SELFIMAGEPATH,
+	SET_KNOWLEDGEID,
+	SET_TREENODEID,
 } from './mutation-types.js'
 
 export default {
@@ -52,6 +56,21 @@ export default {
 	// 设置预览图片
 	[SET_BROWSERIMG](state, browserImg){
 		state.browserImg = browserImg;
+	},
+  // 设置审批tab栏
+  [SET_APPROVETABTYPE](state, approveTabType){
+		state.approveTabType = approveTabType;
+	},
+	// 设置员工头像
+	[SET_SELFIMAGEPATH](state, imagePath){
+		state.userInfo.imagePath = imagePath;
+		state.userInfo.portrait = imagePath;
+	},
+	[SET_KNOWLEDGEID](state, knowledgeID){
+		state.myDatabase.knowledgeID = knowledgeID;
+	},
+	[SET_TREENODEID](state, treeNode){
+		state.myDatabase.treeNode = treeNode;
 	},
 	// [RECORD_SHOPDETAIL](state, detail) {
 	// 	state.shopDetail = detail;

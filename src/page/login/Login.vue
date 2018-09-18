@@ -39,9 +39,9 @@
                                 <div class="button-wrapper form-group" v-show="!isQRLogin">
                                     <button class="sign-button submit" @click="signin">{{ $t("message.login.login") }}</button>
                                 </div>
-                                <div class="bot clearfix" v-show="!isQRLogin">
+                                <!-- <div class="bot clearfix" v-show="!isQRLogin">
                                     <router-link class="pull-right" to="/mainpage">{{ $t("message.login.findPassword") }}</router-link>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -64,9 +64,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import QRCode from 'qrcode';
 import config from '../../../config';
 import {aesEncrypt, aesDecrypt} from '@/config/AES';// AES加密解密算法
-import {_setSession, _getSession } from '@/config/utils';
+import {_setSession, _getSession,alertError } from '@/config/utils';
 import {mapState, mapMutations} from 'vuex'
-import { getCosByCosNum, login, getUUID, checkUUID, checkIP, getCosType} from '@/js/api'
+import { getCosByCosNum, login, getUUID, checkUUID, checkIP, getCosType,findAllStaffs} from '@/js/api'
 
 
 export default {
@@ -156,7 +156,8 @@ export default {
             }
             let staffInfo = null;
             // 外网二维码登录
-            checkIP(currProxy,cosNum).then((result)=>{
+            checkIP(currProxy,cosNum)
+            .then((result)=>{
                 response.data.currProxy = currProxy;
                 response.data.currCOSIP = currCOSIP;
                 response.data.currCOSImgIP = currCOSIP;
@@ -176,6 +177,14 @@ export default {
                     _setSession('user_info',user_info);
                 }
                 this.$router.push("/mainpage");
+            }).catch((err)=>{
+                // this.$alert('错误码：1014', '错误', {
+                //     confirmButtonText: '确定',
+                //     closeOnClickModal: true,
+                //     type:"error",
+                //     callback: action => {
+                //     }
+                // });
             });
             // 公司内网二维码登录
             checkIP('/COS0IN',cosNum).then((result)=>{
@@ -198,6 +207,14 @@ export default {
                     _setSession('user_info',user_info);
                 }
                 this.$router.push("/mainpage");
+            }).catch((err)=>{
+                // this.$alert('错误码：1014', '错误', {
+                //     confirmButtonText: '确定',
+                //     closeOnClickModal: true,
+                //     type:"error",
+                //     callback: action => {
+                //     }
+                // });
             });
         },
         // 用户名密码登录
@@ -254,8 +271,10 @@ export default {
                         this.SAVE_USERINFO(staffInfo);
                         let user_info = aesEncrypt(JSON.stringify(staffInfo));
                         _setSession('user_info',user_info);
+                        this.$router.push("/mainpage");
                     }
-                    this.$router.push("/mainpage");
+                }).catch((err)=>{
+                    // alertError(this,"2001");
                 });
 
                 login('/COS0IN',this.user.cosNum,this.user.userName,this.user.passWord).then((response) => {
@@ -282,12 +301,15 @@ export default {
                         this.SAVE_USERINFO(staffInfo);
                         let user_info = aesEncrypt(JSON.stringify(staffInfo));
                         _setSession('user_info',user_info);
+                        this.$router.push("/mainpage");
                     }
-                    this.$router.push("/mainpage");
+                }).catch((err)=>{
+                    // alertError(this,"2001");
                 });
             })
             .catch((error) => {
                 console.log(error);
+                alertError(this,"1993");
             });
         }
     }

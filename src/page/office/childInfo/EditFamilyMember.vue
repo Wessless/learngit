@@ -11,6 +11,7 @@
                 </el-form-item>
             </el-form>
         </div>
+        <no-data :isShow="isNoData"></no-data>
         <div class="childInfoList">
             <family-member-item v-for="(item,index) in familyList" :key="index" :item="item" @clickDelete="clickDelete"></family-member-item>
             <!-- <child-info-item v-for="(item,index) in allChildList" :key="index" :item="item" @clickDelete="clickDelete"></child-info-item> -->
@@ -31,10 +32,11 @@
 <script>
 
 import { getChildByChildID,getParentsByChildID,delParent } from '@/js/api'
-import { showLoading,closeLoading } from '@/config/utils'
+import { showLoading,closeLoading ,alertError} from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
 import ChatHeader from '@/components/chat/ChatHeader'
 import FamilyMemberItem from '@/page/office/childInfo/FamilyMemberItem'
+import NoData from '@/components/chat/NoData'
 
 export default {
     name: 'EditFamilyMember',
@@ -44,6 +46,7 @@ export default {
                 classID:"",
                 classList:[],
             },
+            isNoData:false,
             childName:"",
             dialogVisible:false,
             clickItem:{},
@@ -52,6 +55,7 @@ export default {
         }
     },
     components:{
+        NoData,
         ChatHeader,
         FamilyMemberItem
     },
@@ -62,6 +66,11 @@ export default {
             closeLoading(loading);
             this.familyList = result[1].data.data;
             this.childName = result[0].data.data[0].ChildName;
+            if(this.familyList.length==0){
+                this.isNoData = true;
+            }else{
+                this.isNoData = false;
+            }
         }).catch((err)=>{
             closeLoading(loading);
         });
@@ -117,6 +126,8 @@ export default {
                         message:"删除失败",
                     });
                 }
+            }).catch((err)=>{
+                alertError(this,"2039");
             })
         },
         reloadParents(){
@@ -125,6 +136,8 @@ export default {
             getParentsByChildID(childID).then((result)=>{
                 closeLoading(loading);
                 this.familyList = result.data.data;
+            }).catch((err)=>{
+                alertError(this,"1019");
             });
         },
         // 点击确认保存模板

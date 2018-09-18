@@ -1,16 +1,22 @@
 <template>
     <div class="classManagementItem">
         <div class="headTitle">{{ item.ClassName }}</div>
-        <div class="title">班级识别号：{{ item.ClassNum }}</div>
+        <div class="title">班级编号：{{ item.ClassNum }}</div>
         <!-- <div class="title" style="color:#FF9D00;">金额：</div> -->
         <div class="title">创建日期：{{ createDate }}</div>
-        <div class="title">类别：{{ type }}</div>
-        <div class="title">状态：{{ status }}</div>
-        <div class="title">教师：张大三、张大三、张大三、张大三、张大三、张大三、张大三、张大三</div>
-        <div class="title">助教：张大三、张大三、张大三、张大三、张大三、张大三、张大三、张大三</div>
-        <div class="title">保育员：张大三、张大三、张大三、张大三、张大三、张大三、张大三、张大三</div>
-        <div class="detail">修改</div>
-        <div class="giveMoney"></div>
+        <!-- <div class="title">类别：{{ type }}</div>
+        <div class="title">状态：{{ status }}</div> -->
+        <div class="title" :title="item.Teacher">教师：{{ item.Teacher }}</div>
+        <div class="title" :title="item.Assistant">助教：{{ item.Assistant }}</div>
+        <div class="title" :title="item.Nursery">保育员：{{ item.Nursery }}</div>
+        <div class="bottomBtns">
+            <div class="bottomBtn" v-show="item.ClassStatus=='1'" @click="classDetail">查看</div>
+            <div class="bottomBtn" v-show="item.ClassStatus=='1'" @click="changeClassName">修改班级名称</div>
+            <div class="bottomBtn" v-show="item.ClassStatus=='0'" @click="deleteClass">删除</div>
+            <div class="bottomBtn" v-show="item.ClassStatus=='0'" @click="changeClassInfo">修改</div>
+            <div class="bottomBtn" v-show="item.ClassType=='4'&&item.ClassStatus=='0'" @click="graduate">毕业</div>
+            <div class="bottomBtn" v-show="item.ClassType!='4'&&item.ClassStatus=='0'" @click="changeClassType">升班</div>
+        </div>
     </div>
 </template>
 
@@ -70,13 +76,24 @@ export default {
     watch:{
     },
     methods:{
-        // paymoney(){
-        //     this.$emit("clickPayMoney",this.item);
-        // },
-        // showDetail(){
-        //     let expenseID = this.item.ChargeBillID;
-        //     this.$router.push(this.$route.fullPath+"/"+expenseID);
-        // }
+        changeClassInfo(){
+            this.$router.push(this.$route.fullPath+"/update/"+this.item.ID);
+        },
+        changeClassName(){
+            this.$emit("changeClassName",this.item);
+        },
+        deleteClass(){
+            this.$emit("clickDelete",this.item);
+        },
+        changeClassType(){
+            this.$emit("changeClassType",this.item);
+        },
+        graduate(){
+            this.$emit("graduate",this.item);
+        },
+        classDetail(){
+            this.$router.push(this.$route.fullPath+"/detail/"+this.item.ID);
+        },
     }
 }
 </script>
@@ -137,6 +154,17 @@ export default {
     position: absolute;
     right:80px;
     top:10px;
+    color: #38adff;
+    cursor: pointer;
+}
+.bottomBtns{
+    display: flex;
+    flex-direction: row-reverse;
+    flex-wrap: wrap;
+    margin-top:5px;
+}
+.bottomBtn{
+    margin-left:10px;
     color: #38adff;
     cursor: pointer;
 }

@@ -35,19 +35,67 @@ module.exports = {
           '^/COS0OUT':'/'
         }
       },
-      '/COS1':{
+      '/COS1OLD':{
         target:'http://101.200.0.8:8060/',
         // target:'http://127.0.0.1:1337/',
         changeOrigin:true,
         pathRewrite: {
-          '^/COS1':'/'
+          '^/COS1OLD':'/'
         }
-      }
+      },
+      '/COS1A':{
+        target:'http://101.200.0.8:8060/COSA/',
+        // target:'http://127.0.0.1:1337/',
+        changeOrigin:true,
+        pathRewrite: {
+          '^/COS1A':'/'
+        }
+      },
+      '/COS1B':{
+        target:'http://101.200.0.8:8060/COSB/',
+        // target:'http://127.0.0.1:1337/',
+        changeOrigin:true,
+        pathRewrite: {
+          '^/COS1B':'/'
+        }
+      },
+      '/COS1C':{
+        target:'http://101.200.0.8:8060/COSC/',
+        // target:'http://127.0.0.1:1337/',
+        changeOrigin:true,
+        pathRewrite: {
+          '^/COS1C':'/'
+        }
+      },
+      '/COS1D':{
+        target:'http://101.200.0.8:8060/COSD/',
+        // target:'http://127.0.0.1:1337/',
+        changeOrigin:true,
+        pathRewrite: {
+          '^/COS1D':'/'
+        }
+      },
+      '/COS1E':{
+        target:'http://101.200.0.8:8060/COSE/',
+        // target:'http://127.0.0.1:1337/',
+        changeOrigin:true,
+        pathRewrite: {
+            '^/COS1E':'/'
+        }
+      },
+      '/COS1F':{
+        target:'http://101.200.0.8:8060/COSF/',
+        // target:'http://127.0.0.1:1337/',
+        changeOrigin:true,
+        pathRewrite: {
+            '^/COS1F':'/'
+        }
+      },
     },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
-    port: 8066, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    port: 80, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,
     errorOverlay: true,
     notifyOnErrors: true,
@@ -104,19 +152,67 @@ module.exports = {
           '^/COS0OUT':'/'
         }
       },
-      '/COS1':{
+      '/COS1OLD':{
         target:'http://101.200.0.8:8060/',
         // target:'http://127.0.0.1:1337/',
         changeOrigin:true,
         pathRewrite: {
-          '^/COS1':'/'
+          '^/COS1OLD':'/'
         }
-      }
+      },
+      '/COS1A':{
+        target:'http://101.200.0.8:8060/COSA/',
+        // target:'http://127.0.0.1:1337/',
+        changeOrigin:true,
+        pathRewrite: {
+          '^/COS1A':'/'
+        }
+      },
+      '/COS1B':{
+        target:'http://101.200.0.8:8060/COSB/',
+        // target:'http://127.0.0.1:1337/',
+        changeOrigin:true,
+        pathRewrite: {
+          '^/COS1B':'/'
+        }
+      },
+      '/COS1C':{
+        target:'http://101.200.0.8:8060/COSC/',
+        // target:'http://127.0.0.1:1337/',
+        changeOrigin:true,
+        pathRewrite: {
+          '^/COS1C':'/'
+        }
+      },
+      '/COS1D':{
+        target:'http://101.200.0.8:8060/COSD/',
+        // target:'http://127.0.0.1:1337/',
+        changeOrigin:true,
+        pathRewrite: {
+          '^/COS1D':'/'
+        }
+      },
+      '/COS1E':{
+        target:'http://101.200.0.8:8060/COSE/',
+        // target:'http://127.0.0.1:1337/',
+        changeOrigin:true,
+        pathRewrite: {
+            '^/COS1E':'/'
+        }
+      },
+      '/COS1F':{
+        target:'http://101.200.0.8:8060/COSF/',
+        // target:'http://127.0.0.1:1337/',
+        changeOrigin:true,
+        pathRewrite: {
+            '^/COS1F':'/'
+        }
+      },
     },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
-    port: 8066,
+    port: 80,
 
     /**
      * Source Maps

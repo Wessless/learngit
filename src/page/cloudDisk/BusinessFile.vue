@@ -19,12 +19,22 @@
         </div> -->
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
             <el-form-item label="">
-                <el-input v-model="formInline.fileName" placeholder="请输入文件名"></el-input>
+                <el-input v-model="formInline.fileName" style="width:180px;" placeholder="请输入文件名"></el-input>
             </el-form-item>
             <el-form-item label="">
-                <el-select v-model="formInline.staffName" filterable placeholder="请选择同事">
+                <el-select v-model="formInline.staffName" style="width:180px;" filterable placeholder="请选择同事">
                     <el-option
                     v-for="item in formInline.staffs"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="">
+                <el-select v-model="formInline.type" style="width:180px;" filterable placeholder="请选择审批类型">
+                    <el-option
+                    v-for="item in formInline.typeNums"
                         :key="item.value"
                         :label="item.label"
                         :value="item.value">
@@ -161,8 +171,8 @@
 
 <script>
 
-import { geFileByTreeID,getAllParentDocument,addMyDocumentFile,addMyDocument,delDocumentOrFile,downloadFile } from '@/js/api'
-import { fileSizeInfo,showLoading,closeLoading } from '@/config/utils'
+import { geFileByTreeID,addMyDocumentFile,addMyDocument,delDocumentOrFile,downloadFile } from '@/js/api'
+import { fileSizeInfo,showLoading,closeLoading ,alertError} from '@/config/utils'
 import {mapState, mapMutations} from 'vuex'
 import TableItem from '@/page/cloudDisk/CloudDiskTableListItem'
 import fs from 'fs'
@@ -175,7 +185,39 @@ export default {
                 staffName: '',
                 startDate: '',
                 endDate: '',
-                staffs: []
+                staffs: [],
+                type:'-1',
+                typeNums:[{
+                    label:"全部",
+                    value:"-1"
+                },{
+                    label:"系统上线",
+                    value:"1"
+                },{
+                    label:"报销",
+                    value:"2"
+                },{
+                    label:"借款",
+                    value:"3"
+                },{
+                    label:"合同",
+                    value:"4"
+                },{
+                    label:"日报",
+                    value:"5"
+                },{
+                    label:"资料库",
+                    value:"6"
+                },{
+                    label:"订单",
+                    value:"7"
+                },{
+                    label:"审批",
+                    value:"8"
+                },{
+                    label:"培训管理",
+                    value:"9"
+                }]
             },
             newFolder:false,// 是否显示新建文件夹
             file:null,//上传文件
@@ -289,7 +331,7 @@ export default {
         // 加载当前文件
         loadFileList(){
             let loading = showLoading();
-            geFileByTreeID("1","1000",this.userInfo.userStaffID,"-2",this.formInline.fileName,this.formInline.staffName?this.formInline.staffName:"-1").then((result)=>{
+            geFileByTreeID("1","1000",this.userInfo.userStaffID,"-2",this.formInline.fileName,this.formInline.staffName?this.formInline.staffName:"-1",this.formInline.type).then((result)=>{
                 let data = result.data.data;
                 console.log(data);
                 let tableData = [];
@@ -313,10 +355,12 @@ export default {
                         connectID:data[i].ConnectStaffID,
                         connectName:data[i].ConnectStaffName
                     };
-                    tableData.push(json);
+                    tableData.unshift(json);
                 }
                 this.tableData = tableData;
                 closeLoading(loading);
+            }).catch((err)=>{
+                alertError(this,"1216");
             });
         },
         deleteAlert(){

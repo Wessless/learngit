@@ -56,7 +56,7 @@
 <script>
 
 import { findParentByID,addOrUpdateParent } from '@/js/api'
-import { showLoading,closeLoading,imageCompress,PhoneNumValid } from '@/config/utils'
+import { showLoading,closeLoading,imageCompress,PhoneNumValid,alertError } from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
 import ChatHeader from '@/components/chat/ChatHeader'
 
@@ -133,6 +133,8 @@ export default {
                 this.form.QQ = data.QQ;
                 this.form.Email = data.Email;
                 this.form.Remark = data.Remark;
+            }).catch((err)=>{
+                alertError(this,"1070");
             });
         },
         familyMemberFileChange(e){
@@ -217,6 +219,8 @@ export default {
                         message:"保存失败"
                     });
                 }
+            }).catch((err)=>{
+                alertError(this,"2042");
             });
         }
         
@@ -281,7 +285,6 @@ export default {
 } */
 .element-icon{
     font-family: element-icons!important;
-    speak: none;
     font-style: normal;
     font-weight: 400;
     font-variant: normal;

@@ -9,7 +9,7 @@
     name: 'App',
     beforeCreate(){
       // 刷新页面时重新定位到主页
-      this.$router.push('/mainPage/conversation');
+      this.$router.push('/mainPage');
     }
   }
 </script>

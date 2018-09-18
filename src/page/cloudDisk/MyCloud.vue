@@ -13,17 +13,15 @@
         <div class="fix">
             <div style="width:100%;position:relative;z-index:3">
                 <div class="cloudHeader">
-                    <el-dropdown @command="handleCommand">
-                        <el-button type="primary">
-                            新建 /上传
-                            <!-- <i class="el-icon-arrow-down el-icon--right"></i> -->
-                        </el-button>
+                    <!-- <el-dropdown @command="handleCommand">
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item command="newFolder">新建文件夹</el-dropdown-item>
                             <el-dropdown-item command="uploadFile">上传文件</el-dropdown-item>
                         </el-dropdown-menu>
-                    </el-dropdown>
+                    </el-dropdown> -->
                     <!-- <el-button type="text" @click="dialogVisible = true">点击打开 Dialog</el-button> -->
+                    <el-button type="primary" @click="selectNewFolder">新建文件夹</el-button>
+                    <el-button type="primary" @click="selectUploadFile">上传文件</el-button>
                 </div>
                 <div class="title">
                     <el-breadcrumb separator="/" class="breadcrumb">
@@ -127,7 +125,7 @@
 <script>
 
 import { geFileByTreeID,getAllParentDocument,addMyDocumentFile,addMyDocument,delDocumentOrFile,downloadFile } from '@/js/api'
-import { fileSizeInfo,showLoading,closeLoading } from '@/config/utils'
+import { fileSizeInfo,showLoading,closeLoading,alertError } from '@/config/utils'
 import {mapState, mapMutations} from 'vuex'
 import TableItem from '@/page/cloudDisk/CloudDiskTableListItem'
 import fs from 'fs'
@@ -220,13 +218,11 @@ export default {
     watch:{
     },
     methods:{
-        // 选择上传文件或新建文件夹
-        handleCommand(command){
-            if(command == 'newFolder'){
-                this.newFolder = true;
-            }else if(command == 'uploadFile'){
-                document.getElementById("uploadCloudFile").click();
-            }
+        selectNewFolder(){
+            this.newFolder = true;
+        },
+        selectUploadFile(){
+            document.getElementById("uploadCloudFile").click();
         },
         routerTo(type,route){
             if(type=="folder"){
@@ -253,6 +249,8 @@ export default {
                     documentArr.push(json);
                 }
                 this.breadcrumbData = documentArr;
+            }).catch((err)=>{
+                alertError(this,"1217");
             });
             
 
@@ -260,7 +258,7 @@ export default {
         // 加载当前文件
         loadFileList(treeID){
             let loading = showLoading();
-            geFileByTreeID("1","1000",this.userInfo.userStaffID,treeID,"-1","-1").then((result)=>{
+            geFileByTreeID("1","1000",this.userInfo.userStaffID,treeID,"-1","-1","-1").then((result)=>{
                 let data = result.data.data;
                 let tableData = [];
                 for(let i=0;i<data.length;i++){
@@ -281,9 +279,13 @@ export default {
                         progress:100,
                         url:url
                     };
-                    tableData.push(json);
+                    tableData.unshift(json);
                 }
                 this.tableData = tableData;
+                closeLoading(loading);
+            }).catch((err)=>{
+                alertError(this,"1216");
+                console.log(err)
                 closeLoading(loading);
             });
         },
@@ -324,6 +326,8 @@ export default {
                     this.loadFileList(parentID);
                     this.loadBreadCrumb(parentID);
                 }
+            }).catch((err)=>{
+                alertError(this,"");
             });
         },
         // 新建文件夹

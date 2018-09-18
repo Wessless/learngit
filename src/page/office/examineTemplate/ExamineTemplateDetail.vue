@@ -97,7 +97,7 @@
 <script>
 
 import { getTemplateByID,downloadFile,editTemplate,getTemplate } from '@/js/api'
-import { money,stamper,showLoading,closeLoading,xmlStr2json } from '@/config/utils'
+import { money,stamper,showLoading,closeLoading,xmlStr2json,alertError } from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
 import ChatHeader from '@/components/chat/ChatHeader'
 
@@ -260,6 +260,8 @@ export default {
                         this.templateList.push(result.data.data[i]);
                     }
                     this.templateID = "";
+                }).catch((err)=>{
+                    alertError(this,"1203");
                 });
             }
         },

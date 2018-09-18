@@ -2,7 +2,8 @@
     <div class="mainBox pull-left">
         <vue-context-menu :contextMenuData="contextMenuData" @deleteConversation="deleteConversation" @setTop="setTop"></vue-context-menu>
         <div id="search-friend" v-show="$route.meta.pageType!='cloudDisk'&&$route.meta.pageType!='office'">
-            <search-input :placeholder="$t('message.friendList.search')"></search-input>
+            <search-input style="flex:1;" :placeholder="$t('message.friendList.search')"></search-input>
+            <div class="createGroupBtn iconfont" @click="createGroup">&#xe6b9;</div>
         </div>
         <div id="chatArea" class="chatArea" v-show="$route.meta.pageType=='conversation'&&!switchbtn.issearchList">
             <p class="withoutFriends" style="text-align:center;margin-top: 200px;" v-show="!mainData.conversation.conversations||!mainData.conversation.conversations.length">{{ $t("message.friendList.withoutFriends") }}</p>
@@ -59,8 +60,9 @@ import friendItem from '@/page/chat/FriendItem'
 import cloudDiskItem from '@/page/cloudDisk/CloudDiskItem'
 import officeItem from '@/page/office/OfficeItem'
 import {mapState, mapMutations, mapActions} from 'vuex'
+import { alertError } from '@/config/utils'
 import { rong_getConversationList,rong_getConversation,rong_removeConversation,rong_setConversationToTop,rong_clearUnreadCount,rong_SendSyncReadStatusMessage } from '@/js/rongCloud'
-import { findAllStaffs,getGroupsByStaffID,findStaffsByStaffIDs,findChildrenByChildIDs,getGroupsByID } from '@/js/api'
+import { findAllStaffs,getGroupsByStaffID,findStaffsByStaffIDs,findChildrenByChildIDs,getGroupsByID,getMenusByStaffID } from '@/js/api'
 
 export default {
     name: 'FriendList',
@@ -99,53 +101,54 @@ export default {
                         url:"/mainpage/cloudDisk/business"
                     }
                 ],
+                menusArray:[],
                 officeList:[
-                    {
-                        title:"常用",
-                        content:"",
-                        name:"1",
-                        url:"/mainpage/office/1",
-                        imgUrl:"static/images/office/common.png",
-                        styleObj:{
-                            background:"#38adff"
-                        }
-                    },{
-                        title:"人事管理",
-                        content:"",
-                        name:"2",
-                        url:"/mainpage/office/2",
-                        imgUrl:"static/images/office/personnel.png",
-                        styleObj:{
-                            background:"#4dc060"
-                        }
-                    },{
-                        title:"财务管理",
-                        content:"",
-                        name:"3",
-                        url:"/mainpage/office/3",
-                        imgUrl:"static/images/office/financial.png",
-                        styleObj:{
-                            background:"#ff9d00"
-                        }
-                    },{
-                        title:"市场管理",
-                        content:"",
-                        name:"4",
-                        url:"/mainpage/office/4",
-                        imgUrl:"static/images/office/market.png",
-                        styleObj:{
-                            background:"#e51c23"
-                        }
-                    },{
-                        title:"行政管理",
-                        content:"",
-                        name:"5",
-                        url:"/mainpage/office/5",
-                        imgUrl:"static/images/office/administrative.png",
-                        styleObj:{
-                            background:"#932cd8"
-                        }
-                    }
+                    // {
+                    //     title:"常用",
+                    //     content:"",
+                    //     name:"1",
+                    //     url:"/mainpage/office/1",
+                    //     imgUrl:"static/images/office/common.png",
+                    //     styleObj:{
+                    //         background:"#38adff"
+                    //     }
+                    // },{
+                    //     title:"人事管理",
+                    //     content:"",
+                    //     name:"2",
+                    //     url:"/mainpage/office/2",
+                    //     imgUrl:"static/images/office/personnel.png",
+                    //     styleObj:{
+                    //         background:"#4dc060"
+                    //     }
+                    // },{
+                    //     title:"财务管理",
+                    //     content:"",
+                    //     name:"3",
+                    //     url:"/mainpage/office/3",
+                    //     imgUrl:"static/images/office/financial.png",
+                    //     styleObj:{
+                    //         background:"#ff9d00"
+                    //     }
+                    // },{
+                    //     title:"市场管理",
+                    //     content:"",
+                    //     name:"4",
+                    //     url:"/mainpage/office/4",
+                    //     imgUrl:"static/images/office/market.png",
+                    //     styleObj:{
+                    //         background:"#e51c23"
+                    //     }
+                    // },{
+                    //     title:"行政管理",
+                    //     content:"",
+                    //     name:"5",
+                    //     url:"/mainpage/office/5",
+                    //     imgUrl:"static/images/office/administrative.png",
+                    //     styleObj:{
+                    //         background:"#932cd8"
+                    //     }
+                    // }
                 ]
             },
             // contextmenu data (菜单数据)
@@ -182,18 +185,7 @@ export default {
         })
         // this.findAllStaffs();
         this.getGroupsByStaffID();
-        if(this.userInfo.cosType=="1"){
-            this.mainData.officeList.push({
-                title:"幼儿管理",
-                content:"",
-                name:"6",
-                url:"/mainpage/office/6",
-                imgUrl:"static/images/office/childAdmin.png",
-                styleObj:{
-                    background:"#42CBFA"
-                }
-            });
-        }
+        this.getMenusByStaffID();
     },
     components:{
         searchInput,
@@ -296,6 +288,7 @@ export default {
         ...mapMutations([
             'SET_TOTALUNREADCOUNT',
             'SET_CURRCONVERSATION',
+            'SET_CURRFRIENDLIST',
             'SET_ALLSTAFFS',
             'SET_MYGROUPS',
         ]),
@@ -303,6 +296,185 @@ export default {
             'rong_init',
             'rong_getTotalUnreadCount'
         ]),
+        createGroup(){
+            // 显示消息组件
+            this.SET_CURRCONVERSATION(null);
+            // 隐藏员工（群组）信息组件
+            this.SET_CURRFRIENDLIST({type:"creatGroup"});
+            // 路由跳转到员工路由
+            this.$router.push('/mainpage/friendList/createGroup');
+        },
+        getMenusByStaffID(){
+            if(this.userInfo.userStaffID){
+                getMenusByStaffID(this.userInfo.userStaffID).then((result)=>{
+                    this.menusArray = result.data.data;
+                    let menu1 = false;
+                    let menu2 = false;
+                    let menu3 = false;
+                    let menu4 = false;
+                    let menu5 = false;
+                    let menu6 = false;
+                    let menu9 = false;
+                    let menu7 = false;
+                    for(let i=0;i<this.menusArray.length;i++){
+                        if(this.menusArray[i].Num[0]=='1'){
+                            menu1 = true;
+                        }
+                        if(this.menusArray[i].Num[0]=='2'){
+                            menu2 = true;
+                        }
+                        if(this.menusArray[i].Num[0]=='3'){
+                            menu3 = true;
+                        }
+                        if(this.menusArray[i].Num[0]=='4'){
+                            menu4 = true;
+                        }
+                        if(this.menusArray[i].Num[0]=='5'){
+                            menu5 = true;
+                        }
+                        if(this.menusArray[i].Num[0]=='6'){
+                            if(this.menusArray[i].Num!='6001'&&this.menusArray[i].Num!='6002'&&this.menusArray[i].Num!='6003'&&this.menusArray[i].Num!='6005'&&this.menusArray[i].Num!='6006'&&this.menusArray[i].Num!='6007'&&this.menusArray[i].Num!='6008'&&this.menusArray[i].Num!='6009'&&this.menusArray[i].Num!='6011'&&this.menusArray[i].Num!='6012'&&this.menusArray[i].Num!='6013'&&this.menusArray[i].Num!='6014'&&this.menusArray[i].Num!='6015'&&this.menusArray[i].Num!='6020'&&this.menusArray[i].Num!='6021'&&this.menusArray[i].Num!='6022'){
+                                menu6 = true;
+                            }
+                        }
+                        if(this.menusArray[i].Num[0]=='9'){
+                            menu9 = true;
+                        }
+                        if(this.menusArray[i].Num[0]=='7'){
+                            menu7 = true;
+                        }
+                    }
+                    if(menu1){
+                        this.mainData.officeList.push({
+                            title:"常用",
+                            content:"",
+                            name:"1",
+                            url:"/mainpage/office/1",
+                            imgUrl:"static/images/office/common.png",
+                            styleObj:{
+                                background:"#38adff"
+                            }
+                        });
+                    }
+                    if(menu2){
+                        this.mainData.officeList.push({
+                            title:"人事管理",
+                            content:"",
+                            name:"2",
+                            url:"/mainpage/office/2",
+                            imgUrl:"static/images/office/personnel.png",
+                            styleObj:{
+                                background:"#4dc060"
+                            }
+                        });
+                    }
+                    if(menu3){
+                        this.mainData.officeList.push({
+                            title:"财务管理",
+                            content:"",
+                            name:"3",
+                            url:"/mainpage/office/3",
+                            imgUrl:"static/images/office/financial.png",
+                            styleObj:{
+                                background:"#ff9d00"
+                            }
+                        });
+                    }
+                    if(menu4){
+                        this.mainData.officeList.push({
+                            title:"市场管理",
+                            content:"",
+                            name:"4",
+                            url:"/mainpage/office/4",
+                            imgUrl:"static/images/office/market.png",
+                            styleObj:{
+                                background:"#e51c23"
+                            }
+                        });
+                    }
+                    if(menu5){
+                        this.mainData.officeList.push({
+                            title:"行政管理",
+                            content:"",
+                            name:"5",
+                            url:"/mainpage/office/5",
+                            imgUrl:"static/images/office/administrative.png",
+                            styleObj:{
+                                background:"#932cd8"
+                            }
+                        });
+                    }
+                    if(menu6){
+                        this.mainData.officeList.push({
+                            title:"幼儿管理",
+                            content:"",
+                            name:"6",
+                            url:"/mainpage/office/6",
+                            imgUrl:"static/images/office/childAdmin.png",
+                            styleObj:{
+                                background:"#42CBFA"
+                            }
+                        });
+                    }
+                    if(menu9){
+                        this.mainData.officeList.push({
+                            title:"兴趣班管理",
+                            content:"",
+                            name:"9",
+                            url:"/mainpage/office/9",
+                            imgUrl:"static/images/office/interestClass.png",
+                            styleObj:{
+                                background:"#FF9999"
+                            }
+                        });
+                    }
+                    if(menu7){
+                        this.mainData.officeList.push({
+                            title:"教学管理",
+                            content:"",
+                            name:"7",
+                            url:"/mainpage/office/7",
+                            imgUrl:"static/images/office/teachManager.png",
+                            styleObj:{
+                                background:"#a0522d"
+                            }
+                        });
+                    }
+                    // if(this.userInfo.cosType=="1"){
+                    //     this.mainData.officeList.push({
+                    //         title:"幼儿管理",
+                    //         content:"",
+                    //         name:"6",
+                    //         url:"/mainpage/office/6",
+                    //         imgUrl:"static/images/office/childAdmin.png",
+                    //         styleObj:{
+                    //             background:"#42CBFA"
+                    //         }
+                    //     },{
+                    //         title:"兴趣班管理",
+                    //         content:"",
+                    //         name:"9",
+                    //         url:"/mainpage/office/9",
+                    //         imgUrl:"static/images/office/interestClass.png",
+                    //         styleObj:{
+                    //             background:"#FF9999"
+                    //         }
+                    //     },{
+                    //         title:"教学管理",
+                    //         content:"",
+                    //         name:"7",
+                    //         url:"/mainpage/office/7",
+                    //         imgUrl:"static/images/office/teachManager.png",
+                    //         styleObj:{
+                    //             background:"#a0522d"
+                    //         }
+                    //     });
+                    // }
+                }).catch((err)=>{
+                    alertError(this,"1016");
+                });
+            }
+        },
         // 加载会话列表
         getConversationList(){
             let instance = RongIMClient.getInstance();
@@ -470,6 +642,8 @@ export default {
                                     this.mainData.conversation.conversations.splice(0,0,data);
                                 }
                             }
+                        }).catch((err)=>{
+                            alertError(this,"1097");
                         });
                     }else{// 员工
                         let staffID = msgObj.targetId.split('_')[1];
@@ -481,6 +655,8 @@ export default {
                                     this.mainData.conversation.conversations.splice(0,0,data);
                                 }
                             }
+                        }).catch((err)=>{
+                            alertError(this,"1038");
                         });
                     }
                 }else{// 如果是幼儿时
@@ -499,6 +675,8 @@ export default {
                                 this.mainData.conversation.conversations.splice(0,0,data);
                             }
                         }
+                    }).catch((err)=>{
+                        alertError(this,"1065");
                     });
                 }
             });
@@ -537,6 +715,9 @@ export default {
     width:314px;
     top:0;
     z-index:8;
+    display: flex;
+    flex-direction: row;
+    height: 54px;
 }
 #chatArea{
     margin-top: 54px;
@@ -544,6 +725,31 @@ export default {
 .chatArea {
     border-top: 1px solid #e1e9f1;
     overflow-y: auto;
+}
+.createGroupBtn{
+    width:20px;
+    height:54px;
+    color:#38adff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-right: 12px;
+    cursor: pointer;
+    position: relative;
+}
+.createGroupBtn:after{
+    content: "";
+    display: block;
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    left: 50%;
+    top:50%;
+    border: 1px solid #38adff;
+    border-radius: 50%;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
 }
 /*  mainBox  */
 .mainBox {

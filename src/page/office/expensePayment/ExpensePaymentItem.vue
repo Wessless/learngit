@@ -5,7 +5,7 @@
         <div class="title" style="color:#FF9D00;">金额：{{money}}{{item.MoneyUnitName}}</div>
         <div class="title">创建日期：{{item.FillDate}}</div>
         <div class="title">支付方式：{{payType[item.PayType]}}</div>
-        <div class="title">用途说明：{{item.BigType}} - {{item.SmallType}} - {{item.Subject}}</div>
+        <div class="title" :title="'用途说明：'+item.BigType+' - '+item.SmallType+' - '+item.Subject">用途说明：{{item.BigType}} - {{item.SmallType}} - {{item.Subject}}</div>
         <div class="detail" @click.stop="showDetail">详情</div>
         <div class="giveMoney" @click.stop="paymoney">付款</div>
     </div>

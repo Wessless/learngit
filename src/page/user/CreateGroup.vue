@@ -37,6 +37,7 @@ import StaffSelect from '@/page/user/StaffSelect'
 import { mapState,mapMutations,mapActions } from 'vuex'
 import { rong_getConversation } from '@/js/rongCloud'
 import { createGroup } from '@/js/api'
+import { alertError } from '@/config/utils'
 
 export default {
     name: 'CreateGroup',
@@ -135,6 +136,8 @@ export default {
                     this.SET_CURRFRIENDLIST({type:"group",data:groupInfo,friendList:this.allStaffs});
                     this.reloadMyGroups();
                 }
+            }).catch((err)=>{
+                alertError(this,"2054");
             });
         }
     }

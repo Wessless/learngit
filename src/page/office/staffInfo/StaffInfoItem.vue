@@ -1,6 +1,7 @@
 <template>
     <div class="staffItem">
         <div class="headImage"><img :src="imagePath" alt=""></div>
+        <div class="canSUP" v-show="canSUP">S</div>
         <div class="headTitle">
             <span class="iconfont moneyIcon" v-if="item.IsSalaryNotIncluded=='1'" style="color:#999">&#xe72e;</span>
             <span class="iconfont moneyIcon" v-if="item.IsSalaryNotIncluded=='0'" style="color:#fdc223">&#xe72e;</span>
@@ -14,19 +15,20 @@
             <span class="item" v-show="item.DepartmentName!=''">{{ item.DepartmentName }}</span>
             <!-- <span class="item">{{ fillYear }}</span> -->
         </div>
-        <div class="title">编号：{{ item.StaffNum }}</div>
-        <div class="title">卡号：{{ item.CardID?item.CardID:"无" }}</div>
+        <div class="title">员工编号：{{ item.StaffNum }}</div>
+        <div class="title">考勤卡号：{{ item.CardID?item.CardID:"无" }}</div>
         <!-- <div class="title">公司工龄：1年</div> -->
         <div class="title">入职时间：{{ beStaff }}（{{ fillYear }}）</div>
         <div class="title" v-show="item.NotBeStaff==''">转正时间：{{ turnDate }}</div>
         <div class="title" v-show="item.NotBeStaff!=''">离职时间：{{ notBeStaff }}</div>
-        <div class="title">负责人：
+        <div class="title">签字设定：
             <span class="personIcon iconfont" :class="{ selected: hasFinanceSignManager}">&#xe886;</span>
             <span class="personIcon iconfont" :class="{ selected: hasTimeScheduleManager}">&#xe734;</span>
-            <span class="personIcon iconfont" :class="{ selected: item.DailyManager!=''}">&#xe737;</span>
+            <span class="personIcon iconfont" :class="{ selected: item.DailyManager!='-1'}">&#xe737;</span>
         </div>
         <div class="deleteStaff" @click.stop="deleteStaff">删除</div>
         <div class="changeStaff" @click.stop="changeStaff">修改</div>
+        <div class="resetPassword" @click.stop="resetPassword">重置密码</div>
     </div>
 </template>
 
@@ -34,7 +36,7 @@
 
 // import {  } from '@/js/api'
 import { mapState, mapMutations } from 'vuex'
-import { money } from '@/config/utils'
+import { money} from '@/config/utils'
 
 export default {
     name: 'StaffInfoItem',
@@ -56,15 +58,22 @@ export default {
             'userInfo',
             'allStaffs'
         ]),
+        canSUP(){
+            if(this.item.SupID){
+                return true;
+            }else{
+                return false;
+            }
+        },
         hasFinanceSignManager(){
-            if(this.item.FinanceSignManager!=""||this.item.FinanceSignManager2!=""||this.item.FinanceSignManager3!=""){
+            if(this.item.FinanceSignManager!="-1"||this.item.FinanceSignManager2!="-1"||this.item.FinanceSignManager3!="-1"){
                 return true;
             }else{
                 return false;
             }
         },
         hasTimeScheduleManager(){
-            if(this.item.TimeScheduleManager!=""||this.item.TimeScheduleManager2!=""||this.item.TimeScheduleManager3!=""){
+            if(this.item.TimeScheduleManager!="-1"||this.item.TimeScheduleManager1!="-1"){
                 return true;
             }else{
                 return false;
@@ -144,7 +153,7 @@ export default {
                 }else{
                     fillYear--;
                 }
-                return "在职"+fillYear+"年";
+                return "在职满"+fillYear+"年";
             }else{
                 return "";
             }
@@ -158,6 +167,9 @@ export default {
         },
         deleteStaff(){
             this.$emit("clickDelete",this.item);
+        },
+        resetPassword(){
+            this.$emit("clickReset",this.item);
         }
     }
 }
@@ -252,7 +264,14 @@ export default {
 }
 .changeStaff{
     position: absolute;
-    right:63px;
+    right:53px;
+    bottom:5px;
+    color: #38adff;
+    cursor: pointer;
+}
+.resetPassword{
+    position: absolute;
+    right:93px;
     bottom:5px;
     color: #38adff;
     cursor: pointer;
@@ -272,5 +291,22 @@ export default {
 }
 .selected{
     color: #38adff;
+}
+.canSUP{
+    width:20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #38ddff;
+    color: #fff;
+    position: absolute;
+    left:50%;
+    top:22px;
+    margin-left:17px;
+    z-index:7;
+    font-size: 12px;
+    border:2px solid #fff;
+    border-radius: 50%;
 }
 </style>

@@ -34,9 +34,14 @@ const state = {
 	currFriendList:null,//当前员工（群组）信息窗口
 	currNewMessage:null,//接听到的新消息时当前窗口时
 	uploadFile:null,//上传文件
+	approveTabType:"first",
 	browserImg:{
 		imgPath:"",
 	},//预览图片
+	myDatabase:{
+		knowledgeID:"-1",
+		treeNode:{},
+	},//我的资料库
 	// latitude: '', // 当前位置纬度
 	// longitude: '', // 当前位置经度
 	// cartList: {}, // 加入购物车的商品列表

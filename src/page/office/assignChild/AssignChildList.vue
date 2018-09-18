@@ -8,9 +8,11 @@
                 </el-form-item>
             </el-form>
         </div>
+        <no-data :isShow="isNoData"></no-data>
         <div class="childInfoList">
             <child-info-item v-for="(item,index) in allChildList" :key="index" :item="item" :type="formInline.radio" :isAssignChild="true" :isAddChild="true"></child-info-item>
         </div>
+        <scroll-top></scroll-top>
         <el-dialog
             title="分班"
             :visible.sync="dialogVisible"
@@ -59,10 +61,12 @@
 <script>
 
 import { getChildsByClassID,getClasses,newKindergartenChildrenToClass } from '@/js/api'
-import { showLoading,closeLoading } from '@/config/utils'
+import { showLoading,closeLoading,alertError } from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
 import ChatHeader from '@/components/chat/ChatHeader'
 import childInfoItem from '@/page/office/childInfo/ChildInfoItem'
+import NoData from '@/components/chat/NoData'
+import ScrollTop from '@/components/chat/ScrollTop'
 
 export default {
     name: 'AddNewChild',
@@ -73,6 +77,7 @@ export default {
                 classList:[],
                 radio:"-2"
             },
+            isNoData:false,
             dialogVisible:false,
             clickItem:{},
             allStaffList:[],
@@ -87,6 +92,8 @@ export default {
         }
     },
     components:{
+        NoData,
+        ScrollTop,
         ChatHeader,
         childInfoItem
     },
@@ -108,6 +115,8 @@ export default {
             let staffID = this.userInfo.userStaffID;
             getClasses(staffID).then((result)=>{
                 this.myAllClasses = result.data.data;
+            }).catch((err)=>{
+                alertError(this,"1002");
             });
         },
         // 重新加载列表
@@ -116,7 +125,7 @@ export default {
             this.getChildsByClassID(loading);
         },
         getChildsByClassID(loading){
-            getChildsByClassID('-2').then((result)=>{
+            getChildsByClassID('-2','').then((result)=>{
                 if(loading){
                     closeLoading(loading);
                 }
@@ -125,7 +134,13 @@ export default {
                     result.data.data[i].selected = false;
                     this.allChildList.push(result.data.data[i]);
                 }
-
+                if(this.allChildList.length==0){
+                    this.isNoData = true;
+                }else{
+                    this.isNoData = false;
+                }
+            }).catch((err)=>{
+                alertError(this,"1003");
             });
         },
         assignChildClick(){

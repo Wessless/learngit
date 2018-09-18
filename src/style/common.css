@@ -214,12 +214,14 @@ body{
 /* 幼儿出勤cell样式 */
 .note-attendance-bg-red{
     background-color: #ffb6c1 !important;
+    /* background-color: rgba(255,182,193,.4); */
 }
 .note-attendance-bg-gray{
     background-color: #d3d3d3 !important;
 }
 .note-attendance-bg-green{
     background-color: #90ee90 !important;
+    /* background-color: rgba(144,238,144,.4); */
 }
 .note-attendance-bg-black{
     background-color: #696969 !important;
@@ -234,4 +236,119 @@ body{
 }
 .note-attendance-height{
     padding:8px 0 !important;
+}
+.note-attendance-color-red{
+    color: #e51c23 !important;
+}
+.smallTableHeight .el-table th{
+    padding:0 !important;
+}
+.smallTableHeight .el-table td{
+    padding:5px 0 !important;
+}
+.xlsx-button{
+    display: inline-block;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    /* background: #fff;
+    border: 1px solid #dcdfe6; */
+    -webkit-appearance: none;
+    text-align: center;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    outline: 0;
+    margin: 0;
+    -webkit-transition: .1s;
+    transition: .1s;
+    padding: 10px 20px !important;
+    font-size: 14px !important;
+    border-radius: 4px;
+    color: #fff;
+    background-color: #409EFF;
+    border-color: #409EFF;
+}
+/* 申领申请 */
+.ReceiveApplyDetail_signatory > label{
+    position: absolute;
+    top:50%;
+    transform: translateY(-50%);
+}
+/* 审批 */
+/* .examineApproveTabs .el-tabs__nav-scroll{
+    position: fixed;
+    left: 400px;
+    top: 80px;
+} */
+.examineApproveTabs .el-tabs__nav{
+    width: 100% !important;
+}
+.examineApproveTabs .el-tabs__nav .el-tabs__item{
+    width: 20% !important;
+    /* padding: 0 !important; */
+    text-align: center;
+}
+@media screen and (max-width: 985px){
+    .examineApproveTabs .el-tabs__nav .el-tabs__item{
+        white-space: nowrap;
+	    text-overflow: ellipsis;
+	    word-wrap: normal;
+	    overflow: hidden;
+    }
+}
+.ellipsis .el-input--small .el-input__inner {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    word-wrap: normal;
+    overflow: hidden;
+}
+.examineApproveList .el-tabs__content{
+    overflow:scroll !important;
+}
+.goodsApplyTabs .el-tabs__nav{
+    width: 100% !important;
+}
+.goodsApplyTabs .el-tabs__nav .el-tabs__item{
+    width: 25% !important;
+    /* padding: 0 !important; */
+    text-align: center;
+}
+@media screen and (max-width: 985px){
+    .goodsApplyTabs .el-tabs__nav .el-tabs__item{
+        white-space: nowrap;
+	    text-overflow: ellipsis;
+	    word-wrap: normal;
+	    overflow: hidden;
+    }
+}
+.goodsApplyTabs .el-tabs__content{
+    overflow:scroll !important;
+}
+.myDatabaseTree .el-tree-node>.el-tree-node__children{
+    overflow: visible;
+}
+/* .quillEditor .el-form-item__content{
+    line-height: 0px !important;
+}
+.quillEditor .el-form-item__label{
+    line-height: 0px !important;
+    padding-top: 20px;
+} */
+.ql-container{
+    height: 80% !important;
+}
+.el-pagination button{
+    background-color: #fafafa !important;
+}
+.el-pagination .el-pager li{
+    background-color: #fafafa !important;
+}
+.midTableHeight .el-table th{
+    padding:5px 0 !important;
+}
+.midTableHeight .el-table td{
+    padding:5px 0 !important;
+}
+.midTableHeight .el-table .el-checkbox{
+    margin-bottom: 0;
 }

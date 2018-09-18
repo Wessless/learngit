@@ -1,6 +1,6 @@
 <template>
     <div class="expenseDetail">
-        <chat-header :showBack="true" :title="'报销支付详情'"></chat-header>
+        <chat-header :showBack="true" :title="title" :showRightBtn="isShowButton" :rightBtnTitle="'确认'" :rightBtnName="'confirm'" :rightBtnType="'btn'" @confirm="confirmTwo"></chat-header>
         <div class="createDate"><span>单号：{{detail.ChargeBillID}}</span><span>填表日期：{{detail.FillDate}}</span></div>
         <img :src="stamperImageUrl" v-show="stamperImageUrl" class="stamperImage" alt="">
         <div class="detailList">
@@ -8,7 +8,10 @@
                 <div class="detailTitle">财务类型</div>
                 <div class="detailContent">{{chargeBillType}}</div>
                 <div class="detailTitle">凭证号</div>
-                <div class="detailContent">{{detail.WarrantNumber}}</div>
+                <div class="detailContent" v-if="$route.meta.type!='certificate'">{{detail.WarrantNumber}}</div>
+                <div class="detailContent" v-if="$route.meta.type=='certificate'">
+                    <el-input v-model="detail.WarrantNumber" size="mini" placeholder="请输入凭证号" style="width:180px;"></el-input>
+                </div>
             </div>
             <div class="detailItem">
                 <div class="detailTitle">财务所属</div>
@@ -70,13 +73,24 @@
                     <span class="file" v-for="item in detail.Attachment" :key="item.AttachmentID" @click="downloadFile(item)">{{item.AttachmentName}}</span>
                 </div>
             </div>
-            <div class="detailItem" v-for="item in detail.SignRecords" :key="item.DetailID">
+            <div class="detailItem" v-for="item in allSigner" :key="item.ApprovalUser">
                 <div class="detailTitle">签字人姓名</div>
-                <div class="detailContent">{{item.ApprovalName}}</div> 
+                <div class="detailContent flexItemCenter">
+                    <span>{{item.ApprovalName}}</span>
+                </div> 
                 <div class="detailTitle">签字人评论</div>
-                <div class="detailContent" style="flex:3;">{{item.Remark}}</div>
-                <div class="detailTitle">签字结果</div>
-                <div class="detailContent">{{item.State=="1"?"同意":"拒绝"}}</div>
+                <div class="detailContent" style="flex:3;">
+                    <span v-show="!item.showApproval">{{item.Remark}}</span>
+                    <el-input v-model="item.Remark" type="textarea" :row="6" size="mini" v-show="item.showApproval" placeholder="请输入签字人评论"></el-input>
+                </div>
+                <div class="detailTitle" style="flex:0.7;">签字结果</div>
+                <div class="detailContent flexItemCenter" style="flex:1.3;">
+                    <span v-show="!item.showApproval">{{item.State?(item.State=="1"?"同意":"拒绝"):"待签字"}}</span>
+                    <div v-show="item.showApproval">
+                        <el-radio v-model="status" label="1" style="margin-left:-5px;">同意</el-radio>
+                        <el-radio v-model="status" label="2" style="margin-left:6px;">拒绝</el-radio>
+                    </div>
+                </div>
             </div>
             <div class="detailItem">
                 <div class="detailTitle">图片</div>
@@ -90,8 +104,8 @@
 
 <script>
 
-import { getChargeBillByID,downloadFile } from '@/js/api'
-import { money,stamper,showLoading,closeLoading } from '@/config/utils'
+import { getChargeBillByID,findStaffByStaffID,downloadFile,signExamine,addbChargeNo } from '@/js/api'
+import { money,stamper,showLoading,closeLoading ,alertError} from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
 import ChatHeader from '@/components/chat/ChatHeader'
 import imageProxy from '@/components/chat/ImageProxy'
@@ -100,6 +114,7 @@ export default {
     name: 'ExpensePaymentDetail',
     data(){
         return {
+            title:"",
             detail:{
                 Attachment:[],
                 BalanceItem:"",
@@ -148,7 +163,9 @@ export default {
                 Summary:"",
                 WarrantNumber:"",
             },
-            stamperImageUrl:""
+            allSigner:[],
+            stamperImageUrl:"",
+            status:"1",
         }
     },
     components:{
@@ -157,6 +174,13 @@ export default {
     },
     mounted(){
         this.loadDetail();
+        this.title = '报销详情';
+        if (this.$route.meta.type=="approve") {
+            this.title = '报销审批';
+        }
+        if (this.$route.meta.type=="certificate") {
+            this.title = '报销凭证录入';
+        }
     },
     computed:{
         ...mapState([
@@ -203,14 +227,98 @@ export default {
         },
         money(){
             return money(this.detail.Money);
+        },
+        isShowButton(){
+            if (this.$route.meta.type=="approve"||this.$route.meta.type=="certificate") {
+                return true;
+            }else{
+                return false;
+            }
         }
         
     },
     watch:{
     },
     methods:{
+        confirmTwo(){
+            if (this.$route.meta.type=="approve") {
+                this.confirm();
+            }else if(this.$route.meta.type=="certificate"){
+                this.addbChargeNo();
+            }
+        },
+        addbChargeNo(){
+            if(this.detail.WarrantNumber.trim()==''){
+                this.$message.error('请输入凭证号');
+                return;
+            }
+            addbChargeNo(this.detail.ChargeBillID,this.detail.WarrantNumber).then((result)=>{
+                if(result.data.Result==1){
+                    this.$message({
+                        message: '录入成功',
+                        type: 'success'
+                    });
+                    window.history.go(-1);
+                }else{
+                    this.$message.error('录入失败');
+                }
+            }).catch((err)=>{
+                alertError(this,"2203");
+            });
+        },
+        confirm(){
+            let cosNum = this.userInfo.cosNum;
+            let id = this.$route.params.expenseID.split("&")[1];
+            // {"ApprovalUser":"","ApprovalName":"","State":"","Remark":""}
+            let approvalID = '';
+            let result = '';
+            let remark = '';
+            for(let i=0;i<this.allSigner.length;i++){
+                if(this.allSigner[i].showApproval){
+                    approvalID = this.allSigner[i].ApprovalUser;
+                    result = this.status;
+                    remark = this.allSigner[i].Remark;
+                }
+            }
+            if (result != "1"&&result != "2") {
+                this.$message.error({
+                    message:"请签字"
+                })
+                return
+            }
+            if (remark == "") {
+                this.$message.error({
+                    message:"请输入签字人评论"
+                })
+                return
+            }
+            let loading = showLoading();
+            signExamine(cosNum,id,approvalID,result,remark).then((result)=>{
+                closeLoading(loading);
+                if(result.data.ret=="1"){
+                    this.$message({
+                        message: '审批成功',
+                        type: 'success'
+                    });
+                    window.history.go(-1);
+                }else{
+                    this.$message({
+                        message: '审批失败',
+                        type: 'error'
+                    });
+                }
+            })
+            .catch((err)=>{
+                alertError(this,"2048");
+            });
+        },
         loadDetail(){
-            let id = this.$route.params.expenseID;
+            let id;
+            if (this.$route.meta.type=="approve"||this.$route.meta.type=="examine") {
+                id = this.$route.params.expenseID.split("&")[0];
+            }else{
+                id = this.$route.params.expenseID;
+            }
             let loading = showLoading();
             getChargeBillByID(id).then((result)=>{
                 closeLoading(loading);
@@ -250,6 +358,39 @@ export default {
                     obj.Images.push(obj.Img8.replace("../../../",this.userInfo.currCOSIP+"COS"+this.userInfo.cosNum+"/"))
                 }
                 this.detail = obj;
+                this.allSigner = [];
+                for(let i=0;i<obj.FinanceStaff.length;i++){
+                    obj.FinanceStaff[i].State = "";
+                    obj.FinanceStaff[i].Remark = "";
+                    this.allSigner.push(obj.FinanceStaff[i]);
+                }
+                for(let i=0;i<obj.AddFinanceStaff.length;i++){
+                    obj.AddFinanceStaff[i].State = "";
+                    obj.AddFinanceStaff[i].Remark = "";
+                    this.allSigner.push(obj.AddFinanceStaff[i]);
+                }
+                for(let i=0;i<this.allSigner.length;i++){
+                    for(let j=0;j<obj.SignRecords.length;j++){
+                        if(obj.SignRecords[j].ApprovalUser==this.allSigner[i].ApprovalUser){
+                            // this.allSigner[i].showApproval = true;
+                            this.allSigner[i].State = obj.SignRecords[j].State;
+                            this.allSigner[i].Remark = obj.SignRecords[j].Remark;
+                        }
+                    }
+                }
+                for(let j=0;j<this.allSigner.length;j++){
+                    if(this.allSigner[j].ApprovalUser==this.userInfo.userStaffID&&this.$route.meta.type=="approve"){
+                        this.allSigner[j].showApproval = true;
+                        this.allSigner[j].State = "";
+                    }
+                }
+                // if (this.$route.meta.type=="approve") {
+                //     let object = {"ApprovalUser":"","ApprovalName":"","State":"1","Remark":""}
+                //     object.ApprovalUser = this.userInfo.userStaffID;
+                //     object.ApprovalName = this.userInfo.userName;
+                //     this.detail.SignRecords.push(object);
+                // }
+
                 let status = "";
 				let color = "";
 				if(obj.State=="0"){
@@ -270,15 +411,22 @@ export default {
 				}else if(obj.State=="4"){
 					status = "延期付款完毕";// green 
 					color = "#2ecc71";
-				}
-                let imgurl = stamper({
-                    outsideInfo : this.userInfo.cosName,
-					success : true,
-					stampImage : "stampImage",
-					color:color,
-                    status:status
-                });
-                this.stamperImageUrl = imgurl;
+                }
+                if(this.$route.meta.type!="approve"){
+                    let imgurl = stamper({
+                        outsideInfo : this.userInfo.cosName,
+                        success : true,
+                        stampImage : "stampImage",
+                        color:color,
+                        status:status
+                    });
+                    this.stamperImageUrl = imgurl;
+                }
+                
+            })
+            .catch((err)=>{
+                console.log(err)
+                alertError(this,"1175");
             });
         },
         downloadFile(item){
@@ -350,6 +498,8 @@ export default {
 	text-overflow: ellipsis;
 	word-wrap: normal;
 	overflow: hidden;
+    display: flex;
+    align-items: center;
 }
 .detailContent > .image{
     width:50px;
@@ -357,6 +507,10 @@ export default {
     margin-right: 40px;
     display: inline-block;
     overflow: hidden;
+}
+.flexItemCenter{
+    display: flex;
+    align-items: center;
 }
 .createDate{
     padding-top:54px;

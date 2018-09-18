@@ -20,6 +20,7 @@
                     placeholder="请选择出生日期"
                     style="width:400px;">
                 </el-date-picker>
+                <div class="redColor">*必填</div>
             </el-form-item>
             <el-form-item label="民族">
                 <el-input v-model="form.ChildNation" size="small" style="width:400px;" placeholder="请输入民族"></el-input>
@@ -181,7 +182,7 @@
 <script>
 
 import { addNewChild,updateChild,getChildByChildID,getPaymentsByType,addChildPhoto,getChildNum } from '@/js/api'
-import { showLoading,closeLoading,IdentityCodeValid,PhoneNumValid,imageCompress} from '@/config/utils'
+import { showLoading,closeLoading,IdentityCodeValid,PhoneNumValid,imageCompress,alertError} from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
 import ChatHeader from '@/components/chat/ChatHeader'
 
@@ -282,6 +283,8 @@ export default {
                         message:"上传失败"
                     });
                 }
+            }).catch((err)=>{
+                alertError(this,"2023");
             });
         },
         getChildByChildID(){
@@ -318,6 +321,8 @@ export default {
                 this.form.CertType = childInfo.CertType;
                 this.form.CertId = childInfo.CertId;
                 this.form.Remark = childInfo.Remark;
+            }).catch((err)=>{
+                alertError(this,"1040");
             });
         },
         loadPayments(){
@@ -329,7 +334,7 @@ export default {
              * TUITION_REFUND：保育费退费,
              * MEAL_FEE_REFUND：餐费退费
              */
-            Promise.all([getPaymentsByType('MEAL_FEE'),getPaymentsByType('MEAL_FEE_REFUND'),getPaymentsByType('TUITION'),getPaymentsByType('TUITION_REFUND'),]).then((result)=>{
+            Promise.all([getPaymentsByType('MEAL_FEE','-1'),getPaymentsByType('MEAL_FEE_REFUND','-1'),getPaymentsByType('TUITION','-1'),getPaymentsByType('TUITION_REFUND','-1'),]).then((result)=>{
                 this.mealFeeType = result[0].data.data;
                 this.mealFeeRefundType = result[1].data.data;
                 this.tuitionType = result[2].data.data;
@@ -349,6 +354,8 @@ export default {
                 if(this.$route.meta.type=="update"){
                     this.getChildByChildID();
                 }
+            }).catch((err)=>{
+                alertError(this,"1041");
             });
             
         },
@@ -396,6 +403,12 @@ export default {
             if (childName == "") {
 				this.$message.error({
                     message:"请输入幼儿姓名！"
+                });
+				return false;
+            }
+            if (birthday == "") {
+				this.$message.error({
+                    message:"请输入幼儿出生日期！"
                 });
 				return false;
 			}
@@ -647,9 +660,11 @@ export default {
     z-index: 5;
 }
 .firstBg{
-    background: #ffb6c1;
+    /* background: #ffb6c1; */
+    background-color: rgba(255,182,193,.4);
 }
 .secondBg{
-    background: #90ee90;
+    /* background: #90ee90; */
+    background-color: rgba(144,238,144,.4);
 }
 </style>

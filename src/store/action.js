@@ -12,7 +12,9 @@ import {
 	findAllStaffs,
 	getGroupsByStaffID,
 } from '@/js/api'
-
+import { 
+	alertError 
+} from '@/config/utils'
 
 export default {
 	rong_init({commit,state}){
@@ -76,6 +78,8 @@ export default {
 		let cosNum = state.userInfo.cosNum;
 		getGroupsByStaffID(staffID,cosNum).then((response) => {
 			commit(SET_MYGROUPS, response.data.data);
+		}).catch((err)=>{
+			alertError(this,"1096");
 		});
 	}
 	// async getUserInfo({

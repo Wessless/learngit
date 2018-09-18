@@ -1,13 +1,14 @@
 <template>
     <div class="toolbar pull-left">
         <div class="bar LeftNav">
-            <div class="LeftNav-item" :title="$t('message.mainHeader.my')">
+            <div class="LeftNav-item" :title="$t('message.mainHeader.my')" @click="showCurrUserInfo">
                 <div class="user">
                     <div id="loginuser" class="portrait" :odd-even="loginUser.userStaffID%2" :data-sex="loginUser.userSex%2" v-show="!imagePath">
                     {{firstChar}}
                     </div>
                     <!-- <img class="userPic Avatar--22"  v-show="imagePath" v-bind:src="imagePath||'../img/barBg.png'" /> -->
-                    <div class="userPic Avatar--22" v-show="imagePath"><image-proxy :imagePath="userInfo.imagePath"></image-proxy></div>
+                    <!-- <div class="userPic Avatar--22" v-show="imagePath"><image-proxy :imagePath="userInfo.imagePath"></image-proxy></div> -->
+                    <div class="userPic Avatar--22" v-show="imagePath"><img :src="imagePath" alt=""></div>
                     <!-- <i class="Presence Presence--stacked Presence--toolbar"></i> -->
                 </div>
             </div>
@@ -39,7 +40,7 @@
                     &#xe71f;
                 </div>
             </router-link>
-            <div class="LeftNav-item iconfont-add bottomBtn"  addbtn @click.stop="changeFlag">
+            <div class="LeftNav-item iconfont-add bottomBtn hide"  addbtn @click.stop="changeFlag">
                 <div>
                     <a class="iconfont">add</a>
                     <ul class="addPanel" v-bind:class="{hide:hideflag}">
@@ -50,11 +51,16 @@
                     </ul>
                 </div>
             </div>
-            <div class="LeftNav-item iconfont-more bottomBtn"  addbtn @click.stop="changeMoreFlag">
+            <div class="LeftNav-item iconfont-more bottomBtn" :title="cosName" addbtn @click.stop="changeMoreFlag">
                 <div>
-                    <a class="iconfont">add</a>
+                    <a class="iconfont textShow">{{ cosNum }}</a>
                     <ul class="addPanel" v-bind:class="{hide:hideMoreflag}">
-                        <li @click="downloadAPP"><a >{{ '下载手机版' }}</a></li>
+                        <li style="background:#ffd700;"><div class="text">{{ cosName }}</div></li>
+                        <li @click="linkToKindgarden" v-show="userInfo.cosType!='0'&&kindgardenURL"><a >{{ '幼儿园官网' }}</a></li>
+                        <li @click="showKindgardenQRCode" v-show="userInfo.cosType!='0'&&kindgardenQRCode.length>0"><a >{{ '园所二维码' }}</a></li>
+                        <li @click="downloadAddNewChild" v-show="userInfo.cosType!='0'&&addNewChildQRCode"><a >{{ '招生二维码' }}</a></li>
+                        <li @click="downloadAPP"><a >{{ '手机版下载' }}</a></li>
+                        <li @click="quitLogin"><a >{{ '退出登录' }}</a></li>
                         <!-- <li id="addFriends"><a>添加好友</a></li> -->
                         <!-- <li id="addDiscussion"><a  ui-sref="main.discussionaddmember({iscreate: 'true', idorname: ''})">发起聊天</a></li> -->
                         <!-- <li id="addGroup"><a href="javascript:void (0)" ui-sref="main.searchgroup">加入群组</a></li> -->
@@ -67,6 +73,7 @@
 
 <script>
 import {mapState, mapMutations} from 'vuex'
+import {getQRCode,getSettingValue,getQRPng} from '@/js/api'
 import imageProxy from '@/components/chat/ImageProxy'
 
 export default {
@@ -91,7 +98,10 @@ export default {
                 notification:{
                     hasNewNotification:false
                 }
-            }
+            },
+            kindgardenURL: '',
+            addNewChildQRCode:'',
+            kindgardenQRCode:[],
         }
     },
     computed:{
@@ -105,13 +115,30 @@ export default {
             return userName.substr(userName.length-2<0?0:userName.length-2,userName.length);
         },
         imagePath(){
-            return this.userInfo.imagePath.replace("../../../",this.userInfo.currCOSIP+"COS"+this.userInfo.cosNum+"/");
+            return this.userInfo.imagePath.replace("../../../",this.userInfo.currProxy+'/COS'+this.userInfo.cosNum+'/');
         },
         loginUser(){
             return this.userInfo;
+        },
+        cosNum(){
+            if(this.userInfo.cosNum){
+                return this.userInfo.cosNum;
+            }else{
+                return "";
+            }
+        },
+        cosName(){
+            if(this.userInfo.cosName){
+                return this.userInfo.cosName;
+            }else{
+                return "";
+            }
         }
     },
     mounted(){
+        this.getKindgardenURL();
+        this.getAddNewChildQRCode();
+        this.getQRPng();
     },
     components:{
         imageProxy
@@ -122,6 +149,9 @@ export default {
             'SET_CURRFRIENDLIST',
             'SET_BROWSERIMG'
         ]),
+        showCurrUserInfo(){
+            this.$emit("clickUserInfo",true);
+        },
         changeFlag(){
             this.$emit("changeFlag",!this.hideflag);
             this.$emit("changeMoreFlag",true);
@@ -129,6 +159,9 @@ export default {
         changeMoreFlag(){
             this.$emit("changeFlag",true);
             this.$emit("changeMoreFlag",!this.hideMoreflag);
+        },
+        quitLogin(){
+            this.$emit("quitLogin",true);
         },
         createGroup(){
             // 显示消息组件
@@ -152,6 +185,79 @@ export default {
                     height:"300px"
                 }
             });
+        },
+        getAddNewChildQRCode(){
+            getQRCode().then((result)=>{
+                this.addNewChildQRCode = result.data.result;
+                
+            }).catch((err)=>{
+                alertError(this,"1064")
+            });
+        },
+        downloadAddNewChild(){
+            let url = this.addNewChildQRCode;
+            this.SET_BROWSERIMG({
+                imgPath : url,//"http://101.200.0.8:8060/COS"+this.userInfo.cosNum+"/Data/system_release/kindergarten_qrcode.png",
+                styleObject : {
+                    width:"300px",
+                    height:"300px"
+                },
+                download:{
+                    url:this.userInfo.currProxy+"/COS"+this.userInfo.cosNum+"/Data/system_release/enrollment/enrollment.zip",
+                    text:"下载二维码"
+                }
+            });
+        },
+        getKindgardenURL(){
+            let setting = 'HOME_PAGE';
+            getSettingValue(setting).then((result)=>{
+                let settingValue = result.data[setting];
+                if(settingValue&&settingValue!='null'){
+                    this.kindgardenURL = settingValue;//'http://www.baidu.com';
+                }
+            }).catch(()=>{
+                alertError(this,"1211");
+            });
+        },
+        getQRPng(){
+            getQRPng()
+            .then((result)=>{
+                if(result.data.result){
+                    let strArr = result.data.result.split(',');
+                    let objArr = [];
+                    for(let i=0;i<strArr.length;i++){
+                        let nameArr = strArr[i].split('|');
+                        if(nameArr[0]=='public_number'){
+                            objArr.push({
+                                url:nameArr[1],
+                                name:'公众号二维码'
+                            });
+                        }
+                        if(nameArr[0]=='life_number'){
+                            objArr.push({
+                                url:nameArr[1],
+                                name:'生活号二维码'
+                            });
+                        }
+                        if(nameArr[0]=='school_number'){
+                            objArr.push({
+                                url:nameArr[1],
+                                name:'校园号二维码'
+                            });
+                        }
+                    }
+                    this.kindgardenQRCode = objArr;
+                }
+            })
+            .catch((err)=>{
+                alertError(this,"1306");
+            });
+        },
+        showKindgardenQRCode(){
+            this.$emit("showKindgardenQRCode",this.kindgardenQRCode);
+        },
+        linkToKindgarden(){
+            window.open(this.kindgardenURL);
         }
     }
 }
@@ -209,6 +315,27 @@ export default {
     margin-top: 17px;
 }
 
+.LeftNav-item div> .textShow{
+    color:#fff;
+    line-height: 38px;
+    text-indent: 0px;
+    display: block;
+}
+
+.LeftNav-item div> .textShow:after{
+    display: block;
+    position: absolute;
+    width:50px;
+    height:50px;
+    border-radius: 50%;
+    border:2px solid #ffffff;
+    content:"";
+    left:50%;
+    top:50%;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+}
+
 .iconfont-single a {
     background: url(../img/icons.png) 17px 0/108px auto no-repeat;
 
@@ -255,7 +382,7 @@ export default {
     left: 0;
 }
 .iconfont-more div> a:after {
-    content: "\E729";
+    /* content: "\E729"; */
 }
 .LeftNav-item:active, .LeftNav-item:focus, .LeftNav-item:hover {
     background: rgba(55, 55, 55, 0.1);
@@ -285,6 +412,15 @@ export default {
     display: inline-block;
     vertical-align: middle;
     overflow: hidden;
+    position: relative;
+}
+
+.userPic > img{
+    width:100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .Presence--toolbar {
@@ -319,8 +455,8 @@ export default {
 /*添加按钮*/
 .addPanel {
     position: absolute;
-    right: -76px;
-    width: 100px;
+    left: 50px;
+    /* width: 100px; */
     background: #fff;
     border-radius: 5px;
     display: flex;
@@ -331,8 +467,8 @@ export default {
 }
 
 .addPanel li {
-    width: 100px;
-    height: 40px;
+    /* width: 100px; */
+    /* height: 40px; */
     line-height: 40px;
     font-size: 13px;
     display: block;
@@ -342,7 +478,23 @@ export default {
     display: block;
     padding: 0 16px;
     color: #444444;
+    white-space: nowrap;
+	text-overflow: ellipsis;
+	word-wrap: normal;
+	overflow: hidden;
+}
 
+.addPanel li .text {
+    display: block;
+    padding: 0 16px;
+    color: #444444;
+    height: 40px;
+    border-bottom: 1px solid #e1e9f1;
+    line-height: 40px;
+    white-space: nowrap;
+	text-overflow: ellipsis;
+	word-wrap: normal;
+	overflow: hidden;
 }
 
 .addPanel li:not(:last-child) a {
@@ -352,5 +504,9 @@ export default {
 .addPanel li:hover {
     background: #e1e9f1;
 }
-
+.currUserInfo{
+    width:100%;
+    height: 100%;
+    background:#38adff;
+}
 </style>

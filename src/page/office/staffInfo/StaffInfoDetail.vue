@@ -1,6 +1,6 @@
 <template>
     <div class="staffInfoDetail">
-        <chat-header :showBack="true" :title="title" :showRightBtn="true" :rightBtnTitle="'确认'" :rightBtnName="'confirm'" :rightBtnType="'btn'" @confirm="confirm"></chat-header>
+        <chat-header :showBack="true" :title="title" :showRightBtn="true" :rightBtnTitle="'保存'" :rightBtnName="'confirm'" :rightBtnType="'btn'" @confirm="confirm"></chat-header>
         <el-tabs type="border-card" id="staffInfoTabs" v-model="tabs.selectedTab" @tab-click="handleClick" class="tab">
             <el-tab-pane label="基本信息" name="first">
                 <el-row type="flex" class="row-bg">
@@ -66,8 +66,8 @@
                 </el-row>
                 <el-row type="flex" class="row-bg">
                     <el-col :span="4"><div class="title">员工编号</div></el-col>
-                    <el-col :span="12"><el-input v-model="staffInfo.staffNum" size="small" placeholder="请输入员工编号"></el-input></el-col>
-                    <el-col :span="4"><div class="redColor">*必填</div></el-col>
+                    <el-col :span="12"><el-input v-model="staffInfo.staffNum" :disabled="true" size="small" placeholder="请输入员工编号"></el-input></el-col>
+                    <!-- <el-col :span="4"><div class="redColor">*必填</div></el-col> -->
                 </el-row>
                 <el-row type="flex" class="row-bg">
                     <el-col :span="4"><div class="title">员工卡号</div></el-col>
@@ -90,7 +90,7 @@
                             </el-option>
                         </el-select>
                     </el-col>
-                    <el-col :span="4"><div class="redColor">*必填</div></el-col>
+                    <!-- <el-col :span="4"><div class="redColor">*必填</div></el-col> -->
                 </el-row>
                 <el-row type="flex" class="row-bg">
                     <el-col :span="4"><div class="title">角色</div></el-col>
@@ -104,7 +104,7 @@
                             </el-option>
                         </el-select>
                     </el-col>
-                    <el-col :span="4"><div class="redColor">*必填</div></el-col>
+                    <!-- <el-col :span="4"><div class="redColor">*必填</div></el-col> -->
                 </el-row>
                 <el-row type="flex" class="row-bg bankBg">
                     <el-col :span="4"><div class="title">是否参与工资计算</div></el-col>
@@ -165,11 +165,12 @@
                             placeholder="选择离职时间"
                             format="yyyy-MM-dd"
                             value-format="yyyy-MM-dd"
+                            @change="notBeStaffChange"
                             style="width:100%;">
                         </el-date-picker>
                     </el-col>
                     <el-col :span="3" style="display:flex;align-items:center;flex-direction:row-reverse">
-                        <el-checkbox v-model="staffInfo.hasLeaveCompany" style="padding-left:10px;margin-bottom:0;">已离职</el-checkbox>
+                        <el-checkbox v-model="staffInfo.hasLeaveCompany" @change="hasLeaveChange" style="padding-left:10px;margin-bottom:0;">已离职</el-checkbox>
                     </el-col>
                 </el-row>
                 <!-- <el-row type="flex" class="row-bg" style="padding-top:10px;">
@@ -641,14 +642,22 @@
                     </el-col>
                 </el-row>
             </el-tab-pane>
+            <el-tab-pane label="聚合学费" name="seventh" v-if="userInfo.cosType=='1'">
+                <el-row type="flex" class="row-bg">
+                    <!-- <el-col :span="4"><div class="title">允许登录聚合学费</div></el-col> -->
+                    <el-col :span="12" style="display:flex;align-items:center;margin-left:20px;margin-top:10px;">
+                        <el-checkbox v-model="staffInfo.isSaveSup">允许登录聚合学费</el-checkbox>
+                    </el-col>
+                </el-row>
+            </el-tab-pane>
         </el-tabs>
     </div>
 </template>
 
 <script>
 
-import { getAllRoles,addOrUpdateStaffDetail,addCertifications,findStaffByStaffID,getDepartmentsByFact } from '@/js/api'
-import { money,stamper,showLoading,closeLoading,xmlStr2json } from '@/config/utils'
+import { getAllRoles,addOrUpdateStaffDetail,addCertifications,findStaffByStaffID,getDepartmentsByFact,getStaffNum } from '@/js/api'
+import { money,stamper,showLoading,closeLoading,xmlStr2json,alertError,PhoneNumValid } from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
 import ChatHeader from '@/components/chat/ChatHeader'
 // isSalaryNotIncluded
@@ -736,7 +745,8 @@ export default {
                 financeSignManager2:"",
                 financeSignManager3:"",
                 timeScheduleManager:"",
-                dailyManager:""
+                dailyManager:"",
+                isSaveSup:false,
             },
             IDNumberFile:null,
             IDNumberFileName:"",
@@ -754,11 +764,11 @@ export default {
     mounted(){
         if(this.$route.meta.type=="add"){
             this.title = "添加员工信息";
+            this.loadStaffNum();
         }else if(this.$route.meta.type=="update"){
             this.title = "修改员工信息";
             this.loadStaffInfo();
         }
-
         // 获取所有角色
         getAllRoles().then((result)=>{
             let array = result.data.data;
@@ -771,12 +781,15 @@ export default {
                 };
                 this.roleList.push(json);
             }
+        }).catch((err)=>{
+            alertError(this,"1035");
         });
 
         // 获取所有部门
         getDepartmentsByFact("1").then((result)=>{
             let array = result.data.data;
             this.departmentList = [];
+            console.log(result)
             for(let i=0;i<array.length;i++){
                 let json = {
                     value:array[i].DepID,
@@ -825,7 +838,19 @@ export default {
     methods:{
         // 切换顶部
         handleClick(tab, event) {
-            console.log(tab, event);
+            // console.log(tab, event);
+        },
+        notBeStaffChange(){
+            if(this.staffInfo.notBeStaff.trim()==''){
+                this.staffInfo.hasLeaveCompany = false;
+            }else{
+                this.staffInfo.hasLeaveCompany = true;
+            }
+        },
+        hasLeaveChange(){
+            if(!this.staffInfo.hasLeaveCompany){
+                this.staffInfo.notBeStaff = '';
+            }
         },
         changeCertificationList(val) {
             this.delCertificationList = val;
@@ -937,6 +962,14 @@ export default {
             this.tabs.selectedTab = tipName;
             document.getElementById('staffInfoTabs').scrollTop = 0;
         },
+        loadStaffNum(){
+            getStaffNum().then((result)=>{
+                let staffNum = result.data.staffNum;
+                this.staffInfo.staffNum = staffNum;
+            }).catch(()=>{
+                alertError(this,"1034");
+            });
+        },
         // 加载员工信息
         loadStaffInfo(){
             let loading = showLoading();
@@ -949,8 +982,10 @@ export default {
                     bestaff = staffInfo.BeStaff.substring(0,4)+"-"+staffInfo.BeStaff.substring(4,6)+"-"+staffInfo.BeStaff.substring(6,8);
                 }
                 let notBeStaff = staffInfo.NotBeStaff;
+                this.staffInfo.hasLeaveCompany = false;
                 if(notBeStaff){
                     notBeStaff = staffInfo.NotBeStaff.substring(0,4)+"-"+staffInfo.NotBeStaff.substring(4,6)+"-"+staffInfo.NotBeStaff.substring(6,8);
+                    this.staffInfo.hasLeaveCompany = true;
                 }
                 let turnDate = staffInfo.TurnDate;
                 if(turnDate){
@@ -961,8 +996,8 @@ export default {
                 this.staffInfo.sex = staffInfo.Sex;
                 this.staffInfo.identityNumber = staffInfo.IdentityNumber;
                 this.staffInfo.cardID = staffInfo.CardID;
-                this.staffInfo.departmentID = staffInfo.DepartmentID.split(",");
-                this.staffInfo.roleID = staffInfo.RoleID;
+                this.staffInfo.departmentID = staffInfo.DepartmentID==''?[]:staffInfo.DepartmentID.split(",");
+                this.staffInfo.roleID = staffInfo.RoleID&&staffInfo.RoleID!='-1'?staffInfo.RoleID:'';
                 this.staffInfo.beStaff = bestaff;
                 this.staffInfo.turnDate = turnDate;
                 this.staffInfo.notBeStaff = notBeStaff;
@@ -976,7 +1011,6 @@ export default {
                 this.staffInfo.salaryBank = staffInfo.SalaryBank;
                 this.staffInfo.salaryCardNum = staffInfo.SalaryCardNum;
                 // hasLeaveCompany:false,
-                this.staffInfo.hasLeaveCompany = false;
                 this.staffInfo.resumeNum = staffInfo.ResumeNum;
                 this.staffInfo.address = staffInfo.Address;
                 this.staffInfo.distance = staffInfo.Distance;
@@ -1025,6 +1059,7 @@ export default {
                 this.staffInfo.childGrade3 = staffInfo.ChildGrade3;
                 this.staffInfo.childSchool3 = staffInfo.ChildSchool3;
                 this.staffInfo.note = staffInfo.Note;
+                this.staffInfo.isSaveSup = staffInfo.SupID?true:false;
                 this.certificationList = [];
                 for(let i=0;i<staffInfo.Certifications.length;i++){
                     let obj = staffInfo.Certifications[i];
@@ -1072,6 +1107,10 @@ export default {
                 this.staffInfo.financeSignManager3 = staffInfo.FinanceSignManager3=="-1"?"":staffInfo.FinanceSignManager3;
                 this.staffInfo.timeScheduleManager = staffInfo.TimeScheduleManager=="-1"?"":staffInfo.TimeScheduleManager;
                 this.staffInfo.dailyManager = staffInfo.DailyManager=="-1"?"":staffInfo.DailyManager;
+            }).catch((err)=>{
+                console.log(err)
+                alertError(this,"1015");
+                closeLoading(loading);
             });
         },
         // 添加证书
@@ -1172,7 +1211,6 @@ export default {
                 };
                 thesisList.push(json);
             }
-            console.log(this.staffInfo.spouse)
             let requestJSON = {
                 staffID,
                 staffName : this.staffInfo.staffName,
@@ -1183,7 +1221,7 @@ export default {
                 departmentID : this.staffInfo.departmentID.join(","),
                 roleID : this.staffInfo.roleID,
                 beStaff : this.staffInfo.beStaff,
-                notBeStaff : this.staffInfo.notBeStaff,
+                notBeStaff : this.staffInfo.notBeStaff?this.staffInfo.notBeStaff:"",
                 turnDate : this.staffInfo.turnDate,
                 mobile : this.staffInfo.mobile,
                 birthday : this.staffInfo.birthday,
@@ -1247,10 +1285,42 @@ export default {
                 financeSignManager3 : this.staffInfo.financeSignManager3,
                 timeScheduleManager : this.staffInfo.timeScheduleManager,
                 dailyManager : this.staffInfo.dailyManager,
+                isSaveSup : this.staffInfo.isSaveSup?"1":"0",
                 file,
                 callback
             };
             console.log(requestJSON);
+            if(requestJSON.staffName.trim()==''){
+                this.$message.error({
+                    message:'请输入员工姓名'
+                });
+                return;
+            }
+            if(requestJSON.mobile.trim()==''){
+                this.$message.error({
+                    message:'请输入员工手机'
+                });
+                return;
+            }
+            if(!PhoneNumValid(requestJSON.mobile)){
+                this.$message.error({
+                    message:'手机号码格式不正确'
+                });
+                return;
+            }
+            // if(requestJSON.roleID.trim()==''){
+            //     this.$message.error({
+            //         message:'请选择员工角色'
+            //     });
+            //     return;
+            // }
+            if(requestJSON.beStaff.trim()==''){
+                this.$message.error({
+                    message:'请选择入职时间'
+                });
+                return;
+            }
+            // return
             let loading = showLoading();
             addOrUpdateStaffDetail(requestJSON).then((result)=>{
                 closeLoading(loading);
@@ -1263,17 +1333,29 @@ export default {
                     name = "修改";
                 }
                 if(!isNaN(Number(staffID))){
-                    this.$message({
-                        message: name+'成功',
-                        type: 'success'
-                    });
+                    if(name=='添加'){
+                        this.$message({
+                            message: name+'成功，用户名：'+this.staffInfo.mobile+'，密码：123456，登录时请修改密码',
+                            type: 'success'
+                        });
+                    }else{
+                        this.$message({
+                            message: name+'成功',
+                            type: 'success'
+                        });
+                    }
                     this.addCertificationsRequest(staffID);
                 }else{
                     this.$message({
-                        message: name+'失败',
+                        message: name+'失败，'+result.data.staffID,
                         type: 'error'
                     });
                 }
+            })
+            .catch((err)=>{
+                console.log(err);
+                alertError(this,"2176");
+                closeLoading(loading);
             });
         }
     }
@@ -1327,10 +1409,12 @@ export default {
     color: red;
 }
 .bankBg{
-    background: #ffb6c1;
+    /* background: #ffb6c1; */
+    background-color: rgba(255,182,193,.4);
 }
 .timeBg{
-    background-color: #90ee90;
+    /* background-color: #90ee90; */
+    background-color: rgba(144,238,144,.4);
 }
 .topblock{
     margin-top:20px;
