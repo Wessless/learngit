@@ -11,6 +11,7 @@
         <div class="detail" @click.stop="paymoney">查看</div>
         <div class="bottomBtns">
             <div class="bottomBtn" @click="showDetail">延期支付管理</div>
+            <div class="bottomBtn" v-show="$route.meta.type=='stop'" @click="clickStop">标记为延期支付完毕</div>
         </div>
         <!-- <div class="giveMoney" @click.stop="paymoney">付款</div> -->
     </div>
@@ -64,6 +65,9 @@ export default {
         showDetail(){
             let expenseID = this.item.ChargeBillID;
             this.$router.push(this.$route.fullPath+"/"+expenseID);
+        },
+        clickStop(){
+            this.$emit('setStop',this.item.ChargeBillID);
         }
     }
 }

@@ -24,6 +24,8 @@ const state = {
 		userSex:"",
 		userStaffID:"",
 		userType:"",
+		password:"",
+		loginName:"",
 	}, //用户信息
 	totalUnreadCount: 0, //消息未读数
 	appKey: "3argexb6rzspe",//appkey

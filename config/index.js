@@ -91,6 +91,14 @@ module.exports = {
             '^/COS1F':'/'
         }
       },
+      '/COS1Z':{
+        target:'http://101.200.0.8:8060/COSZ/',
+        // target:'http://127.0.0.1:1337/',
+        changeOrigin:true,
+        pathRewrite: {
+            '^/COS1Z':'/'
+        }
+      },
     },
 
     // Various Dev Server settings
@@ -206,6 +214,14 @@ module.exports = {
         changeOrigin:true,
         pathRewrite: {
             '^/COS1F':'/'
+        },
+      },
+      '/COS1Z':{
+        target:'http://101.200.0.8:8060/COSZ/',
+        // target:'http://127.0.0.1:1337/',
+        changeOrigin:true,
+        pathRewrite: {
+            '^/COS1Z':'/'
         }
       },
     },

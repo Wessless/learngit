@@ -352,3 +352,40 @@ body{
 .midTableHeight .el-table .el-checkbox{
     margin-bottom: 0;
 }
+.el-table .grayRow {
+    background-color:rgba(221, 231, 240, 0.5);
+}
+.el-tooltip__popper{
+    max-width: 400px;
+}
+.groupPopover{
+    padding: 0px !important;
+    /* width: 100px !important; */
+}
+.ChargeExpendList .chargeCard .chargeCardItem .dateAndprice .el-icon-date:before{
+    /* padding-left: 2px !important; */
+    content: "";
+}
+.ChargeExpendList .chargeCard .chargeCardItem .dateAndprice .el-input__inner{
+    border: 0px;
+    background-color: rgba(255, 157, 0, 0);
+    text-align: center;
+    font-size: 20px;
+    font-weight: normal;
+    color: #fff;
+    margin-top: 5px;
+    cursor: default;
+}
+.groupEcharts .subDialog .el-dialog__title{
+    font-weight: bold;
+}
+.groupEcharts .subDialog .el-dialog__body{
+    padding:0 !important;
+}
+.groupEcharts .chargeBillDialog .el-dialog__title{
+    font-weight: bold;
+}
+.groupEcharts .chargeBillDialog .el-dialog__body{
+    padding-top:0 !important;
+    padding-bottom:50px !important;
+}

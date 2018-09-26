@@ -11,6 +11,8 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 
+import ECharts from 'vue-echarts/components/ECharts'
+
 import App from './App'
 import router from './router'
 import store from './store'
@@ -20,6 +22,8 @@ Vue.use(infiniteScroll);
 Vue.use(ElementUI);
 Vue.use(VueI18n);
 Vue.use(vueXlsxTable, {rABS: false}) //HTML5 FileReader API 有两个方法可以读取本地文件 readAsBinaryString 和 readAsArrayBuffer, 默认rABS为true，也就是使用readAsBinaryString
+
+Vue.component('v-chart', ECharts)
 
 const i18n = new VueI18n({
   locale: 'CN',    // 语言标识

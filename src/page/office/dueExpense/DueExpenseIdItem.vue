@@ -8,8 +8,8 @@
         <div class="title">当前状态：{{item.State}}</div>
         <div class="title">支付方式：{{item.PayType}}</div>
         <div class="title">用途说明：{{item.Purpose}}</div>
-        <!-- <div class="detail" @click.stop="deleteItem">删除</div>
-        <div class="giveMoney" @click.stop="updateItem">修改</div> -->
+        <div class="detail" @click.stop="deleteItem">查看</div>
+        <!-- <div class="giveMoney" @click.stop="updateItem">修改</div> -->
     </div>
 </template>
 
@@ -55,11 +55,13 @@ export default {
     },
     methods:{
         updateItem(){
-            let expenseID = this.item.ChargeBillID;
-            this.$router.push(this.$route.fullPath+"/update/"+expenseID);
+            let dueID = this.item.ChargeBillID;
+            this.$router.push(this.$route.fullPath+"/update/"+dueID);
         },
         deleteItem(){
-            this.$emit("deleteDueExpenseID",this.item);
+            let dueID = this.item.ChargeBillID;
+            let staffID = this.item.FillStaffID;
+            this.$router.push(this.$route.fullPath+"/dueDetail/"+staffID+"/"+dueID);
         }
     }
 }

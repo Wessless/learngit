@@ -1,5 +1,5 @@
 <template>
-    <div class="box_hd">
+    <div class="box_hd" :style="{'z-index':fixIndex}">
         <div class="title_wrap">
             <a class="phone_return iconfont" v-show="showBack" @click="back()"><span class="backArrow">&#xe697;</span></a>
             <div class="title">
@@ -41,6 +41,18 @@ export default {
         rightBtnType:{
             type:String,
             default:"none"
+        },
+        isgoBack:{
+            type:Boolean,
+            default:false,
+        },
+        gobackName:{
+            type:String,
+            default:""
+        },
+        fixIndex:{
+            type:Number,
+            default:9,
         }
     },
     data() {
@@ -50,7 +62,11 @@ export default {
     },
     methods:{
         back(){
-            window.history.go(-1)
+            if (this.isgoBack) {
+                this.$emit(this.gobackName,"");
+            }else{
+                window.history.go(-1);
+            }
         },
         edit(){
             this.$emit(this.rightBtnName,"");
@@ -83,6 +99,7 @@ export default {
     overflow: hidden;
     z-index: 9;
     margin-left:384px;
+    background:#fff;
 }
 
 .box_hd .title_wrap {

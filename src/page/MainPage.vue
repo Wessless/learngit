@@ -64,7 +64,8 @@
         <div class="main_inner clearfix">
             <div class="no_network"><span>{{ $t("message.mainPage.no_network") }}</span></div>
             <main-header @changeFlag="changeFlag" :hideflag="hideflag" @quitLogin="quitLogin" @changeMoreFlag="changeMoreFlag" @clickUserInfo="clickUserInfo" @showKindgardenQRCode="showKindgardenQRCode" :hideMoreflag="hideMoreflag" ></main-header>
-            <friend-list></friend-list>
+            <friend-list v-show="!showText"></friend-list>
+            <div class="showText" v-show="showText">{{ cosName+"蜂堡办公系统" }}</div>
             <div class="elseComponent" style="padding-left:384px;">
                 <!-- <div class="emptyBox" v-if="!this.currConversation&&!this.currFriendList&&($route.meta.pageType=='conversation'||$route.meta.pageType=='friendList')">
                     <div class="cosName">{{ cosName }}<br/>欢迎您！</div>
@@ -72,10 +73,10 @@
                 <!-- <div class="emptyBox" v-if="$route.meta.pageType=='office'&&$route.meta.isoffice">
                     <img src="static/images/office.png" class="office" alt="">
                 </div> -->
-                <div class="showText" v-show="showText">{{ cosName+"蜂堡办公系统" }}</div>
-                <chat-box v-show="this.currConversation&&!this.currFriendList"></chat-box>
+                
+                <chat-box v-show="this.currConversation&&!this.currFriendList&&!showText"></chat-box>
                 <!-- <friend-list-info v-show="!this.currConversation&&this.currFriendList"></friend-list-info>    -->
-                <router-view></router-view>
+                <router-view v-show="!showText"></router-view>
                 <!-- <user-setting></user-setting> -->
             </div>
             <!-- <div class="elseComponent">
@@ -120,10 +121,10 @@ export default {
         return {
             hideflag:true,
             hideMoreflag:true,
-            showText:false,
+            showText:true,
             showCurrUserInfo:false,
             showKindgardenQRCodeDialog:false,
-            qrcodeArr:[]
+            qrcodeArr:[],
         }
     },
     computed:{
@@ -197,7 +198,7 @@ export default {
             this.showText = true;
             setTimeout(()=>{
                 this.showText = false;
-            },3000)
+            },2000)
             // this.$message({
             //     message:this.cosName+"蜂堡办公系统",
             //     duration:2000
@@ -729,7 +730,8 @@ export default {
     border-radius: 10px;
     -webkit-transform: translateX(-50%) translateY(-50%);
     transform: translateX(-50%) translateY(-50%);
-    margin-left: 192px;
+    margin-left: 35px;
+    z-index: 99;
 }
 .staffInfo{
     width:100%;

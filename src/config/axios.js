@@ -1,7 +1,7 @@
 import axios from 'axios';
 import store from '@/store';
 import {aesEncrypt, aesDecrypt} from '@/config/AES';// AES加密解密算法
-import {_setSession, _getSession,} from '@/config/utils';
+import {_setSession, _getSession, ajaxStr2JSON} from '@/config/utils';
 // import store from './store'
 
 export default (obj) => {
@@ -87,7 +87,15 @@ export default (obj) => {
         // return ;
         return new Promise((resolve, reject)=>{
             axios(obj).then((result)=>{
-                resolve(result);
+                if((typeof result.data)=='string'){
+                    let reg = /\n|\t|\r/g;
+                    let data = result.data;
+                    let elseStr = data.replace(reg,'<br/>');
+                    resolve({data:JSON.parse(elseStr)});
+                    // return ;
+                }else{
+                    resolve(result);
+                }
             }).catch((err)=>{
                 reject(err);
             });

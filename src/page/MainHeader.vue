@@ -40,6 +40,15 @@
                     &#xe71f;
                 </div>
             </router-link>
+            <router-link class="LeftNav-item iconfont iconfont-group" style="font-size: 32px;" v-show="userInfo.mobile" :title="'集团'" v-bind:class="{ 'cur': $route.meta.pageType=='group' }" @click="removeChat" :to="'/mainpage/group'">
+                <div class="groupChat" v-show="$route.meta.pageType!='group'" @click="removeChat">
+                    &#xe805;
+                </div>
+                <div class="groupChat" v-show="$route.meta.pageType=='group'" @click="removeChat">
+                    &#xe807;
+                </div>
+            </router-link>
+
             <div class="LeftNav-item iconfont-add bottomBtn hide"  addbtn @click.stop="changeFlag">
                 <div>
                     <a class="iconfont">add</a>
@@ -74,6 +83,7 @@
 <script>
 import {mapState, mapMutations} from 'vuex'
 import {getQRCode,getSettingValue,getQRPng} from '@/js/api'
+import { showLoading,closeLoading ,alertError} from '@/config/utils'
 import imageProxy from '@/components/chat/ImageProxy'
 
 export default {
@@ -191,7 +201,9 @@ export default {
                 this.addNewChildQRCode = result.data.result;
                 
             }).catch((err)=>{
-                alertError(this,"1064")
+                // alertError(this,"1064")
+                console.log('err:1064')
+                console.log(err)
             });
         },
         downloadAddNewChild(){
@@ -215,8 +227,10 @@ export default {
                 if(settingValue&&settingValue!='null'){
                     this.kindgardenURL = settingValue;//'http://www.baidu.com';
                 }
-            }).catch(()=>{
-                alertError(this,"1211");
+            }).catch((err)=>{
+                // alertError(this,"1211");
+                console.log('err:1211')
+                console.log(err)
             });
         },
         getQRPng(){
@@ -250,7 +264,8 @@ export default {
                 }
             })
             .catch((err)=>{
-                alertError(this,"1306");
+                console.log('err:1306')
+                console.log(err)
             });
         },
         showKindgardenQRCode(){

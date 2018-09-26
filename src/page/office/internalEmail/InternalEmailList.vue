@@ -18,7 +18,7 @@
                     <span style="color:#999;margin-left:10px;">共{{ this.form.emailNum }}封邮件</span>
                 </el-form-item> -->
                 <el-form-item label="">
-                    <el-select v-model="form.signFlag" style="width:100px;" placeholder="标记为..." @change="unReadOrReadLocalMail">
+                    <el-select v-model="form.signFlag" v-show="form.flag!='-3'" style="width:100px;" placeholder="标记为..." @change="unReadOrReadLocalMail">
                         <el-option
                             v-for="item in form.signFlagArr"
                             :key="item.value"
@@ -29,11 +29,14 @@
                 </el-form-item>
 
                 <el-form-item style="margin-left:20px;">
-                    <el-button type="danger"  @click="clickDelete">删除</el-button>
+                    <el-button type="danger" v-show="form.flag!='-3'" @click="clickDelete">删除</el-button>
+                    <el-radio v-show="form.flag=='-3'" style="margin-left:10px;" @change="loadList" v-model="isReceive" label="1">来自收件</el-radio>
+                    <el-radio v-show="form.flag=='-3'" style="margin-left:10px;" @change="loadList" v-model="isReceive" label="0">来自发件</el-radio>
+                    <el-button type="primary" v-show="form.flag=='-3'" style="margin-left:30px;" @click="clickRevocer">恢复</el-button>
                 </el-form-item>
 
                 <el-form-item style="float:right;">
-                    <el-button type="primary"  style="float:left;" @click="loadList(true)">检索</el-button>
+                    <el-button type="primary"  style="float:left;" @click="loadList()">检索</el-button>
                 </el-form-item>
                 <el-form-item style="float:right;">
                     <el-input v-model="form.searchText" style="float:left;" placeholder="请输入关键字进行检索"></el-input>
@@ -58,7 +61,8 @@
             <Internal-Email-item v-for="item in internalEmailList" :key="item.num" :item="item" :flag="form.flag" @clickDelete="clickDelete" @clickIsRead="clickIsRead"></Internal-Email-item>
         </div> -->
         <div class="midTableHeight" style="width:100%;display:block;">
-            <el-table :data="internalEmailList" :cell-style="getColStyle" :header-cell-style="getRowStyle" @selection-change="handleSelectionChange" border max-height="405">
+
+            <el-table :data="internalEmailList" v-show="form.flag!='-3'" :cell-style="getColStyle" tooltip-effect="light" :header-cell-style="getRowStyle" @selection-change="handleSelectionChange" border max-height="405">
                 <el-table-column type="selection" align="center" width="40"></el-table-column>
                 <el-table-column align="center"  width="45">
                     <template slot-scope="scope">
@@ -67,7 +71,7 @@
                 </el-table-column>
                 <el-table-column v-if="form.flag!='-2'" :show-overflow-tooltip='true' prop="Sender" align="center"  label="发件人"  width="100"></el-table-column>
                 <el-table-column v-if="form.flag=='-2'" :show-overflow-tooltip='true' prop="Receivers" align="center"  label="收件人"  width="100"></el-table-column>
-                <el-table-column align="center"  :show-overflow-tooltip='true' label="主题"  width="">
+                <el-table-column :show-overflow-tooltip='true' label="主题"  width="">
                     <template slot-scope="scope">
                         <span class="spanTitle" @click="examineEmail(scope.row)">{{scope.row.Title}}</span>
                     </template>
@@ -79,7 +83,26 @@
                         <span>{{form.flag=='-2'?scope.row.MailID:scope.row.ID}}</span>
                     </template>
                 </el-table-column>
-                
+            </el-table>
+
+            <el-table :data="internalEmailList" v-show="form.flag=='-3'" :cell-style="getColStyle" tooltip-effect="light" :header-cell-style="getRowStyle" @selection-change="handleSelectionChange" border max-height="405">
+                <el-table-column type="selection" align="center" width="40"></el-table-column>
+                <el-table-column align="center"  width="45">
+                    <template slot-scope="scope">
+                        <b class="iconfont" :style="{color:scope.row.IsUnread=='1'?'#FF9D00':'#38ADFF'}">{{scope.row.IsUnread=='1'?`&#xe739;`:`&#xe73a;`}}</b>
+                    </template>
+                </el-table-column>
+                <el-table-column v-if="isReceive=='1'" :show-overflow-tooltip='true' prop="Address" align="center"  label="发件人"  width="100"></el-table-column>
+                <el-table-column v-if="isReceive=='0'" :show-overflow-tooltip='true' prop="Address" align="center"  label="收件人"  width="100"></el-table-column>
+                <el-table-column align="center"  :show-overflow-tooltip='true' label="主题"  width="">
+                    <template slot-scope="scope">
+                        <span class="spanTitle" @click="examineEmail(scope.row)">{{scope.row.Title}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column  prop="SentTime" align="center"  label="收件时间"  width="160"></el-table-column>
+                <el-table-column  prop="DeleteTime" align="center"  label="删除时间"  width="160"></el-table-column>
+                <el-table-column  prop="MailSize" align="center"  label="大小"  width="80"></el-table-column>
+                <el-table-column  prop="ID" align="center"  label="邮件ID"  width="80"></el-table-column>
             </el-table>
             <div>
                 <el-pagination
@@ -121,7 +144,7 @@
 
 <script>
 
-import {localMailList,deleteLocalMail,unReadOrReadLocalMail } from '@/js/api'
+import {localMailList,deleteLocalMail,unReadOrReadLocalMail,recoverDeleteMail } from '@/js/api'
 import { showLoading,closeLoading,alertError } from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
 import NoData from '@/components/chat/NoData'
@@ -155,6 +178,7 @@ export default {
             pageSize:10,
             currentPage:1,
             isNoData:false,
+            isReceive:"",
         }
     },
     components:{
@@ -179,7 +203,7 @@ export default {
             let searchType = this.form.searchType;
             let searchText = this.form.searchText;
             let loading = showLoading();
-            localMailList(flag,staffID,searchType,searchText,this.currentPage,this.pageSize).then((result)=>{
+            localMailList(flag,staffID,searchType,searchText,this.currentPage,this.pageSize,this.isReceive).then((result)=>{
                 closeLoading(loading);
                 for(let i=0;i<result.data.data.length;i++){
                     this.internalEmailList.push(result.data.data[i]);
@@ -192,6 +216,7 @@ export default {
                     this.isNoData = false;
                 }
             }).catch((err)=>{
+                closeLoading(loading);
                 alertError(this,"1313");
             });
         },
@@ -251,6 +276,11 @@ export default {
         //     }
         // },
         reloadList(){
+            if (this.form.flag!='-3') {
+                this.isReceive = ""
+            }else{
+                this.isReceive = "1"
+            }
             this.form.searchType = "1";
             this.form.searchText = "";
             this.loadList();
@@ -282,6 +312,7 @@ export default {
                     this.form.signFlag = "";
                 }
             }).catch((err)=>{
+                closeLoading(loading);
                 alertError(this,"");
             })
         },
@@ -329,6 +360,7 @@ export default {
                     });
                 }
             }).catch((err)=>{
+                closeLoading(loading);
                 alertError(this,"2205");
             })
         },
@@ -344,17 +376,44 @@ export default {
             if (this.form.flag=='-1') {
                 let ID = item.ID;
                 let flag = "1";
-                unReadOrReadLocalMail(ID,flag).then((result)=>{
-                    }).catch((err)=>{
-                        alertError(this,"2206");
-                })
+                
+                unReadOrReadLocalMail(ID,flag).then((result)=>{})
+                .catch((err)=>{alertError(this,"2206");})
+
                 this.$router.push(this.$route.fullPath+"/examine/"+ID+'&'+this.form.flag);
             }else if (this.form.flag=='-2') {
                 let ID = item.MailID;
                 this.$router.push(this.$route.fullPath+"/examine/"+ID+'&'+this.form.flag);
             }
         },
-
+        clickRevocer(){
+            let flag = this.isReceive;
+            let array = this.checkEmailArr;
+            let Ids;
+            Ids = array[0].ID;
+            for (let i = 1; i < array.length; i++) {
+                Ids += ','+array[i].ID;
+            }
+            let loading = showLoading();
+            recoverDeleteMail(flag,Ids).then((result)=>{
+                closeLoading(loading);
+                if(result.data.Result==1){
+                    this.$message({
+                        message: '恢复成功',
+                        type: 'success'
+                    });
+                    this.loadList();
+                    this.form.flag = "-3"
+                }else{
+                    this.$message({
+                        message: '恢复失败',
+                        type: 'error'
+                    });
+                }
+            }).catch((err)=>{
+                alertError(this,"");
+            })
+        },
 
         //改变表样式
         getRowStyle({ row, column, rowIndex, columnIndex }){
@@ -362,7 +421,7 @@ export default {
                 if (columnIndex == 0) {
 				    return 'padding-bottom:7px;background:#38ADFF;color:#fff;'
                 }
-                return 'background:#38ADFF;color:#fff;'
+                return 'background:#38ADFF;color:#fff;text-align:center;'
             }
         },
         getColStyle({ row, column, rowIndex, columnIndex }){

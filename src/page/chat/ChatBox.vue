@@ -21,7 +21,7 @@
                 <div id="MessageForm-header">
                     <div class="MessageForm-tool">
                         <i class="iconfont-smile" @click.stop="showemoji=!showemoji"></i>
-                        <div class="expressionWrap" v-bind:class="{expressionWrapShow:showemoji}" @click.stop=""><i class="arrow"></i>
+                        <div class="expressionWrap" v-bind:class="{expressionWrapShow:showemoji}" @click.stop="stopMethod"><i class="arrow"></i>
                             <!-- <emoji ng-repeat="item in emojiList" item="item" content="msgvalue"></emoji> -->
                             <emoji v-for="(item,index) in emojiList" :key="index" :item="item" @insertEmoji="insertEmoji"></emoji>
                         </div>
@@ -181,6 +181,7 @@ export default {
             'SET_UPLOADFILE',
             'SET_CURRNEWMESSAGE',
         ]),
+        stopMethod(){},
         insertEmoji(item){
             // 插入到输入框
             this.currentConversation.draftMsg = this.currentConversation.draftMsg+item.symbol;

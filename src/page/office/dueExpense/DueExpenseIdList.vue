@@ -1,7 +1,7 @@
 <template>
     <div class="borrow">
         <chat-header :showBack="true" :title="'应付款'" :showRightBtn="false"></chat-header>
-        <div style="width:100%;padding-top:54px;padding-bottom:20px;">
+        <div style="width:100%;padding-top:54px;" :style="{bottom20:$route.meta.type=='stop'}">
             <el-form :inline="true" :model="formInline" class="demo-form-inline">
                 <!-- <el-form-item style="color:#8f8f94;">
                     延期支付报销记录
@@ -19,8 +19,8 @@
                 <!-- <el-form-item>
                     <el-button type="primary" size="medium" @click="loadExpenseDetail">查看报销信息</el-button>
                 </el-form-item> -->
-                <el-form-item style="float:right">
-                    <el-button type="primary" size="medium" @click="addDueExpenseID">添加</el-button>
+                <el-form-item style="float:right" v-show="$route.meta.type!='stop'">
+                    <el-button type="primary" size="medium" @click="addDueExpenseID" style="margin-bottom:10px;">添加</el-button>
                 </el-form-item>
             </el-form>
         </div>
@@ -122,8 +122,6 @@ export default {
             this.clickItem = item;
         },
         confirmDelete(){
-            let id = this.clickItem.ChargeBillID;
-            deletePaymentChargeDetail(id)
             
         }
     }
@@ -170,5 +168,8 @@ export default {
 }
 .el-form-item {
     margin-bottom: 0px !important;
+}
+.bottom20{
+    padding-bottom:20px;
 }
 </style>

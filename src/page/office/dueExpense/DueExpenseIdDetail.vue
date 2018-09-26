@@ -67,7 +67,7 @@
 
 <script>
 
-import { findAllRetiredStaffs,paymentChargeDetailForm,addOrUpdatePaymentChargeDetail } from '@/js/api'
+import { findAllRetiredStaffs,addOrUpdatePaymentChargeDetail,paymentChargeDetailForm,deletePaymentChargeAtt } from '@/js/api'
 import { showLoading,closeLoading,alertError,money} from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
 import ChatHeader from '@/components/chat/ChatHeader'
@@ -106,11 +106,11 @@ export default {
     },
     mounted(){
         if(this.$route.meta.type=='add'){
-            this.title = '添加应付款'
+            this.title = '添加应付款';
         }
         if(this.$route.meta.type=='update'){
-            this.title = '修改应付款'
-            this.paymentChargeDetailForm();
+            this.title = '修改应付款';
+            this.loadDetail();
         }
         this.getFinanceSignManagerName();
         this.form.plusSignManagerNameArr = this.findAllstaffs;
@@ -143,16 +143,16 @@ export default {
             let ChargeBillID = '-1';
             if(this.$route.meta.type=='update'){
                 state = '1';
-                ChargeBillID = this.$route.params.dueExpenseID;
+                ChargeBillID = this.$route.params.dueID;
             }
             let signers = '';
             if(this.form.FinanceSignManager){
                 signers += this.form.FinanceSignManager;
             }
-            if(this.form.FinanceSignManager2){
+            if(this.form.FinanceSignManager2&&this.form.FinanceSignManager2!='-1'){
                 signers += ',' + this.form.FinanceSignManager2;
             }
-            if(this.form.FinanceSignManager3){
+            if(this.form.FinanceSignManager3&&this.form.FinanceSignManager3!='-1'){
                 signers += ',' + this.form.FinanceSignManager3;
             }
             let moneyNum = this.form.money.split(',').join('');
@@ -207,57 +207,6 @@ export default {
             value = money(value)
             this.form.money = value;
         },
-        paymentChargeDetailForm(){
-            let staffID = this.userInfo.userStaffID;
-            let chargeBillId = this.$route.params.dueExpenseID;
-            let loading = showLoading();
-            paymentChargeDetailForm('Modify',staffID,chargeBillId,this.$route.params.expenseID).then((result)=>{
-                closeLoading(loading);
-                console.log(result);
-                let obj = result.data;
-                this.form.money = money(obj.Money);
-                this.form.remark = obj.Note;
-                if(obj.Signer1Value!='-1'){
-                    this.form.sidAdditionalSigner1 = obj.Signer1Value;
-                }
-                if(obj.Signer2Value!='-1'){
-                    this.form.sidAdditionalSigner2 = obj.Signer2Value;
-                }
-                for (let i = 0; i < obj.link.length; i++) {
-                    let obj1 = {"ID":"","fileName":"","type":"","imgPath":"","attachmentSize":"","AttachmentPath":""};
-                    let array = obj.link[i].FileName.split(".");
-                    obj1.type = array[array.length-1];
-                    obj1.AttachmentPath = obj.link[i].Path;
-                    if(obj1.type=="doc" || obj1.type=="docx"){
-                        obj1.imgPath = "static/images/doc.png";
-                    }else if(obj1.type=="xlsx" || obj1.type=="xls"){
-                        obj1.imgPath = "static/images/xlsx.png";
-                    }else if(obj1.type=="txt"){
-                        obj1.imgPath = "static/images/txt.png";
-                    }else if(obj1.type=="mp3"){
-                        obj1.imgPath = "static/images/mp3.png";
-                    }else if(obj1.type=="mp4"){
-                        obj1.imgPath = "static/images/mp4.png";
-                    }else if(obj.type=="jpg" || obj1.type=="jpeg" || obj1.type=="png" || obj1.type=="bmp"){
-                        obj1.imgPath = "static/images/pic.png";
-                    }else if(obj.type=="pdf"){
-                        obj1.imgPath = "static/images/pdf.png";
-                    }else if(obj.type=="imageText"){
-                        obj1.imgPath = "static/images/imageText.png";
-                    }else{
-                        obj1.imgPath = "static/images/undefined.png";
-                    }
-                    obj1.fileName = obj.link[i].FileName;
-                    // obj1.attachmentSize = obj.link[i].attachmentSize;
-                    obj1.ID = obj.link[i].FinanceAttachmentID;
-                    this.uploadArr.push(obj1);
-                    this.pathArr.push(obj1);
-                }
-            }).catch((err)=>{
-                closeLoading(loading);
-                alertError(this,'1318');
-            });
-        },
         //显示离线员工
         changePlusSignManagerName(){
             if(this.checked2){
@@ -308,6 +257,57 @@ export default {
                     continue;
                 }
             }
+        },
+        loadDetail(){
+            let cosNum = this.userInfo.cosNum;
+            console.log(this.$route.params)
+            let loading = showLoading();
+            paymentChargeDetailForm('Modify',this.$route.params.staffID,this.$route.params.dueID,this.$route.params.expenseID).then((result)=>{
+                closeLoading(loading);
+                let obj = result.data;
+                // this.detail.ApplyName = obj.fillStaffName;
+                this.form.money = money(obj.Money);
+                this.form.remark = obj.Note;
+                this.form.sidAdditionalSigner1 = obj.Signer1Value&&obj.Signer1Value!='-1'?obj.Signer1Value:'';
+                this.form.sidAdditionalSigner2 = obj.Signer2Value&&obj.Signer2Value!='-1'?obj.Signer2Value:'';
+                // this.detail.link = obj.link;
+                // this.detail.approvalArr = [];
+                for(let i=0;i<obj.link.length;i++){
+                    let object = {"fileName":"","type":"","imgPath":""};
+                    console.log(obj.link[0])
+                    object.fileName = obj.link[i].FileName;
+                    
+                    let names = object.fileName.split(".");
+                    object.type = names[names.length-1];
+                    if(object.type=="doc" || object.type=="docx"){
+                        object.imgPath = "static/images/doc.png";
+                    }else if(object.type=="xlsx" || object.type=="xls"){
+                        object.imgPath = "static/images/xlsx.png";
+                    }else if(object.type=="txt"){
+                        object.imgPath = "static/images/txt.png";
+                    }else if(object.type=="mp3"){
+                        object.imgPath = "static/images/mp3.png";
+                    }else if(object.type=="mp4"){
+                        object.imgPath = "static/images/mp4.png";
+                    }else if(object.type=="jpg" || object.type=="jpeg" || object.type=="png" || object.type=="bmp"){
+                        object.imgPath = "static/images/pic.png";
+                    }else if(object.type=="pdf"){
+                        object.imgPath = "static/images/pdf.png";
+                    }else if(object.type=="imageText"){
+                        object.imgPath = "static/images/imageText.png";
+                    }else{
+                        object.imgPath = "static/images/undefined.png";
+                    }
+                    object.ID = obj.link[i].FinanceAttachmentID;
+                    this.uploadArr.push(object);
+                    this.pathArr.push(object);
+                }
+            })
+            .catch((err)=>{
+                console.log(err)
+                alertError(this,"1089");
+                closeLoading(loading);
+            });
         },
         //拖拽添加附件
         drop(e){
@@ -400,25 +400,25 @@ export default {
         confirmDelete(){
             let index = this.currDelFileObj.index;
             let id = this.pathArr[index].ID;
-            // deletePaymentChargeDetail(id)
-            // .then((result)=>{
-            //     if(result.data.Result=='1'){
-            //         this.$message({
-            //             type:"success",
-            //             message:"删除成功"
-            //         });
-            //         this.uploadArr.splice(index,1);
-            //         this.pathArr.splice(index,1);
-            //         this.dialogFormVisible = false;
-            //     }else{
-            //         this.$message.error({
-            //             message:"删除失败"
-            //         })
-            //     }
-            // })
-            // .catch((err)=>{
-            //     alertError(this,"2210");
-            // });
+            deletePaymentChargeAtt(id)
+            .then((result)=>{
+                if(result.data.Reult=='1'){
+                    this.$message({
+                        type:"success",
+                        message:"删除成功"
+                    });
+                    this.uploadArr.splice(index,1);
+                    this.pathArr.splice(index,1);
+                    this.dialogFormVisible = false;
+                }else{
+                    this.$message.error({
+                        message:"删除失败"
+                    })
+                }
+            })
+            .catch((err)=>{
+                alertError(this,"2210");
+            });
         },
         deleteImage(item,index){
             if(!item.isNew){

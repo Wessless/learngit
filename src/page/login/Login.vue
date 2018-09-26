@@ -62,11 +62,11 @@
 // import main from '@/style/main.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import QRCode from 'qrcode';
-import config from '../../../config';
+import config from '@config';
 import {aesEncrypt, aesDecrypt} from '@/config/AES';// AES加密解密算法
 import {_setSession, _getSession,alertError } from '@/config/utils';
 import {mapState, mapMutations} from 'vuex'
-import { getCosByCosNum, login, getUUID, checkUUID, checkIP, getCosType,findAllStaffs} from '@/js/api'
+import { getCosByCosNum, login, getUUID, checkUUID, checkIP, getCosType,findAllStaffs,getPassword} from '@/js/api'
 
 
 export default {
@@ -148,6 +148,7 @@ export default {
             let currProxy = "";
             let cosNum = response.data.CosNum;
             let proxyTables = config.dev.proxyTable;
+            let password = '';
 
             for(let proxyTable in proxyTables){
                 if(proxyTables[proxyTable].target==currCOSIP){
@@ -163,15 +164,18 @@ export default {
                 response.data.currCOSImgIP = currCOSIP;
                 response.data.cosNum = cosNum;
                 response.data.portrait = response.data.imagePath;
+                response.data.loginName = response.data.mobile;
+                response.data.password = password;
                 staffInfo = response.data;
                 this.SAVE_USERINFO(staffInfo);
                 let user_info = aesEncrypt(JSON.stringify(staffInfo));
                 _setSession('user_info',user_info);
-                return getCosType();
+                return Promise.all([getCosType(),getPassword(response.data.userStaffID)]);
             }).then((result)=>{
                 // 登录成功后再storage中添加cosType
                 if(result){
-                    staffInfo.cosType = result.data.costype;
+                    staffInfo.cosType = result[0].data.costype;
+                    staffInfo.password = result[1].data.Password;
                     this.SAVE_USERINFO(staffInfo);
                     let user_info = aesEncrypt(JSON.stringify(staffInfo));
                     _setSession('user_info',user_info);
@@ -193,15 +197,18 @@ export default {
                 response.data.currCOSImgIP = "http://172.16.1.100:888/";
                 response.data.cosNum = cosNum;
                 response.data.portrait = response.data.imagePath;
+                response.data.loginName = response.data.mobile;
+                response.data.password = password;
                 staffInfo = response.data;
                 this.SAVE_USERINFO(staffInfo);
                 let user_info = aesEncrypt(JSON.stringify(staffInfo));
                 _setSession('user_info',user_info);
-                return getCosType();
+                return Promise.all([getCosType(),getPassword(response.data.userStaffID)]);
             }).then((result)=>{
                 // 登录成功后再storage中添加cosType
                 if(result){
-                    staffInfo.cosType = result.data.costype;
+                    staffInfo.cosType = result[0].data.costype;
+                    staffInfo.password = result[1].data.Password;
                     this.SAVE_USERINFO(staffInfo);
                     let user_info = aesEncrypt(JSON.stringify(staffInfo));
                     _setSession('user_info',user_info);
@@ -239,7 +246,8 @@ export default {
             getCosByCosNum(this.user.cosNum).then((response) => {
                 currCOSIP = response.data.F_CosUrl;
                 let proxyTables = config.dev.proxyTable;
-                
+                console.log(proxyTables)
+                console.log(currCOSIP)
                 for(let proxyTable in proxyTables){
                     if(proxyTables[proxyTable].target==currCOSIP){
                         currProxy = proxyTable
@@ -248,13 +256,17 @@ export default {
             })
             .then(() => {
                 let staffInfo = null;
+                console.log(currProxy,this.user.cosNum,this.user.userName,this.user.passWord)
                 login(currProxy,this.user.cosNum,this.user.userName,this.user.passWord).then((response) => {
+                    console.log(response)
                     if(response.data.ret == 1){
                         response.data.currProxy = currProxy;
                         response.data.currCOSIP = currCOSIP;
                         response.data.currCOSImgIP = currCOSIP;
                         response.data.cosNum = this.user.cosNum;
                         response.data.portrait = response.data.imagePath;
+                        response.data.loginName = this.user.userName;
+                        response.data.password = this.user.passWord;
                         staffInfo = response.data;
                         this.SAVE_USERINFO(staffInfo);
                         let user_info = aesEncrypt(JSON.stringify(staffInfo));
@@ -275,15 +287,22 @@ export default {
                     }
                 }).catch((err)=>{
                     // alertError(this,"2001");
+                    console.log('cos1');
+                    console.log(err);
+                    this.passwordError = this.$t("message.login.passwordError");
+                    this.showPasswordError = true;
                 });
 
                 login('/COS0IN',this.user.cosNum,this.user.userName,this.user.passWord).then((response) => {
+                    console.log(response);
                     if(response.data.ret == 1){
                         response.data.currProxy = "/COS0IN";
                         response.data.currCOSIP = "http://172.16.1.100:888/";
                         response.data.currCOSImgIP = "http://172.16.1.100:888/";
                         response.data.cosNum = this.user.cosNum;
                         response.data.portrait = response.data.imagePath;
+                        response.data.loginName = this.user.userName;
+                        response.data.password = this.user.passWord;
                         staffInfo = response.data;
                         
                         this.SAVE_USERINFO(staffInfo);
@@ -305,6 +324,9 @@ export default {
                     }
                 }).catch((err)=>{
                     // alertError(this,"2001");
+                    console.log(err);
+                    this.passwordError = this.$t("message.login.passwordError");
+                    this.showPasswordError = true;
                 });
             })
             .catch((error) => {

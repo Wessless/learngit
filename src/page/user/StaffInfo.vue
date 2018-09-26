@@ -437,9 +437,9 @@ export default {
     display: flex;
     align-items: center;
 }
-.userFunPannel ul li:last-child{
-    /*margin-top: 300px;*/
-}
+/* .userFunPannel ul li:last-child{
+    
+} */
 .redColor{
     color: #ff0000;
 }

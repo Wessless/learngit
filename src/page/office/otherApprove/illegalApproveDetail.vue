@@ -75,7 +75,7 @@ export default {
                 approvalArr:[]
             },
             stamperImageUrl:"",
-            status:"1",
+            status:"",
         }
     },
     components:{
@@ -142,12 +142,6 @@ export default {
             if (result != "1"&&result != "2") {
                 this.$message.error({
                     message:"请签字"
-                })
-                return
-            }
-            if (remark == "") {
-                this.$message.error({
-                    message:"请输入签字人评论"
                 })
                 return
             }

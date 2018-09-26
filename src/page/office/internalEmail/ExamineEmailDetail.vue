@@ -131,7 +131,7 @@ export default {
         loadEmail(){
             let staffID = this.userInfo.userStaffID;
             this.emailID = this.$route.params.emailID.split("&")[0];
-            let cosNum = this.userInfo.cosNum;
+            let cosNum = 'COS'+this.userInfo.cosNum;
             let ip = this.userInfo.currCOSIP.split("//")[1].split(":")[0];
             let loading = showLoading();
             if (this.flag=='-1') {
@@ -174,6 +174,7 @@ export default {
                     console.log(obj)
                 }).catch((err)=>{
                     alertError(this,"1314");
+                    closeLoading(loading)
                 });
             }
             if (this.flag=='-2') {

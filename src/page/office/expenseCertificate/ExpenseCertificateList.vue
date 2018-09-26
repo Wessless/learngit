@@ -161,12 +161,12 @@ export default {
         },
         confirmPayment(){
             let chargeDate = this.form.isToday?"":this.form.chargeDate;
-            if(payDate==""&&this.form.isToday==false){
+            if(chargeDate==""&&this.form.isToday==false){
                 this.$message.error({
                     message: '请选择记账日期',
                 });
             }else{
-                bchargeDateInput(this.currChargeBillID,this.form.isToday?'1':'0',ChargeDate).then((result)=>{
+                bchargeDateInput(this.currChargeBillID,this.form.isToday?'1':'0',chargeDate).then((result)=>{
                     if(result.data.Result==1){
                         this.$message({
                             message: '修改成功',

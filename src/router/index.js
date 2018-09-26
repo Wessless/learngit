@@ -126,7 +126,28 @@ import BorrowCertificateList from '@/page/office/borrowCertificate/BorrowCertifi
 import DueExpenseList from '@/page/office/dueExpense/DueExpenseList'
 import DueExpenseIdList from '@/page/office/dueExpense/DueExpenseIdList'
 import DueExpenseIdDetail from '@/page/office/dueExpense/DueExpenseIdDetail'
-import dueApproveDetail from '@/page/office/otherApprove/dueApproveDetail'
+import SchoolInformList from '@/page/office/schoolInform/SchoolInformList'
+import SchoolInformDetail from '@/page/office/schoolInform/SchoolInformDetail'
+import ParentschoolContactList from '@/page/office/parentschoolContact/ParentschoolContactList'
+import ParentschoolContactDetail from '@/page/office/parentschoolContact/ParentschoolContactDetail'
+import SchoolPhotoesList from '@/page/office/schoolInform/SchoolPhotoesList'
+import SchoolPhotoesDetail from '@/page/office/schoolInform/SchoolPhotoesDetail'
+import ParentschoolPhotoesList from '@/page/office/parentschoolContact/ParentschoolPhotoesList'
+import ParentschoolPhotoesDetail from '@/page/office/parentschoolContact/ParentschoolPhotoesDetail'
+import ChildPhotoesList from '@/page/office/childPhotoes/ChildPhotoesList'
+import ChildPhotoesDetail from '@/page/office/childPhotoes/ChildPhotoesDetail'
+import teacherWordList from '@/page/office/teacherWord/teacherWordList'
+import teacherWordDetail from '@/page/office/teacherWord/teacherWordDetail'
+import ChargeExpendList from '@/page/group/chargeExpend/ChargeExpendList'
+import ChargeExpendDetail from '@/page/group/chargeExpend/ChargeExpendDetail'
+import StaffDataList from '@/page/group/staffData/StaffDataList'
+import StudentDataList from '@/page/group/studentData/StudentDataList'
+import DuePaymentList from '@/page/office/duePayment/DuePaymentList'
+import DuePaymentDetail from '@/page/office/duePayment/DuePaymentDetail'
+import DueCertificateList from '@/page/office/dueCertificate/DueCertificateList'
+import DueFindList from '@/page/office/dueFind/DueFindList'
+import BankAccountList from '@/page/office/bankAccount/BankAccountList'
+import BankAccountDetail from '@/page/office/bankAccount/BankAccountDetail'
 
 Vue.use(Router);
 
@@ -1147,31 +1168,203 @@ export default new Router({
           component: DueExpenseIdList
         },
         {
-          path: "office/:id/examineApprove/dueApply/:expenseID/detail",
+          path:"office/:id/examineApprove/dueApply/:expenseID/dueDetail/:staffID/:dueID",
+          meta: { pageType: "office" },
+          component: DuePaymentDetail
+        },
+        {
+          path: "office/:id/examineApprove/dueApply/:expenseID/detail",// 报销详情
           meta: { pageType: "office" },
           component: ExpensePaymentDetail
         },
         {
-          path: "office/:id/examineApprove/dueApply/:expenseID/add",
+          path: "office/:id/examineApprove/dueApply/:expenseID/add",// 添加审批
           meta: { pageType: "office", type:"add" },
           component: DueExpenseIdDetail
         },
         {
-          path: "office/:id/examineApprove/updateDue/:expenseID/:examineID/:dueExpenseID",
+          path: "office/:id/examineApprove/updateDue/:expenseID/:staffID/:examineID/:dueID",// 修改审批
           meta: { pageType: "office", type:"update" },
           component: DueExpenseIdDetail
         },
         // 应付款审批
         {
-          path:"office/:id/examineApprove/examineDue/:expenseID/:examineID/:dueExpenseID",// 详情
+          path:"office/:id/examineApprove/examineDue/:expenseID/:staffID/:examineID/:dueID",// 详情
           meta: { pageType: "office" ,type:"examine"},
-          component: dueApproveDetail
+          component: DuePaymentDetail
         },
         {
-          path:"office/:id/examineApprove/approveDue/:expenseID/:examineID/:dueExpenseID",// 审批
+          path:"office/:id/examineApprove/approveDue/:expenseID/:staffID/:examineID/:dueID",// 审批
           meta: { pageType: "office" ,type:"approve"},
-          component: dueApproveDetail
+          component: DuePaymentDetail
         },
+        // 应付款支付
+        {
+          path:"office/:id/duePayment",
+          meta: { pageType: "office" },
+          component: DuePaymentList
+        },
+        {
+          path:"office/:id/duePayment/:expenseID/:staffID/:dueID",
+          meta: { pageType: "office", type:"detail" },
+          component: DuePaymentDetail
+        },
+        // 应付款终止
+        {
+          path:"office/:id/dueStop",
+          meta: { pageType: "office",type:"stop" },
+          component: DueExpenseList
+        },
+        {
+          path:"office/:id/dueStop/:expenseID",
+          meta: { pageType: "office",type:"stop" },
+          component: DueExpenseIdList
+        },
+        {
+          path: "office/:id/dueStop/:expenseID/dueDetail/:staffID/:dueID",
+          meta: { pageType: "office" },
+          component: DuePaymentDetail
+        },
+        {
+          path: "office/:id/dueStop/:expenseID/detail",
+          meta: { pageType: "office" },
+          component: ExpensePaymentDetail
+        },
+        // 应付款凭证
+        {
+          path:"office/:id/dueCertificate",
+          meta: { pageType: "office" },
+          component: DueCertificateList
+        },
+        {
+          path: "office/:id/dueCertificate/certificate/:expenseID/:staffID/:dueID",
+          meta: { pageType: "office", type:"certificate" },
+          component: DuePaymentDetail
+        },
+        // 应付款查询
+        {
+          path:"office/:id/dueFind",
+          meta: { pageType: "office" },
+          component: DueFindList
+        },
+        {
+          path:"office/:id/dueFind/:expenseID/:staffID/:dueID",
+          meta: { pageType: "office" },
+          component: DuePaymentDetail
+        },
+        // 银行账户
+        {
+          path:"office/:id/bankAccount",
+          meta: { pageType: "office" },
+          component: BankAccountList
+        },
+        {
+          path:"office/:id/bankAccount/add",
+          meta: { pageType: "office", type:"add" },
+          component: BankAccountDetail
+        },
+        {
+          path:"office/:id/bankAccount/update/:bankID",
+          meta: { pageType: "office", type:"update" },
+          component: BankAccountDetail
+        },
+        //园所通知
+        {
+          path:"office/:id/schoolInform",
+          meta: { pageType: "office" },
+          component: SchoolInformList
+        },
+        {
+          path:"office/:id/schoolInform/examine/:noticeID",
+          meta: { pageType: "office" ,type:"examine"},
+          component: SchoolInformDetail
+        },
+        //家校联络
+        {
+          path:"office/:id/parentschoolContact",
+          meta: { pageType: "office" },
+          component: ParentschoolContactList
+        },
+        {
+          path:"office/:id/parentschoolContact/examine/:noticeID",
+          meta: { pageType: "office" ,type:"examine"},
+          component: ParentschoolContactDetail
+        },
+        //园所相册
+        {
+          path:"office/:id/schoolPhotoes",
+          meta: { pageType: "office" },
+          component: SchoolPhotoesList
+        },
+        {
+          path:"office/:id/schoolPhotoes/examine/:noticeID",
+          meta: { pageType: "office" ,type:"examine"},
+          component: SchoolPhotoesDetail
+        },
+        //班级相册
+        {
+          path:"office/:id/parentschoolPhotoes",
+          meta: { pageType: "office" },
+          component: ParentschoolPhotoesList
+        },
+        {
+          path:"office/:id/parentschoolPhotoes/examine/:noticeID",
+          meta: { pageType: "office" ,type:"examine"},
+          component: ParentschoolPhotoesDetail
+        },
+        //个人相册
+        {
+          path:"office/:id/childPhotoes",
+          meta: { pageType: "office" },
+          component: ChildPhotoesList
+        },
+        {
+          path:"office/:id/childPhotoes/examine/:photoesID",
+          meta: { pageType: "office" ,type:"examine"},
+          component: ChildPhotoesDetail
+        },
+        //老师的话
+        {
+          path:"office/:id/teacherWord",
+          meta: { pageType: "office" },
+          component: teacherWordList
+        },
+        {
+          path:"office/:id/teacherWord/examine/:wordID",
+          meta: { pageType: "office" ,type:"examine"},
+          component: teacherWordDetail
+        },
+        //集团
+        {
+          path: "group",
+          meta: { pageType: "group" }
+        },
+        //费用支出
+        {
+          path: "group/:cosNum/chargeExpend",
+          meta: { pageType: "group" },
+          component: ChargeExpendList,
+          children:[
+            {
+              path:"expense/:expenseID",
+              meta: { pageType: "group" ,type:"find"},
+              component: ChargeExpendDetail
+            },
+          ]
+        },
+        //员工数据
+        {
+          path: "group/:cosNum/staffData",
+          meta: { pageType: "group" },
+          component: StaffDataList,
+        },
+        //学员数据
+        {
+          path: "group/:cosNum/studentData",
+          meta: { pageType: "group" },
+          component: StudentDataList,
+        },
+
       ]
     }
   ]

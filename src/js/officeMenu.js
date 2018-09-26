@@ -159,17 +159,17 @@ export default () => {
         "3002": {
             router:"/borrowFind",
             modulesNum:"3",
-            sortNum:2
+            sortNum:4
         },
         "3003": {
-            router:"",
+            router:"/bankAccount",
             modulesNum:"3",
-            sortNum:3
+            sortNum:15
         },
         "3004": {
             router:"/expensePayment",
             modulesNum:"3",
-            sortNum:4
+            sortNum:2
         },
         "3005": {
             router:"/borrowPayment",
@@ -179,22 +179,42 @@ export default () => {
         "3006": {
             router:"/setTuitionSubject",
             modulesNum:"3",
-            sortNum:6
+            sortNum:16
         },
         "3008": {
             router:"/borrowRepayment",
             modulesNum:"3",
-            sortNum:8
+            sortNum:7
         },
         "3009": {
             router:"/borrowCertificate",
             modulesNum:"3",
-            sortNum:9
+            sortNum:6
         },
         "3010": {
             router:"/expenseCertificate",
             modulesNum:"3",
-            sortNum:10
+            sortNum:3
+        },
+        "3011": {
+            router:"/duePayment",
+            modulesNum:"3",
+            sortNum:11
+        },
+        "3012": {
+            router:"/dueStop",
+            modulesNum:"3",
+            sortNum:14
+        },
+        "3013": {
+            router:"/dueCertificate",
+            modulesNum:"3",
+            sortNum:13
+        },
+        "3014": {
+            router:"/dueFind",
+            modulesNum:"3",
+            sortNum:8
         },
         "4001": {
             router:"",
@@ -350,6 +370,37 @@ export default () => {
             router:"/interestClassTexpend",
             modulesNum:"9",
             sortNum:8
+        },
+        "6002": {
+            router:"/schoolInform",
+            modulesNum:"8",
+            sortNum:1
+        },
+        "6008": {
+            router:"/parentschoolContact",
+            MenuName:"家校联络",
+            modulesNum:"8",
+            sortNum:2
+        },
+        "6001": {
+            router:"/schoolPhotoes",
+            modulesNum:"8",
+            sortNum:3
+        },
+        "6007": {
+            router:"/parentschoolPhotoes",
+            modulesNum:"8",
+            sortNum:4
+        },
+        "6012": {
+            router:"/childPhotoes",
+            modulesNum:"8",
+            sortNum:5
+        },
+        "6013": {
+            router:"/teacherWord",
+            modulesNum:"8",
+            sortNum:6
         },
         
     }

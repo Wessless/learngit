@@ -1,7 +1,7 @@
 <template>
     <div class="mainBox pull-left">
         <vue-context-menu :contextMenuData="contextMenuData" @deleteConversation="deleteConversation" @setTop="setTop"></vue-context-menu>
-        <div id="search-friend" v-show="$route.meta.pageType!='cloudDisk'&&$route.meta.pageType!='office'">
+        <div id="search-friend" v-show="$route.meta.pageType!='cloudDisk'&&$route.meta.pageType!='office'&&$route.meta.pageType!='group'">
             <search-input style="flex:1;" :placeholder="$t('message.friendList.search')"></search-input>
             <div class="createGroupBtn iconfont" @click="createGroup">&#xe6b9;</div>
         </div>
@@ -47,6 +47,21 @@
         <div v-show="$route.meta.pageType=='office'">
             <office-item v-for="(item,index) in mainData.officeList" :key="index" :item="item"></office-item>
         </div>
+        <div v-show="$route.meta.pageType=='group'" class="groupcompanyList">
+            <div class="companyBody" @click="showcompany=!showcompany">
+                <group-company-item v-if="mainData.groupcompanyList.data" :item="mainData.groupcompanyList.data" :showcompany="showcompany" :isGroup="true" @changeIsShowGroup="changeIsShowGroup" @changeLogin="changeLogin"></group-company-item>
+            </div>
+            <div class="companyBody" v-show="showcompany">
+                <group-company-item v-for="(item,index) in mainData.groupcompanyList.child" :key="index" :item="item.data" @changeIsShowGroup="changeIsShowGroup" @changeLogin="changeLogin"></group-company-item>
+            </div>
+            <!-- <div class="companyBody" @click="showcompany=!showcompany">
+                <group-company-item :item="mainData.groupFirstData" :isGroup="true" @changeIsShowGroup="changeIsShowGroup"></group-company-item>
+            </div>
+            <div class="companyBody" v-show="showcompany">
+                <group-company-item v-for="(item,index) in mainData.groupcompanyList" :key="index" :item="item" @changeIsShowGroup="changeIsShowGroup"></group-company-item>
+            </div> -->
+        </div>
+
     </div>
 </template>
 
@@ -59,10 +74,15 @@ import groupItem from '@/page/chat/GroupItem'
 import friendItem from '@/page/chat/FriendItem'
 import cloudDiskItem from '@/page/cloudDisk/CloudDiskItem'
 import officeItem from '@/page/office/OfficeItem'
+import groupCompanyItem from '@/page/group/GroupCompanyItem'
+
 import {mapState, mapMutations, mapActions} from 'vuex'
-import { alertError } from '@/config/utils'
+import { _setSession,_getSession,_removeSession,alertError } from '@/config/utils'
+import {aesEncrypt, aesDecrypt} from '@/config/AES';// AES加密解密算法
+import config from '@config';
 import { rong_getConversationList,rong_getConversation,rong_removeConversation,rong_setConversationToTop,rong_clearUnreadCount,rong_SendSyncReadStatusMessage } from '@/js/rongCloud'
-import { findAllStaffs,getGroupsByStaffID,findStaffsByStaffIDs,findChildrenByChildIDs,getGroupsByID,getMenusByStaffID } from '@/js/api'
+import { findAllStaffs,getGroupsByStaffID,findStaffsByStaffIDs,findChildrenByChildIDs,getGroupsByID,getMenusByStaffID,getGroupAllCos,getCosByCosNum,login,getCosType } from '@/js/api'
+import officeMenu from '@/js/officeMenu'
 
 export default {
     name: 'FriendList',
@@ -70,6 +90,7 @@ export default {
         return {
             showfriends:false,//是否显示联系人
             showgroups:false,//是否显示群组
+            showcompany:true,//是否显示集团下内容
             switchbtn: {
                 isFriendList:true,
                 issearchList: false
@@ -84,7 +105,7 @@ export default {
                 contactsList:{
                     subgroupList:[],
                     groupList:[],
-                    friendList:[]
+                    friendList:[],
                 },
                 cloudDiskList:[
                     {
@@ -149,7 +170,10 @@ export default {
                     //         background:"#932cd8"
                     //     }
                     // }
-                ]
+                ],
+                groupObj:{},
+                groupFirstData:{},
+                groupcompanyList:{},
             },
             // contextmenu data (菜单数据)
             contextMenuData: {
@@ -186,6 +210,7 @@ export default {
         // this.findAllStaffs();
         this.getGroupsByStaffID();
         this.getMenusByStaffID();
+        this.getGroupAllCos();
     },
     components:{
         searchInput,
@@ -194,7 +219,8 @@ export default {
         groupItem,
         friendItem,
         cloudDiskItem,
-        officeItem
+        officeItem,
+        groupCompanyItem
     },
     computed:{
         ...mapState([
@@ -291,6 +317,7 @@ export default {
             'SET_CURRFRIENDLIST',
             'SET_ALLSTAFFS',
             'SET_MYGROUPS',
+            'SAVE_USERINFO',
         ]),
         ...mapActions([
             'rong_init',
@@ -308,6 +335,7 @@ export default {
             if(this.userInfo.userStaffID){
                 getMenusByStaffID(this.userInfo.userStaffID).then((result)=>{
                     this.menusArray = result.data.data;
+                    let menus = officeMenu();
                     let menu1 = false;
                     let menu2 = false;
                     let menu3 = false;
@@ -316,32 +344,34 @@ export default {
                     let menu6 = false;
                     let menu9 = false;
                     let menu7 = false;
+                    let menu8 = false;
                     for(let i=0;i<this.menusArray.length;i++){
-                        if(this.menusArray[i].Num[0]=='1'){
+                        if(menus[this.menusArray[i].Num]&&menus[this.menusArray[i].Num].modulesNum=='1'){
                             menu1 = true;
                         }
-                        if(this.menusArray[i].Num[0]=='2'){
+                        if(menus[this.menusArray[i].Num]&&menus[this.menusArray[i].Num].modulesNum=='2'){
                             menu2 = true;
                         }
-                        if(this.menusArray[i].Num[0]=='3'){
+                        if(menus[this.menusArray[i].Num]&&menus[this.menusArray[i].Num].modulesNum=='3'){
                             menu3 = true;
                         }
-                        if(this.menusArray[i].Num[0]=='4'){
+                        if(menus[this.menusArray[i].Num]&&menus[this.menusArray[i].Num].modulesNum=='4'){
                             menu4 = true;
                         }
-                        if(this.menusArray[i].Num[0]=='5'){
+                        if(menus[this.menusArray[i].Num]&&menus[this.menusArray[i].Num].modulesNum=='5'){
                             menu5 = true;
                         }
-                        if(this.menusArray[i].Num[0]=='6'){
-                            if(this.menusArray[i].Num!='6001'&&this.menusArray[i].Num!='6002'&&this.menusArray[i].Num!='6003'&&this.menusArray[i].Num!='6005'&&this.menusArray[i].Num!='6006'&&this.menusArray[i].Num!='6007'&&this.menusArray[i].Num!='6008'&&this.menusArray[i].Num!='6009'&&this.menusArray[i].Num!='6011'&&this.menusArray[i].Num!='6012'&&this.menusArray[i].Num!='6013'&&this.menusArray[i].Num!='6014'&&this.menusArray[i].Num!='6015'&&this.menusArray[i].Num!='6020'&&this.menusArray[i].Num!='6021'&&this.menusArray[i].Num!='6022'){
-                                menu6 = true;
-                            }
+                        if(menus[this.menusArray[i].Num]&&menus[this.menusArray[i].Num].modulesNum=='6'){
+                            menu6 = true;
                         }
-                        if(this.menusArray[i].Num[0]=='9'){
-                            menu9 = true;
-                        }
-                        if(this.menusArray[i].Num[0]=='7'){
+                        if(menus[this.menusArray[i].Num]&&menus[this.menusArray[i].Num].modulesNum=='7'){
                             menu7 = true;
+                        }
+                        if(menus[this.menusArray[i].Num]&&menus[this.menusArray[i].Num].modulesNum=='8'){
+                            menu8 = true;
+                        }
+                        if(menus[this.menusArray[i].Num]&&menus[this.menusArray[i].Num].modulesNum=='9'){
+                            menu9 = true;
                         }
                     }
                     if(menu1){
@@ -440,39 +470,94 @@ export default {
                             }
                         });
                     }
-                    // if(this.userInfo.cosType=="1"){
-                    //     this.mainData.officeList.push({
-                    //         title:"幼儿管理",
-                    //         content:"",
-                    //         name:"6",
-                    //         url:"/mainpage/office/6",
-                    //         imgUrl:"static/images/office/childAdmin.png",
-                    //         styleObj:{
-                    //             background:"#42CBFA"
-                    //         }
-                    //     },{
-                    //         title:"兴趣班管理",
-                    //         content:"",
-                    //         name:"9",
-                    //         url:"/mainpage/office/9",
-                    //         imgUrl:"static/images/office/interestClass.png",
-                    //         styleObj:{
-                    //             background:"#FF9999"
-                    //         }
-                    //     },{
-                    //         title:"教学管理",
-                    //         content:"",
-                    //         name:"7",
-                    //         url:"/mainpage/office/7",
-                    //         imgUrl:"static/images/office/teachManager.png",
-                    //         styleObj:{
-                    //             background:"#a0522d"
-                    //         }
-                    //     });
-                    // }
+                    if(menu8){
+                        this.mainData.officeList.push({
+                            title:"家园通管理",
+                            content:"",
+                            name:"8",
+                            url:"/mainpage/office/8",
+                            imgUrl:"static/images/office/homesteadManager.png",
+                            styleObj:{
+                                background:"#008000"
+                            }
+                        });
+                    }
                 }).catch((err)=>{
                     alertError(this,"1016");
+                    console.log(err)
                 });
+            }
+        },
+        //获取所有集团幼儿园
+        getGroupAllCos(){
+            let cosNum = this.userInfo.cosNum;
+            let acctID = this.userInfo.mobile;
+            if(acctID){
+                getGroupAllCos(cosNum,acctID).then((result)=>{
+                    // console.log(result.data)
+                    let data = result.data;
+                    let firstCosNum = "";
+                    firstCosNum = data[0].F_CosNum;
+                    for(let i=0;i<data.length;i++){
+                        data[i].isShowGroup = false;
+                        this.mainData.groupObj[data[i].F_CosNum] = data[i];
+                    }
+                    this.mainData.groupcompanyList = this.concatChild({},data[0]);
+                    console.log(this.mainData.groupcompanyList);
+                }).catch((err)=>{
+                    alertError(this,"1991");
+                    console.log(err)
+                });
+            }
+        },
+        concatChild(firstData,dataObj){
+			firstData.data = dataObj;
+			firstData.child = [];
+			let childCosNums = dataObj.F_Child?dataObj.F_Child.split(","):[];
+			for(let m=0;m<childCosNums.length;m++){
+				let childObj = {};
+				if(this.mainData.groupObj[childCosNums[m]]){
+					this.concatChild(childObj,this.mainData.groupObj[childCosNums[m]]);
+					firstData.child.push(childObj);
+				}
+            };
+            return firstData;
+		},
+        changeIsShowGroup(cosNum){
+            if (this.mainData.groupcompanyList.data.F_CosNum==cosNum) {
+                if(this.mainData.groupcompanyList.data.isShowGroup){
+                    this.mainData.groupcompanyList.data.isShowGroup = false;
+                }else{
+                    this.mainData.groupcompanyList.data.isShowGroup = true;
+                }
+            }else{
+                this.mainData.groupcompanyList.data.isShowGroup = false;
+            }
+            for (let i = 0; i < this.mainData.groupcompanyList.child.length; i++) {
+                let item = this.mainData.groupcompanyList.child[i];
+                if (item.data.F_CosNum==cosNum) {
+                    if(item.data.isShowGroup){
+                        item.data.isShowGroup = false;
+                    }else{
+                        item.data.isShowGroup = true;
+                    }
+                }else{
+                    item.data.isShowGroup = false;
+                }
+                if(item.child&&item.child.length>0){
+                    for (let j = 0; j < item.child.length; j++) {
+                        let itemElse = item.child[j];
+                        if (itemElse.data.F_CosNum==cosNum) {
+                            if(itemElse.data.isShowGroup){
+                                itemElse.data.isShowGroup = false;
+                            }else{
+                                itemElse.data.isShowGroup = true;
+                            }
+                        }else{
+                            itemElse.data.isShowGroup = false;
+                        }
+                    }
+                }
             }
         },
         // 加载会话列表
@@ -701,6 +786,140 @@ export default {
             })
             
         },
+        changeLogin(item){
+            // console.log(item);
+            this.$alert('你确定要切换到【'+item.F_CosName+'】吗？', '温馨提示', {
+                confirmButtonText: '确定',
+                callback: action => {
+                    if(action=='confirm'){
+                        this.signin({
+                            cosNum: item.F_CosNum,
+                            userName: this.userInfo.mobile?this.userInfo.mobile:this.userInfo.loginName,
+                            passWord: this.userInfo.password
+                        });
+                    }
+                }
+            });
+        },
+        loginError(){
+            this.$alert('用户名密码错误，是否退出到登录页面？', '温馨提示', {
+                confirmButtonText: '确定',
+                showCancelButton: true,
+                callback: action => {
+                    if(action=='confirm'){
+                        _removeSession('user_info');
+                        this.$router.push('/login');
+                    }
+                }
+            });
+        },
+        reloadPage(){
+            window.location.reload([true]);
+        },
+        // 用户名密码登录
+        signin(user){
+            // if (!this.user.userName) {
+            //     this.passwordError = this.$t("message.login.pleaseUsername");
+            //     this.showPasswordError = true;
+            //     return;
+            // }else if(!this.user.passWord){
+            //     this.passwordError = this.$t("message.login.pleasePassword");
+            //     this.showPasswordError = true;
+            //     return;
+            // }else if(!this.user.cosNum){
+            //     this.passwordError = this.$t("message.login.pleaseCOSNum");
+            //     this.showPasswordError = true;
+            //     return;
+            // }
+            // this.passwordError = '';
+            // this.showPasswordError = false;
+            let currCOSIP = "";
+            let currProxy = "";
+            getCosByCosNum(user.cosNum).then((response) => {
+                currCOSIP = response.data.F_CosUrl;
+                let proxyTables = config.dev.proxyTable;
+                console.log(currCOSIP)
+                for(let proxyTable in proxyTables){
+                    if(proxyTables[proxyTable].target==currCOSIP){
+                        currProxy = proxyTable
+                    }
+                }
+            })
+            .then(() => {
+                let staffInfo = null;
+                console.log(currProxy,user.cosNum,user.userName,user.passWord)
+                login(currProxy,user.cosNum,user.userName,user.passWord).then((response) => {
+                    console.log(response)
+                    if(response.data.ret == 1){
+                        response.data.currProxy = currProxy;
+                        response.data.currCOSIP = currCOSIP;
+                        response.data.currCOSImgIP = currCOSIP;
+                        response.data.cosNum = user.cosNum;
+                        response.data.portrait = response.data.imagePath;
+                        response.data.loginName = user.userName;
+                        response.data.password = user.passWord;
+                        staffInfo = response.data;
+                        this.SAVE_USERINFO(staffInfo);
+                        let user_info = aesEncrypt(JSON.stringify(staffInfo));
+                        _setSession('user_info',user_info);
+                        return getCosType();
+                    }else{
+                        this.loginError();
+                    }
+                }).then((result)=>{
+                    // 登录成功后再storage中添加cosType
+                    if(result){
+                        staffInfo.cosType = result.data.costype;
+                        this.SAVE_USERINFO(staffInfo);
+                        let user_info = aesEncrypt(JSON.stringify(staffInfo));
+                        _setSession('user_info',user_info);
+                        this.reloadPage();
+                    }
+                }).catch((err)=>{
+                    // alertError(this,"2001");
+                    console.log('cos1');
+                    console.log(err);
+                });
+                console.log('/COS0IN');
+                login('/COS0IN',user.cosNum,user.userName,user.passWord).then((response) => {
+                    console.log(response);
+                    if(response.data.ret == 1){
+                        response.data.currProxy = "/COS0IN";
+                        response.data.currCOSIP = "http://172.16.1.100:888/";
+                        response.data.currCOSImgIP = "http://172.16.1.100:888/";
+                        response.data.cosNum = user.cosNum;
+                        response.data.portrait = response.data.imagePath;
+                        response.data.loginName = user.userName;
+                        response.data.password = user.passWord;
+                        staffInfo = response.data;
+                        
+                        this.SAVE_USERINFO(staffInfo);
+                        let user_info = aesEncrypt(JSON.stringify(staffInfo));
+                        _setSession('user_info',user_info);
+                        return getCosType();
+                    }else{
+                        this.loginError();
+                    }
+                }).then((result)=>{
+                    // 登录成功后再storage中添加cosType
+                    if(result){
+                        staffInfo.cosType = result.data.costype;
+                        this.SAVE_USERINFO(staffInfo);
+                        let user_info = aesEncrypt(JSON.stringify(staffInfo));
+                        _setSession('user_info',user_info);
+                        this.reloadPage();
+                    }
+                }).catch((err)=>{
+                    // alertError(this,"2001");
+                    console.log('cos0in');
+                    console.log(err);
+                });
+            })
+            .catch((error) => {
+                console.log(error);
+                alertError(this,"1993");    
+            });
+        }
     }
 }
 </script>
@@ -907,5 +1126,12 @@ export default {
     -webkit-user-select: none;
     -ms-user-select: none;
 }
-
+.groupcompanyList{
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    height: 100%;
+    overflow: auto;
+    font-size: 15px;
+}
 </style>

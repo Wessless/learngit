@@ -236,6 +236,7 @@ export default {
             })
             .catch((err)=>{
                 alertError(this,"2204");
+                closeLoading(loading);
             });
         },
         //加载页面
@@ -247,7 +248,7 @@ export default {
             // ip
             let WriteType,Id;
             let staffId = this.userInfo.userStaffID;
-            let cosNum = this.userInfo.cosNum;
+            let cosNum = 'COS'+this.userInfo.cosNum;
             let ip = this.userInfo.currCOSIP.split("//")[1].split(":")[0];
             if (this.$route.meta.type=="transpond") {
                 Id = this.$route.params.emailID.split("&")[0];

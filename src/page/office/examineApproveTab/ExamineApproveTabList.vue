@@ -188,6 +188,7 @@ export default {
             })
             .catch((err)=>{
                 alertError(this,"2049");
+                closeLoading(loading);
             });
         },
     },

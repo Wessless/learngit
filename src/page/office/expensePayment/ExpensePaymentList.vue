@@ -167,6 +167,7 @@ export default {
                     }
                 }).catch((err)=>{
                     alertError(this,"1174");
+                    closeLoading(loading);
             }   );
             }
         },

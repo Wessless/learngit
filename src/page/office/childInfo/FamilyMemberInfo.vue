@@ -166,7 +166,8 @@ export default {
                 career:this.form.Career,
                 cardID:this.form.CardID,
                 email:this.form.Email,
-                remark:this.form.Remark
+                remark:this.form.Remark,
+                file:this.familyMemberFile,
             }
 
             if(json.parentName==""){

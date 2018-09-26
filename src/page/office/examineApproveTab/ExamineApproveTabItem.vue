@@ -6,16 +6,15 @@
         <div class="title" :class="{blueColor:item.Type==15}" @click="urlToExpense">{{item.ChargeID?IDName+"ID："+item.ChargeID:`&nbsp;`}}</div>
         <div class="title" v-show="item.OrderApplyNum">{{item.OrderApplyNum?"订单编号："+item.OrderApplyNum:`&nbsp;`}}</div>
         <div class="title" style="color:#FF9D00;">{{item.BillMoney?"金额："+item.BillMoney:`&nbsp;`}}</div>
-        <div class="leftButton"  v-show="item.Result=='0'&&tabType=='2'&&isShowUpdate" @click="updateItem">修改</div>
+        <!-- <div class="leftButton"  v-show="item.Result=='0'&&tabType=='2'&&isShowUpdate" @click="updateItem">修改</div> -->
         <!-- <div class="leftButton"  v-show="isShowExamine&&item.Result=='0'&&tabType=='2'" @click="examineItem">详情</div> -->
-        <div class="rightButton" v-show="item.Result=='0'&&tabType=='2'" @click="delItem">撤销</div>
-        <div class="rightButton" v-show="item.Result!='0'&&tabType!='0'" @click="examineItem">详情</div>
+        <!-- <div class="rightButton" v-show="item.Result=='0'&&tabType=='2'" @click="delItem">撤销</div> -->
+        <div class="rightButton" v-show="tabType!='0'" @click="examineItem">详情</div>
         <div class="rightButton" v-show="item.Result=='0'&&tabType=='0'" @click="approveItem">审批</div>
-        <!-- <div class="bottomBtns" v-show="!isAssignChild&&!isBeeBind">
-            <div class="bottomBtn" @click.stop="deleteChild">删除</div>
-            <div class="bottomBtn" @click.stop="changeChild">修改</div>
-            <div class="bottomBtn" @click.stop="payment">新生入园缴费</div>
-        </div> -->
+        <div class="bottomBtns">
+            <div class="bottomBtn" v-show="item.Result=='0'&&tabType=='2'&&item.IsDelAble=='1'" @click.stop="delItem">撤销</div>
+            <div class="bottomBtn" v-show="item.Result=='0'&&tabType=='2'&&item.IsDelAble=='1'&&isShowUpdate" @click.stop="updateItem">修改</div>
+        </div>
     </div>
 </template>
 
@@ -75,6 +74,7 @@ export default {
             }else if (this.item.Type==14) {
                 return "加班"
             }else if (this.item.Type==15) {
+                this.isShowUpdate = true;
                 return "报销"
             }else{
                 return "";
@@ -85,8 +85,6 @@ export default {
                 this.isShowUpdate = true;
                 // this.isShowExamine = false;
                 return "报销"
-            }else if (this.item.Type==8) {
-                return "请假"
             }else if (this.item.Type==12) {
                 return "违规"
             }else if (this.item.Type==1) {
@@ -148,10 +146,11 @@ export default {
                 this.$router.push(this.$route.fullPath+"/updateBorrow/"+ChargeID+"&"+ID);
             }
             if (this.item.Type==15) {
-                let expenseID = '';// 报销ID
-                let examineID = this.item.examineID;// 审批ID
-                let ID = this.item.ID;//应付款ID
-                this.$router.push(this.$route.fullPath+"/updateDue/"+expenseID+"/"+examineID+"/"+ID);
+                let expenseID = this.item.ChargeID;// 报销ID
+                let examineID = this.item.ID;// 审批ID
+                let ID = this.item.CID;//应付款ID
+                let staffID = this.item.ApplyUser;// 申请人ID
+                this.$router.push(this.$route.fullPath+"/updateDue/"+expenseID+"/"+staffID+"/"+examineID+"/"+ID);
             }
         },
         examineItem(){
@@ -194,10 +193,11 @@ export default {
                 this.$router.push(this.$route.fullPath+"/examineExtrawork/"+ID);
             }
             if (this.item.Type==15) {
-                let expenseID = '';// 报销ID
-                let examineID = this.item.examineID;// 审批ID
-                let ID = this.item.ID;//应付款ID
-                this.$router.push(this.$route.fullPath+"/examineDue/"+expenseID+"/"+examineID+"/"+ID);
+                let expenseID = this.item.ChargeID;// 报销ID
+                let examineID = this.item.ID;// 审批ID
+                let ID = this.item.CID;//应付款ID
+                let staffID = this.item.ApplyUser;// 申请人ID
+                this.$router.push(this.$route.fullPath+"/examineDue/"+expenseID+"/"+staffID+"/"+examineID+"/"+ID);
             }
         },
         delItem(){
@@ -243,16 +243,17 @@ export default {
                 this.$router.push(this.$route.fullPath+"/approveExtrawork/"+ID);
             }
             if (this.item.Type==15) {
-                console.log(this.item)
-                let expenseID = '';// 报销ID
+                let expenseID = this.item.ChargeID;// 报销ID
                 let examineID = this.item.ID;// 审批ID
-                let ID = this.item.ID;//应付款ID
-                this.$router.push(this.$route.fullPath+"/approveDue/"+expenseID+"/"+examineID+"/"+ID);
+                let ID = this.item.CID;//应付款ID
+                let staffID = this.item.ApplyUser;// 申请人ID
+                this.$router.push(this.$route.fullPath+"/approveDue/"+expenseID+"/"+staffID+"/"+examineID+"/"+ID);
             }
         },
         // 应付款跳转到报销
         urlToExpense(){
-            if(item.Type==15){
+            if(this.item.Type==15){
+                let ID = this.item.ChargeID;// 报销ID
                 this.$router.push("/mainpage/office/"+this.$route.params.id+"/expensePayment/"+ID);
             }
         }
@@ -325,6 +326,7 @@ export default {
     flex-direction: row-reverse;
     flex-wrap: wrap;
     margin-top:3px;
+    margin-right: 8px;
 }
 .bottomBtn{
     margin-left:10px;

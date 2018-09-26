@@ -1,6 +1,6 @@
 <template>
     <div class="borrow">
-        <chat-header :showBack="true" :title="'应付款'" :showRightBtn="false"></chat-header>
+        <chat-header :showBack="true" :title="title" :showRightBtn="false"></chat-header>
         <div style="width:100%;padding-top:54px;">
             <el-form :inline="true" :model="formInline" class="demo-form-inline">
                 <!-- <el-form-item style="color:#8f8f94;">
@@ -23,14 +23,24 @@
         </div>
         <no-data :isShow="isNoData"></no-data>
         <div class="dueExpenseList">
-            <due-expense-item v-for="item in dueExpenseList" :key="item.num" :item="item"></due-expense-item>
+            <due-expense-item v-for="item in dueExpenseList" :key="item.num" :item="item" @setStop="setStop"></due-expense-item>
         </div>
+        <el-dialog
+            title="提示"
+            :visible.sync="dialogFormVisible"
+            width="30%">
+            <span>是否设置延期支付结束</span>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogFormVisible = false">取 消</el-button>
+                <el-button type="primary" @click="confirmDelete">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
 <script>
 
-import { paymentChargeList } from '@/js/api'
+import { paymentChargeList,setPaymentChargePayEnd } from '@/js/api'
 import { showLoading,closeLoading ,alertError} from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
 import ChatHeader from '@/components/chat/ChatHeader'
@@ -41,6 +51,7 @@ export default {
     name: 'DueExpenseList',
     data(){
         return {
+            title:"",
             formInline: {
                 staffID: '',
                 staffs:[]
@@ -59,7 +70,7 @@ export default {
                 isDeferPayment:false,
             },
             formLabelWidth: '120px',
-            currBookChargeID:''
+            currExpenseID:''
         }
     },
     components:{
@@ -68,6 +79,11 @@ export default {
         dueExpenseItem
     },
     mounted(){
+        if(this.$route.meta.type=='stop'){
+            this.title = '应付款终止';
+        }else{
+            this.title = '应付款';
+        }
         this.loadList();
     },
     computed:{
@@ -96,6 +112,34 @@ export default {
                 }
             }).catch((err)=>{
                 alertError(this,"1316");
+                closeLoading(loading);
+            });
+        },
+        setStop(expenseID){
+            this.currExpenseID = expenseID;
+            this.dialogFormVisible = true;
+            // let chargeBillIDs
+            // setPaymentChargePayEnd(chargeBillIDs)
+        },
+        confirmDelete(){
+            let loading = showLoading();
+            setPaymentChargePayEnd(this.currExpenseID).then((result)=>{
+                closeLoading(loading);
+                if(result.data.Result=="1"){
+                    this.$message({
+                        message: '设置成功',
+                        type: 'success'
+                    });
+                    this.loadList();
+                }else{
+                    this.$message({
+                        message: '设置失败',
+                        type: 'error'
+                    });
+                }
+            })
+            .catch((err)=>{
+                alertError(this,"2212");
                 closeLoading(loading);
             });
         }

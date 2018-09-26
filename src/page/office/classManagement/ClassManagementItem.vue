@@ -9,6 +9,7 @@
         <div class="title" :title="item.Teacher">教师：{{ item.Teacher }}</div>
         <div class="title" :title="item.Assistant">助教：{{ item.Assistant }}</div>
         <div class="title" :title="item.Nursery">保育员：{{ item.Nursery }}</div>
+        <div style="flex:1;"></div>
         <div class="bottomBtns">
             <div class="bottomBtn" v-show="item.ClassStatus=='1'" @click="classDetail">查看</div>
             <div class="bottomBtn" v-show="item.ClassStatus=='1'" @click="changeClassName">修改班级名称</div>
@@ -113,7 +114,8 @@ export default {
     margin-bottom: 20px;
 } */
 .classManagementItem{
-    display: block;
+    display: flex;
+    flex-direction: column;
     position: relative;
     justify-self: center;
     width: 94%;
@@ -158,6 +160,16 @@ export default {
     cursor: pointer;
 }
 .bottomBtns{
+    display: flex;
+    flex-direction: row-reverse;
+    flex-wrap: wrap;
+    margin-top:5px;
+}
+.bottomBtn{
+    margin-left:10px;
+    color: #38adff;
+    cursor: pointer;
+}.bottomBtns{
     display: flex;
     flex-direction: row-reverse;
     flex-wrap: wrap;
