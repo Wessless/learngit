@@ -1,7 +1,7 @@
 <template>
-    <div class="mainBox pull-left">
+    <div class="mainBox pull-left" :class="{hideMainBox:closeLeft}">
         <vue-context-menu :contextMenuData="contextMenuData" @deleteConversation="deleteConversation" @setTop="setTop"></vue-context-menu>
-        <div id="search-friend" v-show="$route.meta.pageType!='cloudDisk'&&$route.meta.pageType!='office'&&$route.meta.pageType!='group'">
+        <div id="search-friend" v-show="!closeLeft&&$route.meta.pageType!='cloudDisk'&&$route.meta.pageType!='office'&&$route.meta.pageType!='group'">
             <search-input style="flex:1;" :placeholder="$t('message.friendList.search')"></search-input>
             <div class="createGroupBtn iconfont" @click="createGroup">&#xe6b9;</div>
         </div>
@@ -61,7 +61,11 @@
                 <group-company-item v-for="(item,index) in mainData.groupcompanyList" :key="index" :item="item" @changeIsShowGroup="changeIsShowGroup"></group-company-item>
             </div> -->
         </div>
-
+        <!-- <div class="cosType" v-show="$route.meta.pageType=='office'">
+            <div class="type">{{cosTypeName}}</div>
+            <div class="status">{{cosStatusName}}</div>
+        </div> -->
+        <div class="closeBtn iconfont" :class="{closeBtnRight:closeLeft}" @click="changeCloseBtn"><div v-show="!closeLeft">&#xeb93;</div><div v-show="closeLeft">&#xeb91;</div></div>
     </div>
 </template>
 
@@ -81,7 +85,7 @@ import { _setSession,_getSession,_removeSession,alertError } from '@/config/util
 import {aesEncrypt, aesDecrypt} from '@/config/AES';// AES加密解密算法
 import config from '@config';
 import { rong_getConversationList,rong_getConversation,rong_removeConversation,rong_setConversationToTop,rong_clearUnreadCount,rong_SendSyncReadStatusMessage } from '@/js/rongCloud'
-import { findAllStaffs,getGroupsByStaffID,findStaffsByStaffIDs,findChildrenByChildIDs,getGroupsByID,getMenusByStaffID,getGroupAllCos,getCosByCosNum,login,getCosType } from '@/js/api'
+import { findAllStaffs,getGroupsByStaffID,getTableName,findStaffsByStaffIDs,findChildrenByChildIDs,getGroupsByID,getMenusByStaffID,getGroupAllCos,getCosByCosNum,login,getCosType } from '@/js/api'
 import officeMenu from '@/js/officeMenu'
 
 export default {
@@ -200,7 +204,8 @@ export default {
                 targetId:null,
                 conversationType:null,
                 isTop:false
-            }
+            },
+            cosStatusName:"",
         }
     },
     mounted(){
@@ -211,6 +216,7 @@ export default {
         this.getGroupsByStaffID();
         this.getMenusByStaffID();
         this.getGroupAllCos();
+        this.getTableName();
     },
     components:{
         searchInput,
@@ -230,6 +236,7 @@ export default {
             'currConversation',
             'currNewMessage',
             'myGroups',
+            'closeLeft',
         ]),
         friendArray(){
             if(this.allStaffs){
@@ -251,6 +258,17 @@ export default {
         listenCurrNewMessage() {  
             return this.currNewMessage;  
         },
+        cosTypeName(){
+            if(this.userInfo.cosType=='1'){
+                return '幼儿园';
+            }else if(this.userInfo.cosType=='2'){
+                return '培训学校';
+            }else if(this.userInfo.cosType=='3'){
+                return '学校';
+            }else{
+                return '';
+            }
+        }
     },
     watch:{
         listenCurrConversation(newVal,oldVal){// 监听store中currConversation变化切换消息列表选中值
@@ -318,6 +336,7 @@ export default {
             'SET_ALLSTAFFS',
             'SET_MYGROUPS',
             'SAVE_USERINFO',
+            'SET_CLOSELEFT',
         ]),
         ...mapActions([
             'rong_init',
@@ -330,6 +349,54 @@ export default {
             this.SET_CURRFRIENDLIST({type:"creatGroup"});
             // 路由跳转到员工路由
             this.$router.push('/mainpage/friendList/createGroup');
+        },
+        getTableName(){
+            getTableName().then((result)=>{
+                let tableName = result.data.tableName;
+                if(tableName == "menu_kindergarten_advanced"){
+                    this.cosStatusName = "标准版";
+                }
+                if(tableName == "menu_kindergarten_professional"){
+                    this.cosStatusName = "标准版";
+                }
+                if(tableName == "menu_kindergarten_standard"){
+                    this.cosStatusName = "标准版";
+                }
+                if(tableName == "menu_kindergarten_basic"){
+                    this.cosStatusName = "基础版";
+                }
+                if(tableName == "menu_school_standard"){
+                    this.cosStatusName = "标准版";
+                }
+                if(tableName == "menu_school_professional"){
+                    this.cosStatusName = "标准版";
+                }
+                if(tableName == "Sendy"||tableName == "sendy"){
+                    this.cosStatusName = "";
+                }
+                if(tableName == "General"||tableName == "general"){
+                    this.cosStatusName = "";
+                }
+                if(tableName == "Basic"||tableName == "basic"){
+                    this.cosStatusName = "基础版";
+                }
+                if(tableName == "Standard"||tableName == "standard"){
+                    this.cosStatusName = "标准版";
+                }
+                if(tableName == "BasicTS"){
+                    this.cosStatusName = "基础版";
+                }
+                if(tableName == "StandardTS"){
+                    this.cosStatusName = "标准版";
+                }
+                let cosType = this.cosTypeName + this.cosStatusName;
+                if(cosType){
+                    document.title = '蜂堡办公系统 - ' + cosType;
+                }
+            }).catch((err)=>{
+                // alertError(this,'1104');
+                console.log(err);
+            });
         },
         getMenusByStaffID(){
             if(this.userInfo.userStaffID){
@@ -919,6 +986,10 @@ export default {
                 console.log(error);
                 alertError(this,"1993");    
             });
+        },
+        changeCloseBtn(){
+            console.log(this.closeLeft)
+            this.SET_CLOSELEFT(!this.closeLeft);
         }
     }
 }
@@ -977,12 +1048,15 @@ export default {
     height: 100vh;
     position: fixed;
     background-color: #F4F8FC;
-    overflow: hidden;
+    /* overflow: hidden; */
     display:flex;
     flex-direction: column;
     z-index: 6;
     left:70px;
     top:0;
+}
+.hideMainBox{
+    width: 0px !important;
 }
 /**/ 
 .withoutFriends{
@@ -1133,5 +1207,80 @@ export default {
     height: 100%;
     overflow: auto;
     font-size: 15px;
+}
+.cosType{
+    position:absolute;
+    height: 70px;
+    width:70px;
+    background:#FF9D00;
+    background: #38adff;
+    bottom:10px;
+    left:50%;
+    font-size: 14px;
+    text-align: center;
+    color: #ffffff;
+    /* border:2px solid #FF9D00; */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+}
+.closeBtn{
+    position: absolute;
+    right:0;
+    top:50%;
+    width:18px;
+    height:50px;
+    z-index: 9;
+    /* background: rgba(0,0,0,.3); */
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+
+    /* border-radius: 5px 0 0 5px; */
+    cursor: pointer;
+}
+.closeBtn:after{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    background: rgba(56,173,255,.4);
+    /* transform: perspective(.5em) rotateX(3deg); */
+    transform: perspective(.5em) rotateY(-5deg);
+    transform-origin: bottom right left top;
+}
+.closeBtn:hover:after{
+    background: rgba(56,173,255,.7);
+}
+.closeBtnRight{
+    -webkit-transform:translateX(100%) translateY(-50%);
+    transform:translateX(100%) translateY(-50%);
+    /* border-radius: 0 5px 5px 0; */
+}
+.closeBtnRight:after{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    background: rgba(56,173,255,.4);
+    /* transform: perspective(.5em) rotateX(3deg); */
+    transform: perspective(.5em) rotateY(5deg);
+    transform-origin: bottom right left top;
+}
+.closeBtnRight:hover:after{
+    background: rgba(56,173,255,.7);
 }
 </style>

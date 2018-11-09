@@ -581,11 +581,11 @@
                     </el-col>
                 </el-row>
             </el-tab-pane>
-            <el-tab-pane label="审批设定" name="sixth">
+            <el-tab-pane label="签字设定" name="sixth">
                 <el-row type="flex" class="row-bg">
                     <el-col :span="4"><div class="title">财务负责人</div></el-col>
                     <el-col :span="6">
-                        <el-select v-model="staffInfo.financeSignManager1" filterable placeholder="请选择财务负责人">
+                        <el-select v-model="staffInfo.financeSignManager1" :clearable="true" filterable placeholder="请选择财务负责人">
                             <el-option
                             v-for="item in staffs"
                                 :key="item.value"
@@ -595,7 +595,7 @@
                         </el-select>
                     </el-col>
                     <el-col :span="6">
-                        <el-select v-model="staffInfo.financeSignManager2" filterable placeholder="请选择财务负责人">
+                        <el-select v-model="staffInfo.financeSignManager2" :clearable="true" filterable placeholder="请选择财务负责人">
                             <el-option
                             v-for="item in staffs"
                                 :key="item.value"
@@ -605,7 +605,7 @@
                         </el-select>
                     </el-col>
                     <el-col :span="6">
-                        <el-select v-model="staffInfo.financeSignManager3" filterable placeholder="请选择财务负责人">
+                        <el-select v-model="staffInfo.financeSignManager3" :clearable="true" filterable placeholder="请选择财务负责人">
                             <el-option
                             v-for="item in staffs"
                                 :key="item.value"
@@ -618,7 +618,7 @@
                 <el-row type="flex" class="row-bg">
                     <el-col :span="4"><div class="title">考勤负责人</div></el-col>
                     <el-col :span="12">
-                        <el-select v-model="staffInfo.timeScheduleManager" filterable placeholder="请选择考勤负责人">
+                        <el-select v-model="staffInfo.timeScheduleManager" :clearable="true" filterable placeholder="请选择考勤负责人">
                             <el-option
                             v-for="item in staffs"
                                 :key="item.value"
@@ -628,7 +628,7 @@
                         </el-select>
                     </el-col>
                 </el-row>
-                <el-row type="flex" class="row-bg">
+                <!-- <el-row type="flex" class="row-bg">
                     <el-col :span="4"><div class="title">工作计划负责人</div></el-col>
                     <el-col :span="12">
                         <el-select v-model="staffInfo.dailyManager" filterable placeholder="请选择工作计划负责人">
@@ -640,7 +640,7 @@
                             </el-option>
                         </el-select>
                     </el-col>
-                </el-row>
+                </el-row> -->
             </el-tab-pane>
             <el-tab-pane label="聚合学费" name="seventh" v-if="userInfo.cosType=='1'">
                 <el-row type="flex" class="row-bg">
@@ -1002,7 +1002,7 @@ export default {
                 this.staffInfo.turnDate = turnDate;
                 this.staffInfo.notBeStaff = notBeStaff;
                 this.staffInfo.mobile = staffInfo.Mobile;
-                this.staffInfo.birthday = staffInfo.Birthday.split(" ")[0];
+                this.staffInfo.birthday = staffInfo.Birthday=='0001-01-01 00:00:00'?'':staffInfo.Birthday.split(" ")[0];
                 this.staffInfo.nation = staffInfo.Nation;
                 this.staffInfo.identityValidity = staffInfo.IdentityValidity;
                 // cosUserName:"ceshiyuangong",// 无
@@ -1106,7 +1106,7 @@ export default {
                 this.staffInfo.financeSignManager2 = staffInfo.FinanceSignManager2=="-1"?"":staffInfo.FinanceSignManager2;
                 this.staffInfo.financeSignManager3 = staffInfo.FinanceSignManager3=="-1"?"":staffInfo.FinanceSignManager3;
                 this.staffInfo.timeScheduleManager = staffInfo.TimeScheduleManager=="-1"?"":staffInfo.TimeScheduleManager;
-                this.staffInfo.dailyManager = staffInfo.DailyManager=="-1"?"":staffInfo.DailyManager;
+                // this.staffInfo.dailyManager = staffInfo.DailyManager=="-1"?"":staffInfo.DailyManager;
             }).catch((err)=>{
                 console.log(err)
                 alertError(this,"1015");
@@ -1280,11 +1280,11 @@ export default {
                 childSchool3 : this.staffInfo.childSchool3,
                 thesisList : JSON.stringify(thesisList),
                 languagesList : JSON.stringify(languagesList),
-                financeSignManager1 : this.staffInfo.financeSignManager1,
-                financeSignManager2 : this.staffInfo.financeSignManager2,
-                financeSignManager3 : this.staffInfo.financeSignManager3,
-                timeScheduleManager : this.staffInfo.timeScheduleManager,
-                dailyManager : this.staffInfo.dailyManager,
+                financeSignManager1 : this.staffInfo.financeSignManager1?this.staffInfo.financeSignManager1:'-100',
+                financeSignManager2 : this.staffInfo.financeSignManager2?this.staffInfo.financeSignManager2:'-100',
+                financeSignManager3 : this.staffInfo.financeSignManager3?this.staffInfo.financeSignManager3:'-100',
+                timeScheduleManager : this.staffInfo.timeScheduleManager?this.staffInfo.timeScheduleManager:'-100',
+                dailyManager : this.staffInfo.dailyManager?this.staffInfo.dailyManager:'-100',
                 isSaveSup : this.staffInfo.isSaveSup?"1":"0",
                 file,
                 callback

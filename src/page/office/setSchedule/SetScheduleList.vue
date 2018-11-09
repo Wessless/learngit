@@ -124,7 +124,6 @@ export default {
                 ClassID:"",
                 allClass:[],
             },
-            title:"课程表设定",
             pageNo:1,
             pageSize:1000,
             dateStr:"",
@@ -157,6 +156,13 @@ export default {
         year(){
             return parseInt(this.formInline.termName);
         },
+        title(){
+            if (this.$route.meta.type!='examine') {
+                return "课程表设定"
+            }else{
+                return "课程表查询"
+            }
+        }
     },
     watch:{
         

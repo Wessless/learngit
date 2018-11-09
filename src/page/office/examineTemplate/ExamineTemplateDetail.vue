@@ -50,21 +50,21 @@
                 <el-col :span="2"><el-button size="small" type="danger" @click="removeItem(projectIndex,index)" v-if="$route.meta.type!='detail'">移除</el-button></el-col>
             </el-row>
             <el-row :gutter="5" v-if="form.pointType=='100'&&projectItem.item.length>0">
-                <el-col :span="3">评分项目</el-col>
-                <el-col :span="8">评分说明</el-col>
-                <el-col :span="2">分数</el-col>
-                <el-col :span="3">考核人1所占比例</el-col>
-                <el-col :span="3">考核人2所占比例</el-col>
-                <el-col :span="3">考核人3所占比例</el-col>
-                <el-col :span="2"></el-col>
+                <el-col style="line-height: 40px;" :span="3">评分项目</el-col>
+                <el-col style="line-height: 40px;" :span="12">评分说明</el-col>
+                <el-col style="line-height: 40px;" :span="1">分数</el-col>
+                <el-col :span="2">考核人1<br />所占比例</el-col>
+                <el-col :span="2">考核人2<br />所占比例</el-col>
+                <el-col :span="2">考核人3<br />所占比例</el-col>
+                <el-col style="line-height: 40px;" :span="2"></el-col>
             </el-row>
             <el-row :gutter="5" class="items" v-if="form.pointType=='100'" style="padding-top:10px;" v-for="(item,index) in projectItem.item" :key="index">
-                <el-col :span="3"><el-input size="small" v-model="item.$.name" :disabled="$route.meta.type=='detail'"></el-input></el-col>
-                <el-col :span="8"><el-input size="small" v-model="item.$.description" :disabled="$route.meta.type=='detail'"></el-input></el-col>
-                <el-col :span="2"><el-input size="small" v-model="item.$.point" :disabled="$route.meta.type=='detail'"></el-input></el-col>
-                <el-col :span="3"><el-input size="small" v-model="item.$.ratio1" :disabled="$route.meta.type=='detail'"></el-input></el-col>
-                <el-col :span="3"><el-input size="small" v-model="item.$.ratio2" :disabled="$route.meta.type=='detail'"></el-input></el-col>
-                <el-col :span="3"><el-input size="small" v-model="item.$.ratio3" :disabled="$route.meta.type=='detail'"></el-input></el-col>
+                <el-col :span="3"><el-input size="small" type="textarea" rows="5" v-model="item.$.name" :disabled="$route.meta.type=='detail'"></el-input></el-col>
+                <el-col :span="12"><el-input size="small" type="textarea" rows="5" v-model="item.$.description" :disabled="$route.meta.type=='detail'"></el-input></el-col>
+                <el-col :span="1"><el-input size="small" v-model="item.$.point" :disabled="$route.meta.type=='detail'"></el-input></el-col>
+                <el-col :span="2"><el-input size="small" v-model="item.$.ratio1" :disabled="$route.meta.type=='detail'"></el-input></el-col>
+                <el-col :span="2"><el-input size="small" v-model="item.$.ratio2" :disabled="$route.meta.type=='detail'"></el-input></el-col>
+                <el-col :span="2"><el-input size="small" v-model="item.$.ratio3" :disabled="$route.meta.type=='detail'"></el-input></el-col>
                 <el-col :span="2"><el-button size="small" type="danger" @click="removeItem(projectIndex,index)" v-if="$route.meta.type!='detail'">移除</el-button></el-col>
             </el-row>
         </div>

@@ -24,10 +24,61 @@
                 </el-form-item>
             </el-form>
         </div>
-        <no-data :isShow="isNoData"></no-data>
-        <div class="myDatabaseList" v-infinite-scroll="loadList" infinite-scroll-disabled="isDisabled" infinite-scroll-distance="10">
-            <my-database-item v-for="(item,index) in myDatabaseList" :key="index" :item="item" @deleteKnowledge="deleteKnowledge"></my-database-item>
+        
+        <div class="midTableHeight" style="width:100%;display:block;padding:0px 10px;">
+            <el-table :data="myDatabaseList" :cell-class-name="tableCellClassName" :header-cell-style="getRowStyle" border max-height="470">
+                <!-- <el-table-column prop="" align="center"  label="类别"  width="120"></el-table-column> -->
+                <el-table-column prop="KnowledgeBaseName"  label="名称">
+                    <template slot-scope="scope">
+                        <span class="spanTitle">{{scope.row.KnowledgeBaseName}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="ANum" align="center"  label="个数"  width="80"></el-table-column>
+                <el-table-column prop="CreateUser" align="center"  label="创建者"  width="80"></el-table-column>
+                <el-table-column prop="CreateDate" align="center"  label="创建时间"  width="155"></el-table-column>
+                <el-table-column label="检索/维护" width="147">
+                    <template slot-scope="scope">
+                        <el-button
+                            type="primary"
+                            size="mini"
+                            v-show="scope.row.EnableBrowse=='1'"
+                            @click="detailBrowse(scope.row)">检索</el-button>
+                        <el-button
+                            type="primary"
+                            size="mini"
+                            v-show="scope.row.EnableModify=='1'"
+                            @click="detailKnowledge(scope.row)">维护</el-button>
+                    </template>
+                </el-table-column>
+                <el-table-column label="操作" align="center" width="205">
+                    <template slot-scope="scope">
+                        <el-button
+                            type="primary"
+                            size="mini"
+                            v-show="scope.row.EnableSet=='1'"
+                            @click="setManager(scope.row)">权限管理+修改</el-button>
+                        <el-button
+                            type="danger"
+                            size="mini"
+                            v-show="scope.row.EnableSet=='1'"
+                            @click="deleteKnowledge(scope.row)">删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <div>
+                <el-pagination
+                    style="float:left;"
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="currentPage"
+                    :page-sizes="[10, 20, 30, 40]"
+                    :page-size="pageSize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="itemNum">
+                </el-pagination>
+            </div>
         </div>
+        
         <el-dialog
             title="删除"
             :visible.sync="dialogVisible"
@@ -47,8 +98,6 @@ import { getBaseByStaffID,deleteKnowledgeBase } from '@/js/api'
 import { showLoading,closeLoading ,alertError} from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
 import ChatHeader from '@/components/chat/ChatHeader'
-import MyDatabaseItem from '@/page/office/myDatabase/MyDatabaseItem'
-import NoData from '@/components/chat/NoData'
 
 export default {
     name: 'MyDatabase',
@@ -60,20 +109,19 @@ export default {
             },
             isNoData:false,
             myDatabaseList:[],
-            pageSize:15,
+            pageSize:10,
             currentPage:1,
+            itemNum:0,
             isDisabled:false,
             dialogVisible:false,
             clickItem:{},
         }
     },
     components:{
-        NoData,
         ChatHeader,
-        MyDatabaseItem
     },
     mounted(){
-        // this.showInfo();
+        this.loadList();
     },
     computed:{
         ...mapState([
@@ -84,11 +132,14 @@ export default {
     watch:{
     },
     methods:{
+        ...mapMutations([
+            'SET_KNOWLEDGEID',
+            'SET_TREENODEID',
+        ]),
         addKnowledgeBase(){
             this.$router.push(this.$route.fullPath+"/add");
         },
         deleteKnowledge(item){
-            // let id = item.KnowledgeBaseID;
             this.clickItem = item;
             this.dialogVisible = true;
         },
@@ -112,40 +163,67 @@ export default {
                 alertError(this,"2128");
             });
         },
-        loadList(reload){
+        loadList(){
             let staffID = this.userInfo.userStaffID;
-            // staffID = "0";
-            if(reload){
-                this.currentPage = 1;
-                this.isDisabled = false;
+            let loading = showLoading();
+            getBaseByStaffID(this.currentPage,this.pageSize,staffID).then((result)=>{
+                closeLoading(loading);
+                this.myDatabaseList = result.data.data;
+                this.itemNum = parseInt(result.data.totalCount);
+                console.log(this.myDatabaseList);
+            }).catch((err)=>{
+                alertError(this,"1194");
+            });
+        },
+        //权限管理+修改
+        setManager(item){
+            this.$router.push(this.$route.fullPath+"/update/"+item.KnowledgeBaseID);
+        },
+        //维护
+        detailKnowledge(item){
+            this.SET_KNOWLEDGEID(item.KnowledgeBaseID);
+            this.SET_TREENODEID({});
+            this.$router.push(this.$route.fullPath+"/maintenance");
+        },
+        //检索
+        detailBrowse(item){
+            this.SET_KNOWLEDGEID(item.KnowledgeBaseID);
+            this.SET_TREENODEID({});
+            this.$router.push(this.$route.fullPath+"/browse");
+        },
+        handleSizeChange(val){
+            this.pageSize = val;
+            this.loadList();
+        },
+        handleCurrentChange(val){
+            this.currentPage = val;
+            this.loadList();
+        },
+
+        //改变表样式
+        getRowStyle({ row, column, rowIndex, columnIndex }){
+            if (rowIndex == 0) {
+                return 'background:#38ADFF;color:#fff;text-align:center;'
             }
-            if(!this.isDisabled){
-                this.isDisabled = true;
-                let loading = showLoading();
-                getBaseByStaffID(this.currentPage,this.pageSize,staffID).then((result)=>{
-                    if(reload){
-                        this.myDatabaseList = [];
-                    }
-                    if(result.data.totalCount<this.currentPage*this.pageSize){
-                        this.isDisabled = true;
-                    }else{
-                        this.isDisabled = false;
-                    }
-                    closeLoading(loading);
-                    this.currentPage++;
-                    for(let i=0;i<result.data.data.length;i++){
-                        this.myDatabaseList.push(result.data.data[i]);
-                    }
-                    if(this.myDatabaseList.length==0){
-                        this.isNoData = true;
-                    }else{
-                        this.isNoData = false;
-                    }
-                }).catch((err)=>{
-                    alertError(this,"1194");
-                });
-            }
-        }
+        },
+        // getColStyle({ row, column, rowIndex, columnIndex }){
+        //     if (columnIndex == 0) {
+		// 		return 'padding-bottom:7px;text-align:center;'
+		// 	} else {
+		// 		return ''
+        //     }
+        // },
+        tableRowClassName({row, rowIndex}) {
+            if (rowIndex%2 ==0) {
+                return 'grayRow';
+            } 
+            return '';
+        },
+        tableCellClassName({ row, column, rowIndex, columnIndex }) {
+            if (rowIndex%2 ==0) {
+                return 'grayRow';
+            } 
+        },
     }
 }
 </script>
@@ -190,5 +268,13 @@ export default {
 }
 .el-form-item {
     margin-bottom: 0px !important;
+}
+.spanTitle{
+    display: inline-block;
+    height: 17px;
+    white-space: nowrap;
+	text-overflow: ellipsis;
+	word-wrap: normal;
+	overflow: hidden;
 }
 </style>

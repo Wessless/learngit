@@ -1,7 +1,7 @@
 <template>
     <div class="expenseDetail">
-        <chat-header :showBack="true" :title="title" :showRightBtn="isShowButton" :rightBtnTitle="'确认'" :rightBtnName="'confirm'" :rightBtnType="'btn'" @confirm="confirmTwo"></chat-header>
-        <div class="createDate"><span>单号：{{detail.ChargeBillID}}</span><span>填表日期：{{detail.FillDate}}</span></div>
+        <chat-header :fixIndex="10" :showBack="true" :title="title" :showRightBtn="isShowButton" :rightBtnTitle="'确认'" :rightBtnName="'confirm'" :rightBtnType="'btn'" @confirm="confirmTwo"></chat-header>
+        <div class="createDate"><div style="float:left;">单号：{{detail.ChargeBillID}}</div><div style="float:right;">填表日期：{{detail.FillDate}}</div></div>
         <img :src="stamperImageUrl" v-show="stamperImageUrl" class="stamperImage" alt="">
         <div class="detailList">
             <div class="detailItem">
@@ -73,7 +73,13 @@
                     <span class="file" v-for="item in detail.Attachment" :key="item.AttachmentID" @click="downloadFile(item)">{{item.AttachmentName}}</span>
                 </div>
             </div>
-            <div class="detailItem" v-for="item in allSigner" :key="item.ApprovalUser">
+            <div class="detailItem">
+                <div class="detailTitle">图片</div>
+                <div class="detailContent">
+                    <div class="image" v-for="item in detail.Images" :key="item"><image-proxy :canBrowse="true" :imagePath="item"></image-proxy></div>
+                </div>
+            </div>
+            <div class="detailItem signer" v-for="item in allSigner" :key="item.ApprovalUser">
                 <div class="detailTitle">签字人姓名</div>
                 <div class="detailContent flexItemCenter">
                     <span>{{item.ApprovalName}}</span>
@@ -90,12 +96,6 @@
                         <el-radio v-model="status" label="1" style="margin-left:-5px;">同意</el-radio>
                         <el-radio v-model="status" label="2" style="margin-left:6px;">拒绝</el-radio>
                     </div>
-                </div>
-            </div>
-            <div class="detailItem">
-                <div class="detailTitle">图片</div>
-                <div class="detailContent">
-                    <div class="image" v-for="item in detail.Images" :key="item"><image-proxy :canBrowse="true" :imagePath="item"></image-proxy></div>
                 </div>
             </div>
         </div>
@@ -395,6 +395,9 @@ export default {
 				}else if(obj.State=="2"){
 					status = "处理完毕";// green 
 					color = "#2ecc71";
+                    for (let i = 0; i < this.allSigner.length; i++) {
+                        this.allSigner[i].State = "1";
+                    }
 				}else if(obj.State=="-1"){
 					status = "未通过审批";// red 
 					color = "#e51c23";
@@ -451,9 +454,10 @@ export default {
 .expenseDetail{
     padding:20px;
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap; 
-    max-height: 100%;
+    flex-direction: column;
+    /* flex-wrap: wrap;  */
+    height: 100vh;
+    width: 100%;
     overflow: scroll;
     background: #fafafa;
     position: relative;
@@ -502,9 +506,8 @@ export default {
     padding-top:54px;
     padding-bottom: 10px;
     width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    height: 20px;
+    box-sizing: content-box;
 }
 .file{
     color:#38adff;
@@ -516,5 +519,12 @@ export default {
     right: 40px;
     top: 50px;
     /* background:#fafafa; */
+}
+.signer > .detailTitle{
+    font-weight: 600;
+    color:#000;
+}
+.signer{
+    background: rgba(255,182,193,.4);
 }
 </style>

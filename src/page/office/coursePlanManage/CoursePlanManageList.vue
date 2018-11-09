@@ -1,6 +1,6 @@
 <template>
     <div class="interestClassTeacher">
-        <chat-header :showBack="true" :title="'教案管理'" :showRightBtn="false"></chat-header>
+        <chat-header :showBack="true" :title="'写教案'" :showRightBtn="false"></chat-header>
         <div style="width:100%;padding-top:54px;padding-bottom:20px;" id="staffInfoBtns"></div>
         <no-data :isShow="isNoData"></no-data>
         <div class="coursePlanList" v-infinite-scroll="loadList" infinite-scroll-disabled="isDisabled" infinite-scroll-distance="10">

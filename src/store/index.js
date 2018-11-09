@@ -44,6 +44,7 @@ const state = {
 		knowledgeID:"-1",
 		treeNode:{},
 	},//我的资料库
+	closeLeft:false,
 	// latitude: '', // 当前位置纬度
 	// longitude: '', // 当前位置经度
 	// cartList: {}, // 加入购物车的商品列表

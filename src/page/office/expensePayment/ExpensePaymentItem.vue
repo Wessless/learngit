@@ -2,7 +2,7 @@
     <div class="expenseItem">
         <div class="headTitle">{{item.FillStaff}}的报销支付</div>
         <div class="title">单号：{{item.ChargeBillID}}</div>
-        <div class="title" style="color:#FF9D00;">金额：{{money}}{{item.MoneyUnitName}}</div>
+        <div class="title">金额：<span style="color:#333;font-size:16px;">{{money}}{{item.MoneyUnitName=='人民币'?'元':item.MoneyUnitName}}</span></div>
         <div class="title">创建日期：{{item.FillDate}}</div>
         <div class="title">支付方式：{{payType[item.PayType]}}</div>
         <div class="title" :title="'用途说明：'+item.BigType+' - '+item.SmallType+' - '+item.Subject">用途说明：{{item.BigType}} - {{item.SmallType}} - {{item.Subject}}</div>

@@ -24,7 +24,6 @@ export default (obj) => {
     //         }
     //     }
     // }
-
     // 共同
     if(!obj.url){
         let user_info = _getSession('user_info');
@@ -34,6 +33,8 @@ export default (obj) => {
         }
         if(obj.urlTo == 'CosCenter'){// CosCenter接口
             obj.url = '/COSCenter/CosCenter.aspx';
+        }else if(obj.urlTo == 'https'){
+            obj.url = '/IotDevice/webin/servlet/webapi';//'/TaobaoMobil/cc/json/mobile_tel_segment.htm';//''
         }else if(obj.urlTo == 'CosApp'){// CosApp接口
             if(obj.currProxy&&obj.cosNum){
                 obj.url = obj.currProxy+"/m_IntegratedMenu/CosApp.aspx";
@@ -56,6 +57,8 @@ export default (obj) => {
                     }
                 }
             }
+        }else if(obj.urlTo == 'CosStatistic'){// CosApp接口
+            obj.url = "/COS1OLD/COS888/m_IntegratedMenu/CosStatistic.aspx";
         }
     }
 
@@ -67,7 +70,7 @@ export default (obj) => {
                 // formData.append('files', obj.uploadFile.file); 
                 for (let i = 0; i < obj.uploadFile.file.length; i++) {
                     formData.append('files', obj.uploadFile.file[i])
-                  }
+                }
             }else{
                 formData.append('pic', obj.uploadFile.file); 
             }
@@ -88,6 +91,7 @@ export default (obj) => {
         return new Promise((resolve, reject)=>{
             axios(obj).then((result)=>{
                 if((typeof result.data)=='string'){
+                    console.log(result);
                     let reg = /\n|\t|\r/g;
                     let data = result.data;
                     let elseStr = data.replace(reg,'<br/>');

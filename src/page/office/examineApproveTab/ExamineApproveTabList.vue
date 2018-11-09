@@ -67,6 +67,7 @@ export default {
                     {value:"11",label:"借款"},
                     {value:"14",label:"加班"},
                     {value:"12",label:"违规"},
+                    {value:"15",label:"应付款"}
                 ]
             }
         }

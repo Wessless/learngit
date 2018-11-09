@@ -3,8 +3,8 @@
         <div class="headTitle">{{item.ChargeStaff}}的借款</div>
         <div class="title">单号：{{item.BookChargeID}}</div>
         <div class="title">填表人：{{item.FillStaff}}</div>
-        <div class="title" style="color:#FF9D00;">金额：{{money}}{{item.MoneyUnit}}</div>
-        <div class="title" style="color:#e51c23;">未还款额：{{marginMoney}}{{item.MoneyUnit}}</div>
+        <div class="title">金额：<span style="color:#333;font-size:16px;">{{money}}{{item.MoneyUnit=='人民币'?'元':item.MoneyUnit}}</span></div>
+        <div class="title">未还款额：<span style="color:#e51c23;">{{marginMoney}}{{item.MoneyUnit=='人民币'?'元':item.MoneyUnit}}</span></div>
         <div class="title">填表日期：{{item.FillDate}}</div>
         <div class="title">支付日期：{{item.PayDate}}</div>
         <div class="title">支付方式：{{item.PayType}}</div><!-- {{payType[item.PayType]}} -->

@@ -7,17 +7,17 @@
             <div class="chargeCard">
                 <div class="chargeCardItem">
                     <div class="title">按年龄统计图</div>
-                    <v-chart class="echarts" :options="data.optionAge"/>
+                    <v-chart class="echarts" v-if="isNotCloseLeft" :options="data.optionAge"/>
                 </div>
-                <div class="chargeCardItem">
+                <div class="chargeCardItem" v-if="$route.params.isGroup=='0'">
                     <div class="title">按入职时间统计图</div>
-                    <v-chart class="echarts" :options="data.optionBeStaff"/>
+                    <v-chart class="echarts" v-if="isNotCloseLeft" :options="data.optionBeStaff"/>
                 </div>
                 <div class="chargeCardItem">
                     <div class="title">按性别统计图</div>
-                    <v-chart class="echarts" :options="data.optionSex"/>
+                    <v-chart class="echarts" v-if="isNotCloseLeft" :options="data.optionSex"/>
                 </div>
-                <div class="chargeCardItem">
+                <div class="chargeCardItem" v-if="$route.params.isGroup=='0'">
                     <div class="title">证书</div>
                     <div class="midTableHeight table">
                         <el-table :data="data.certification" border max-height="315" :row-class-name="tableRowClassName" :cell-style="getColStyle" :header-cell-style="getRowStyle">
@@ -52,7 +52,7 @@
 
 <script>
 
-import { getStaffStatisticByAge,getStaffStatisticBySex,getCosStaffStatisticByBeStaff,
+import { getStaffStatisticByAge,getStaffStatisticBySex,getCosStaffStatisticByAge,getCosStaffStatisticBySex,getCosStaffStatisticByBeStaff,
          getCosStaffStatisticByCertification,getCosByCosNum,getStaffByCertification } from '@/js/api'
 import { showLoading,closeLoading,alertError,money } from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
@@ -80,6 +80,7 @@ export default {
             dialogVisible:false,
             pageSize:10,
             currentPage:1,
+            isNotCloseLeft:true,
         }
     },
     
@@ -94,12 +95,19 @@ export default {
         cosNum(newVal,oldVal){
             this.getCosByCosNum();
             this.loadList();
+        },
+        closeLeft(newVal,oldVal){
+            this.isNotCloseLeft = false;
+            setTimeout(()=>{
+                this.isNotCloseLeft = true;
+            },0);
         }
     },
     computed:{
         ...mapState([
             'userInfo',
             'allStaffs',
+            'closeLeft',
         ]),
         cosNum(){
             return this.$route.params.cosNum;
@@ -129,14 +137,23 @@ export default {
             let numCos = this.$route.params.cosNum;
             let acctID = this.userInfo.mobile;
             let date = new Date();
-            let monthYear = date.getFullYear() + "-" + (Array(3).join(0) + (date.getMonth() + 1)).slice(-2) + "-01";
+            let monthYear = date.getFullYear() + (Array(3).join(0) + (date.getMonth() + 1)).slice(-2) + "01";
             let loading = showLoading();
-            Promise.all([
-                getStaffStatisticByAge(numCos,acctID,monthYear),
-                getStaffStatisticBySex(numCos,acctID,monthYear),
-                getCosStaffStatisticByBeStaff(numCos,acctID,monthYear),
-                getCosStaffStatisticByCertification(numCos,acctID,monthYear)
-            ]).then((result) => {
+            let promiseArr = [];
+            if(this.$route.params.isGroup=='0'){
+                promiseArr = [
+                    getCosStaffStatisticByAge(numCos,acctID,monthYear),
+                    getCosStaffStatisticBySex(numCos,acctID,monthYear),
+                    getCosStaffStatisticByBeStaff(numCos,acctID,monthYear),
+                    getCosStaffStatisticByCertification(numCos,acctID,monthYear)
+                ]
+            }else{
+                promiseArr = [
+                    getStaffStatisticByAge(numCos,acctID,monthYear),
+                    getStaffStatisticBySex(numCos,acctID,monthYear)
+                ]
+            }
+            Promise.all(promiseArr).then((result) => {
                 closeLoading(loading);
                 let result1 = result[0].data;
                 let num = [0,0,0,0,0];
@@ -158,7 +175,7 @@ export default {
                     }
                 }
                 this.ageDataEchartsLoad(["20岁以下","20-25岁","26-30岁","31-40岁","40岁以上"],num);
-
+            
                 let result2 = result[1].data;
                 let sex = [];
                 for(let j=0;j<result2.StaffSex.length;j++){
@@ -177,44 +194,47 @@ export default {
                 }
                 this.sexDataEchartsLoad(sex);
 
-                let result3 = result[2].data;
-                let yearNum = [0,0,0,0,0];
-                for(let m=0;m<result3.InYears.length;m++){
-                    if(result3.InYears[m]=="0"){
-                        yearNum[0] = result3.InNum[m];
+                if(this.$route.params.isGroup=='0'){
+                    let result3 = result[2].data;
+                    let yearNum = [0,0,0,0,0];
+                    for(let m=0;m<result3.InYears.length;m++){
+                        if(result3.InYears[m]=="0"){
+                            yearNum[0] = result3.InNum[m];
+                        }
+                        if(result3.InYears[m]=="1"){
+                            yearNum[1] = result3.InNum[m];
+                        }
+                        if(result3.InYears[m]=="2"){
+                            yearNum[2] = result3.InNum[m];
+                        }
+                        if(result3.InYears[m]=="3"){
+                            yearNum[3] = result3.InNum[m];
+                        }
+                        if(result3.InYears[m]=="4"){
+                            yearNum[4] = result3.InNum[m];
+                        }
                     }
-                    if(result3.InYears[m]=="1"){
-                        yearNum[1] = result3.InNum[m];
+                    this.beStaffDataEchartsLoad(["入职不满一年","入职满1年","入职满2年","入职满3年","入职4年以上"],yearNum);
+                    
+                    let result4 = result[3].data;
+                    let array = [];
+                    for (let n = 0; n < result4.CertificationNames.length; n++) {
+                        let obj = {};
+                        obj.certificationName = result4.CertificationNames[n];
+                        obj.certificationCount = result4.CertificationCounts[n];
+                        array.push(obj);
                     }
-                    if(result3.InYears[m]=="2"){
-                        yearNum[2] = result3.InNum[m];
-                    }
-                    if(result3.InYears[m]=="3"){
-                        yearNum[3] = result3.InNum[m];
-                    }
-                    if(result3.InYears[m]=="4"){
-                        yearNum[4] = result3.InNum[m];
-                    }
+                    this.data.certification = array;
+                    console.log(this.data.certification);
                 }
-                this.beStaffDataEchartsLoad(["入职不满一年","入职满1年","入职满2年","入职满3年","入职4年以上"],yearNum);
-                
-                let result4 = result[3].data;
-                let array = [];
-                for (let n = 0; n < result4.CertificationNames.length; n++) {
-                    let obj = {};
-                    obj.certificationName = result4.CertificationNames[n];
-                    obj.certificationCount = result4.CertificationCounts[n];
-                    array.push(obj);
-                }
-                this.data.certification = array;
-                console.log(this.data.certification);
-                // console.log(result[0])
-                // console.log(result[1])
-                // console.log(result[2])
-                // console.log(result[3])
+
             }).catch((err)=>{
                 closeLoading(loading);
-                alertError(this,"1264/1265/1268");
+                if(this.$route.params.isGroup=='0'){
+                    alertError(this,"1267/1272/1268/1269");
+                }else{
+                    alertError(this,"1264/1265");
+                }
             });
         },
         ageDataEchartsLoad(months,alreadyMoney){
@@ -333,6 +353,7 @@ export default {
                     offset:0,
                     boundaryGap: [0, '20%'],
                 },
+                color:"#38adff",
                 series: [
                     {
                         name:'员工人数',

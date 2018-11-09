@@ -16,7 +16,7 @@
 <script>
 import { _format ,alertError} from '@/config/utils';
 import { mapState,mapMutations } from 'vuex'
-import { getMenusByStaffID } from '@/js/api'
+import { getMenusByStaffID,getSettingValue } from '@/js/api'
 import officeMenu from '@/js/officeMenu'
 
 export default {
@@ -24,7 +24,8 @@ export default {
     data :function() {
         return {
             itemList:[],
-            isshowInterestClass : false
+            isshowInterestClass : false,
+            isshowExpense : false,
         }
     },
     computed:{
@@ -64,7 +65,19 @@ export default {
                         obj.MenuName = menus[obj.Num].MenuName;
                     }
                     obj.sortNum = menus[obj.Num].sortNum;
-                    resultArr.push(obj);
+                    // console.log(obj.Num);
+                    if (obj.Num=="3004"||obj.Num=="3010"||obj.Num=="3005"||obj.Num=="3009"||obj.Num=="3011"||obj.Num=="3013"||obj.Num=="3012") {
+                        if (this.isshowExpense) {
+                            resultArr.push(obj);
+                        }
+                    }else if (obj.Num=="3015"||obj.Num=="3016"||obj.Num=="3017") {
+                        if (!this.isshowExpense) {
+                            resultArr.push(obj);
+                        }
+                    }else{
+                        resultArr.push(obj);
+                    }
+                    // resultArr.push(obj);
                 }
                 // if(obj.Num[0]==num){
                 //     if(menus[obj.Num]){// 是否在officeMenu中
@@ -136,18 +149,25 @@ export default {
                 this.isshowInterestClass = false;
             }
             // resultArr.push({
-            //     MENU_NM:"报销凭证",
-            //     MENU_URL:"/image/firstpage/1-3_menu ico-321.png",
-            //     Num:"3015",
+            //     MENU_NM:"智能设备",
+            //     MENU_URL:"",
+            //     Num:"5015",
             //     TITLE_IMAGE:"",
-            //     Router: "/expenseCertificate"
+            //     Router: "/intelligentDevice",
             // });
             // resultArr.push({
-            //     MENU_NM:"借款凭证",
+            //     MENU_NM:"借款记账",
             //     MENU_URL:"/image/firstpage/1-3_menu ico-321.png",
             //     Num:"3016",
             //     TITLE_IMAGE:"",
-            //     Router: "/borrowCertificate"
+            //     Router: "/borrowAccount",
+            // });
+            // resultArr.push({
+            //     MENU_NM:"应付款记账",
+            //     MENU_URL:"/image/firstpage/1-3_menu ico-321.png",
+            //     Num:"3017",
+            //     TITLE_IMAGE:"",
+            //     Router: "/dueAccount",
             // });
             return resultArr;
         }
@@ -158,6 +178,11 @@ export default {
             this.itemList = result.data.data;
         }).catch((err)=>{
             alertError(this,"1016");
+        });
+        getSettingValue("EXPENSE_APPLY_REQUIRED").then((result)=>{
+            this.isshowExpense = result.data.EXPENSE_APPLY_REQUIRED=="NO"?false:true;
+        }).catch((err)=>{
+            alertError(this,"1211");
         });
     },
     components: {
@@ -241,7 +266,7 @@ export default {
     width: 100%;
     grid-template-columns: 25% 25% 25% 25%;
     max-height: 100%;
-    overflow: scroll;
+    /* overflow: scroll; */
     background: #fafafa;
 
     /* padding: 20px;

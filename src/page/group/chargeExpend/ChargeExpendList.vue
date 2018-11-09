@@ -8,13 +8,14 @@
                 <div class="chargeCardItem">
                     <div class="title" style="background-color: #38ADFF;">今日<br />报销</div>
                     <div class="dateAndprice">
-                        <div class="today">{{this.todayDate}}</div>
                         <div class="prices" @click="examineExpenseFind(true)">{{this.TodayMoneySum}}&nbsp;元</div>
+                        <div class="today">{{this.todayDate}}</div>
                     </div>
                 </div>
                 <div class="chargeCardItem">
                     <div class="title" style="background-color: #FF9D00;">当月<br />报销</div>
                     <div class="dateAndprice">
+                        <div class="prices" @click="examineExpenseFind(false)">{{this.MonthMoneySum}}&nbsp;元</div>
                         <div class="date">
                             <el-date-picker
                                 v-model="chargeDate"
@@ -27,7 +28,7 @@
                                 size="small">
                             </el-date-picker>
                         </div>
-                        <div class="prices" @click="examineExpenseFind(false)">{{this.MonthMoneySum}}&nbsp;元</div>
+                        
                     </div>
                 </div>
             </div>
@@ -42,7 +43,7 @@
             </div>
 
             <div class="midTableHeight" style="width:100%;display:block;margin-top:30px;transform:translateY(-10px);">
-                <el-table :data="data.SubjectDetail" border max-height="485" :row-class-name="tableRowClassName" :cell-style="getColStyle" :header-cell-style="getRowStyle1">
+                <el-table :data="data.SubjectDetail" border max-height="485" :row-class-name="tableRowClassName" :cell-style="getColStyle" :header-cell-style="getRowStyle">
                     <el-table-column align="center" label="资金分类">
                         <el-table-column prop="SubjectName" align="center"  label="资金科目"  width="550"></el-table-column>
                         <el-table-column prop="MoneySum" align="center"  label="报销金额"  ></el-table-column>
@@ -73,7 +74,7 @@
                 width="70%">
                 <span style="margin-left:25px;display:block;">共{{ this.data.chargeBillNum }}条，总金额：{{ this.data.chargeBillMoney }}元</span>
                 <div class="midTableHeight" style="width:95%;display:block;margin:10px auto;">
-                    <el-table :data="data.chargeBillList" border max-height="500" :row-class-name="tableRowClassName" :cell-style="getColStyle" :header-cell-style="getRowStyle">
+                    <el-table :data="data.chargeBillList" border max-height="500" :row-class-name="tableRowClassName" :cell-style="getColStyle" :header-cell-style="getRowStyle1">
                         <el-table-column prop="ChargeBillID" align="center"  label="ID"  width="60"></el-table-column>
                         <el-table-column prop="FillStaff" align="center"  label="填表人"  width="80"></el-table-column>
                         <el-table-column prop="FillDate" align="center" label="填表日期"  width="120"></el-table-column>
@@ -448,10 +449,10 @@ export default {
          //改变表样式
         getRowStyle({ row, column, rowIndex, columnIndex }){
             if (rowIndex == 0||rowIndex == 1) {
-                if (columnIndex == 0) {
-				    return 'padding-bottom:7px;background:#38ADFF;color:#fff;'
+                if (columnIndex == 0&&rowIndex == 0) {
+				    return 'padding-bottom:7px;background:rgba(136,136,136);color:#fff;'
                 }
-                return 'background:#38ADFF;color:#fff;text-align:center;'
+                return 'background:rgba(136,136,136,.5);color:#fff;text-align:center;'
             }
         },
         getColStyle({ row, column, rowIndex, columnIndex }){
@@ -462,17 +463,17 @@ export default {
             }
         },
         tableRowClassName({row, rowIndex}) {
-            if (rowIndex%2 ==0) {
+            if (rowIndex%2 == 1) {
                 return 'grayRow';
-            } 
+            }
             return '';
         },
         getRowStyle1({ row, column, rowIndex, columnIndex }){
             if (rowIndex == 0||rowIndex == 1) {
                 if (columnIndex == 0) {
-				    return 'padding-bottom:7px;background:#FF9D00;color:#fff;'
+				    return 'padding-bottom:7px;background:#38adff;color:#fff;'
                 }
-                return 'background:#FF9D00;color:#fff;text-align:center;'
+                return 'background:#38adff;color:#fff;text-align:center;'
             }
         }
     }
@@ -578,29 +579,34 @@ export default {
     align-items: center;
 }
 .dateAndprice .date{
-    line-height: 35px;
-    background-color: rgba(255, 157, 0);
-    border-bottom:1px solid #dddddd;
+    /* line-height: 35px; */
+    /* background-color: rgba(255, 157, 0); */
+    /* border-bottom:1px solid #dddddd; */
     box-sizing: border-box;
+    width:100%;
+    flex:1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .dateAndprice .today{
-    font-size: 20px;
+    font-size: 14px;
     text-align: center;
-    height: 100%;
     flex: 1;
-    color:#fff;
+    color: #333;
     width: 100%;
-    line-height: 39px;
-    background-color: rgba(56, 173, 255);
+    /* background-color: rgba(56, 173, 255); */
 }
 .dateAndprice .prices{
     text-align: center;
-    flex: 1;
-    font-size: 20px;
+    flex: 2;
+    font-size: 24px;
     width: 100%;
-    line-height: 36px;
     color:#38ADFF;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .el-form-item {
     margin-bottom: 0px !important;

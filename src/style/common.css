@@ -303,7 +303,7 @@ body{
     overflow: hidden;
 }
 .examineApproveList .el-tabs__content{
-    overflow:scroll !important;
+    overflow: auto !important;
 }
 .goodsApplyTabs .el-tabs__nav{
     width: 100% !important;
@@ -355,6 +355,38 @@ body{
 .el-table .grayRow {
     background-color:rgba(221, 231, 240, 0.5);
 }
+.el-table .grayRowDeep {
+    background-color:rgba(221, 231, 240, 0.9);
+}
+.el-table .redRow {
+    background-color:rgba(229,28,35,0.7);
+    /* background-color:#FFFACD; */
+}
+.el-table .orangeRow {
+    background-color:rgba(255,157,0,0.7);
+    /* background-color:#FFFACD; */
+}
+.midTableHeight .el-table .el-table__footer-wrapper .el-table__footer tr td:nth-child(1){
+    text-align: center !important;
+}
+.el-table .lineHeight16 .cell{
+    line-height: 16px !important;
+}
+.el-table--enable-row-hover .el-table__body .otherhover:hover .redRow{
+    background-color: rgba(229,28,35) !important;
+}
+.el-table--enable-row-hover .el-table__body .otherhover:hover .orangeRow{
+    background-color: rgba(255,157,0) !important;
+}
+.el-table--enable-row-hover .el-table__body tr:hover .nohover{
+    background-color: rgba(255,157,0,0) !important;
+}
+/* .el-table--enable-row-hover .el-table__body .nohover .redRow:hover{
+    background-color: rgba(229,28,35,0.8) !important;
+}
+.el-table--enable-row-hover .el-table__body .nohover .orangeRow:hover{
+    background-color: rgba(255,157,0,0.8) !important;
+} */
 .el-tooltip__popper{
     max-width: 400px;
 }
@@ -370,11 +402,13 @@ body{
     border: 0px;
     background-color: rgba(255, 157, 0, 0);
     text-align: center;
-    font-size: 20px;
+    font-size: 14px;
     font-weight: normal;
-    color: #fff;
+    color: #38adff;
     margin-top: 5px;
     cursor: default;
+    height: 14px;
+    margin:0;
 }
 .groupEcharts .subDialog .el-dialog__title{
     font-weight: bold;
@@ -388,4 +422,68 @@ body{
 .groupEcharts .chargeBillDialog .el-dialog__body{
     padding-top:0 !important;
     padding-bottom:50px !important;
+}
+.tuitionIncomeTabs .el-tabs__nav{
+    width: 100% !important;
+}
+.tuitionIncomeTabs .el-tabs__nav .el-tabs__item{
+    width: 50% !important;
+    /* padding: 0 !important; */
+    text-align: center;
+}
+@media screen and (max-width: 985px){
+    .tuitionIncomeTabs .el-tabs__nav .el-tabs__item{
+        white-space: nowrap;
+	    text-overflow: ellipsis;
+	    word-wrap: normal;
+	    overflow: hidden;
+    }
+}
+.tuitionIncomeTabs .el-tabs__content{
+    overflow:scroll !important;
+}
+.ParentschoolContactList .el-radio__label{
+    padding-left: 5px !important;
+}
+.setYearHoliday .el-date-picker__header .el-icon-d-arrow-left{
+    display: none !important;
+}
+.setYearHoliday .el-date-picker__header .el-icon-d-arrow-right{
+    display: none !important;
+}
+.setYearHoliday .el-date-picker__header .el-date-picker__header-label:first-of-type{
+    display: none !important;
+}
+.setYearHoliday .el-picker-panel__content .el-date-table tr:first-of-type{
+    display: none !important;
+}
+.workTimeSet .el-dialog__body{
+    padding-top: 0px !important;
+}
+.summaryColor .el-table__footer-wrapper tbody td, .el-table__header-wrapper tbody td{
+    background-color: #FF9D00 !important; 
+    color: #fff;
+    font-weight: bold;
+}
+.summaryColor .el-table--enable-row-hover .el-table__body tr:hover td{
+    background-color: rgba(221, 231, 240) !important;
+}
+.commandTaskTabs .el-tabs__nav{
+    width: 100% !important;
+}
+.commandTaskTabs .el-tabs__nav .el-tabs__item{
+    width: 33.33% !important;
+    /* padding: 0 !important; */
+    text-align: center;
+}
+@media screen and (max-width: 985px){
+    .commandTaskTabs .el-tabs__nav .el-tabs__item{
+        white-space: nowrap;
+	    text-overflow: ellipsis;
+	    word-wrap: normal;
+	    overflow: hidden;
+    }
+}
+.commandTaskTabs .el-tabs__content{
+    overflow:scroll !important;
 }

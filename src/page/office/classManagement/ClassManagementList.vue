@@ -71,7 +71,7 @@
 
 <script>
 
-import { getClassesByStatus,deleteClassByID,setClassType,setClassStatus,addOrUpdateClass } from '@/js/api'
+import { getClassesByStatus,deleteClassByID,setClassType,setClassStatus,addOrUpdateClass,ifCanDelete } from '@/js/api'
 import { showLoading,closeLoading,alertError } from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
 import ChatHeader from '@/components/chat/ChatHeader'
@@ -167,22 +167,36 @@ export default {
         confirmDelete(){
             let id = this.clickItem.ID;
             let loading = showLoading();
-            deleteClassByID(id).then((result)=>{
-                closeLoading(loading);
-                if(result.data.ret=="1"){
-                    this.$message({
-                        message:'删除成功',
-                        type:'success'
+            ifCanDelete(id).then((ret)=>{
+                if(ret.data.result==1){
+                    deleteClassByID(id).then((result)=>{
+                        closeLoading(loading);
+                        if(result.data.ret=="1"){
+                            this.$message({
+                                message:'删除成功',
+                                type:'success'
+                            });
+                            this.getClassesByStatus();
+                        }else{
+                            this.$message.error({
+                                message:'删除失败',
+                            });
+                        }
+                    }).catch((err)=>{
+                        closeLoading(loading);
+                        alertError(this,"2017");
                     });
-                    this.getClassesByStatus();
                 }else{
+                    closeLoading(loading);
                     this.$message.error({
-                        message:'删除失败',
+                        message:'该班级下存在幼儿，无法删除！',
                     });
                 }
             }).catch((err)=>{
-                alertError(this,"2017");
+                closeLoading(loading);
+                alertError(this,"1326");
             });
+            
             this.dialogVisible = false;  
         },
         // 升班

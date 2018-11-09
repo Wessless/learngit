@@ -1,6 +1,7 @@
 <template>
     <div class="staffItem">
         <div class="headImage"><img :src="imagePath" alt=""></div>
+        <div class="manager" v-show="item.DepID=='1'"><div class="isManager"></div><div class="content">超</div></div> 
         <div class="canSUP" v-show="canSUP">S</div>
         <div class="headTitle">
             <span class="iconfont moneyIcon" v-if="item.IsSalaryNotIncluded=='1'" style="color:#999">&#xe72e;</span>
@@ -201,6 +202,37 @@ export default {
     /* box-shadow: 0 4px 8px rgba(0,0,0,.12); */
     padding: 45px 10px 25px 10px;
     margin: 40px 3% 20px 3%;
+}
+.manager{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 40px;
+    height: 40px;
+    border-radius: 0px 5px 0px 0px; 
+    overflow: hidden;
+}
+.content{
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    width: 15px;
+    height: 15px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+}
+.isManager{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 0;
+    height: 0;
+    border-width: 30px 0px 0px 30px;
+    border-color: #38adff transparent;
+    border-style: solid;
 }
 .headImage{
     position: absolute;

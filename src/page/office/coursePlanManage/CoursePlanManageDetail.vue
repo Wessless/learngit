@@ -410,10 +410,6 @@ export default {
                 // closeLoading(loading);
                 // console.log(result.data)
                 if(result.data.data.length>0){
-                    this.$message({
-                        message:"添加成功",
-                        type:"success"
-                    });
                     for (let k = 0; k < result.data.data.length; k++) {
                         result.data.data[k].CoursewareFrom = result.data.data[k].CoursewareFrom=="Crisen"?"川迪课件库":"本地文件上传"
                     }

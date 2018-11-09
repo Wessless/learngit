@@ -40,7 +40,7 @@
                     </div>
                 </el-form-item>
 
-                <el-form-item :label="dateTypeName">
+                <!-- <el-form-item :label="dateTypeName">
                     <el-date-picker
                         v-model="form.startDate"
                         type="date"
@@ -55,6 +55,21 @@
                         size="small"
                         style="width:240px;"
                         placeholder="结束日期">
+                    </el-date-picker>
+                </el-form-item> -->
+
+                <el-form-item :label="dateTypeName">
+                    <el-date-picker
+                        style="width:501px;"
+                        v-model="form.dateRange"
+                        type="daterange"
+                        range-separator="一"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
+                        value-format="yyyy-MM-dd"
+                        size="small"
+                        unlink-panels
+                        :picker-options="pickerOptions">
                     </el-date-picker>
                 </el-form-item>
                 
@@ -187,8 +202,6 @@ export default {
                 includeProject:false,
                 fillStaff:[],
                 dateType:"0",
-                startDate:"",
-                endDate:"",
                 outBillList:[],
                 outBillDetailList:[{"DetailID":'-1',"DetailName":'全部'}],
                 bankArr:[],
@@ -216,7 +229,8 @@ export default {
                 },{
                     id:"State",
                     name:"任务状态"
-                }]
+                }],
+                dateRange:"",
             },
             isNoData:false,
             dialogVisible:false,
@@ -232,6 +246,33 @@ export default {
             itemNum:0,
             itemMoney:0,
             Summary:"",
+            pickerOptions: {
+                shortcuts: [{
+                    text: '最近一周',
+                    onClick(picker) {
+                    const end = new Date();
+                    const start = new Date();
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                    picker.$emit('pick', [start, end]);
+                    }
+                }, {
+                    text: '最近一个月',
+                    onClick(picker) {
+                    const end = new Date();
+                    const start = new Date();
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                    picker.$emit('pick', [start, end]);
+                    }
+                }, {
+                    text: '最近三个月',
+                    onClick(picker) {
+                    const end = new Date();
+                    const start = new Date();
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                    picker.$emit('pick', [start, end]);
+                    }
+                }]
+            },
         }
     },
     components:{
@@ -273,12 +314,6 @@ export default {
             let endID = this.form.endID!=""?this.form.endID:"-1";
             let expenseStartID = this.form.expenseStartID!=""?this.form.expenseStartID:"-1";
             let expenseEndID = this.form.expenseEndID!=""?this.form.expenseEndID:"-1";
-            let fillDateFrom = this.form.fillDateFrom!=""?this.form.fillDateFrom:"-1";
-            let fillDateTo = this.form.fillDateTo!=""?this.form.fillDateTo:"-1";
-            let chargeDateFrom = this.form.chargeDateFrom!=""?this.form.chargeDateFrom:"-1";
-            let chargeDateTo = this.form.chargeDateTo!=""?this.form.chargeDateTo:"-1";
-            let payDateFrom = this.form.payDateFrom!=""?this.form.payDateFrom:"-1";
-            let payDateTo = this.form.payDateTo!=""?this.form.payDateTo:"-1";
             let returnDateFrom = this.form.returnDateFrom!=""?this.form.returnDateFrom:"-1";
             let returnDateTo = this.form.returnDateTo!=""?this.form.returnDateTo:"-1";
             let hasInvoice = this.form.hasInvoice!=""?this.form.hasInvoice:"-1";
@@ -291,9 +326,10 @@ export default {
             let outBillID = this.form.outBillID!=""?this.form.outBillID:"-1";
             let includeProject = this.form.includeProject?"1":"0";
             let sort = this.form.sortID;
-            let startDate = this.form.startDate!=""?this.form.startDate:"";
-            let endDate = this.form.endDate!=""?this.form.endDate:"";
+            let startDate = this.form.dateRange?this.form.dateRange[0]:"";
+            let endDate = this.form.dateRange?this.form.dateRange[1]:"";
             let dateType = this.form.dateType;
+
             // staffID,startDate,endDate,payType,departmentId,fillStaffId,startID,endID,expenseStartID,expenseEndID,status,bankAccountID,dateType,sort
             let loading = showLoading();
             findPaymentChargecheck(staffID,startDate,endDate,payType,departmentID,fillStaffID,startID,endID,expenseStartID,expenseEndID,status,bankAccountID,dateType,sort).then((result)=>{

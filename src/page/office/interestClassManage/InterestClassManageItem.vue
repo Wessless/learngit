@@ -13,7 +13,7 @@
         <div class="bottomBtns">
             <div class="bottomBtn" @click.stop="deleteClass">删除</div>
             <div class="bottomBtn" @click.stop="changeClass">修改</div>
-            <div class="bottomBtn" @click.stop="changeEnd">标记为结束</div>
+            <div class="bottomBtn" v-show="item.EndDate==''||item.EndDate=='1900-01-01 00:00:00'" @click.stop="changeEnd">标记为结束</div>
         </div>
     </div>
 </template>

@@ -38,7 +38,7 @@
             </el-form>
         </div>
         <no-data :isShow="isNoData"></no-data>
-        <div class="childInfoList">
+        <div class="childInfoList" :class="{forthInfoList:closeLeft}">
             <child-info-item v-for="(item,index) in allChildList" :key="index" :item="item" :type="formInline.radio" :canSetPaymentSubject="canSetPaymentSubject" @clickDelete="clickDelete" @childRecord="childRecord" @changeClass="clickChangeClass" @quitSchool="clickQuitSchool" @changeClassBack="clickChangeClass"></child-info-item>
         </div>
         <scroll-top></scroll-top>
@@ -184,10 +184,31 @@ export default {
         this.getClasses();
         this.getSettingValue();
     },
+    activated(){
+        if(this.formInline.classID){
+            this.reloadList();
+        }
+        console.log(this.$vnode.parent.componentInstance.cache)
+    },
+    destroyed() {
+        // alert('1')
+    },
+    beforeRouteLeave (to, from, next) {
+        console.log(to);    
+        console.log(from);
+        if(to.name=='ChildInfoUpdate'||to.name=='PaymentSubjectList'||to.name=='EditFamilyMember'){
+            
+        }else{
+            // console.log(this.$vnode.parent.componentInstance.cache)
+            this.$vnode.parent.componentInstance.cache = {};
+        }
+        next();
+    },
     computed:{
         ...mapState([
             'userInfo',
-            'allStaffs'
+            'allStaffs',
+            'closeLeft'
         ]),
         allNum(){
             let num = this.allChildList.length;
@@ -511,6 +532,25 @@ export default {
                 }
             });
             titleArray.push({ 
+                value:"性别",
+                type:"title",
+                style:{
+                    font:{
+                        color:{ rgb: "FF000000"}
+                    },
+                    alignment:{
+                        horizontal:"center",
+                        vertical:"center"
+                    },
+                    border:{
+                        top:{ style: "thin", color: { rgb: "FF000000"} },
+                        bottom:{ style: "thin", color: { rgb: "FF000000"} },
+                        left:{ style: "thin", color: { rgb: "FF000000"} },
+                        right:{ style: "thin", color: { rgb: "FF000000"} }
+                    }
+                }
+            });
+            titleArray.push({ 
                 value:"民族",
                 type:"title",
                 style:{
@@ -663,6 +703,24 @@ export default {
                         }
                     }
                 },{
+                    value:childObj.ChildSex=='0'?'男':'女',
+                    type:"content",
+                    style:{
+                        font:{
+                            color:{ rgb: "FF000000"}
+                        },
+                        alignment:{
+                            horizontal:"center",
+                            vertical:"center"
+                        },
+                        border:{
+                            top:{ style: "thin", color: { rgb: "FF000000"} },
+                            bottom:{ style: "thin", color: { rgb: "FF000000"} },
+                            left:{ style: "thin", color: { rgb: "FF000000"} },
+                            right:{ style: "thin", color: { rgb: "FF000000"} }
+                        }
+                    }
+                },{
                     value:childObj.ChildNation,
                     type:"content",
                     style:{
@@ -747,9 +805,9 @@ export default {
                 contentArray.push(json);
                 data.push(contentArray);
             }
-            let concat = 8;
+            let concat = 9;
             let merges = [ {s:{c:0, r:0}, e:{c:concat-1, r:0}},{s:{c:0, r:1}, e:{c:concat-1, r:1}} ];
-            let cols = [{ wpx: 30 },{ wpx: 60 },{ wpx: 70 },{ wpx: 80 },{ wpx: 70 },{ wpx: 60 },{ wpx: 90 },{ wpx: 90 }];
+            let cols = [{ wpx: 30 },{ wpx: 50 },{ wpx: 60 },{ wpx: 70 },{ wpx: 30 },{ wpx: 70 },{ wpx: 60 },{ wpx: 90 },{ wpx: 90 }];
             let Sheets = {
                 'Sheet1':data2Workbook(data,merges,cols)
             };
@@ -782,17 +840,36 @@ export default {
     width: 100%;
     grid-template-columns: 33.3% 33.3% 33.3%;
 }
+.forthInfoList{
+    grid-template-columns: 25% 25% 25% 25%;
+}
 @media screen and (max-width: 1120px){
     .childInfoList{
         display: grid;
         width: 100%;
         grid-template-columns: 50% 50%;
     }
+    .forthInfoList{
+        grid-template-columns: 33.3% 33.3% 33.3%;
+    }
 }
 @media screen and (max-width: 960px){
     .childInfoList{
         display: grid;
         width: 100%;
+        grid-template-columns: 100%;
+    }
+    .forthInfoList{
+        grid-template-columns: 50% 50%;
+    }
+}
+@media screen and (max-width: 690px){
+    .childInfoList{
+        display: grid;
+        width: 100%;
+        grid-template-columns: 100%;
+    }
+    .forthInfoList{
         grid-template-columns: 100%;
     }
 }

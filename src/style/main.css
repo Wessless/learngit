@@ -1312,7 +1312,7 @@
     width: 100%;
     height: 90px;
     line-height: 90px;
-    background: url(../img/webBg.png) 0 0/10px 10px;
+    /* background: url(../img/webBg.png) 0 0/10px 10px; */
 }
 #sign .header .main{
     width: 980px;
@@ -1339,7 +1339,7 @@
 #sign .content{
     width: 100%;
     height: 590px;
-    background: url(../img/webBg.png) 0 0/10px 10px;
+    /* background: url(../img/webBg.png) 0 0/10px 10px; */
     margin: 0 auto;
 }
 #sign .content .main{

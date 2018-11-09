@@ -3,11 +3,11 @@
         <div class="headTitle">{{item.ChargeStaff}}的应付款</div>
         <div class="title">单号：{{item.ChargeBillID}}</div>
         <div class="title">填表人：{{item.FillStaff}}</div>
-        <div class="title" style="color:#FF9D00;">金额：{{money}}{{item.MoneyUnit}}</div>
+        <div class="title">金额：<span style="color:#333;font-size:16px;">{{money}}{{item.MoneyUnit=='人民币'?'元':item.MoneyUnit}}</span></div>
         <div class="title">填表日期：{{item.FillDate}}</div>
         <div class="title">支付日期：{{item.PayDate}}</div>
         <div class="title">记账日期：{{item.ChargeDate}}</div>
-        <div class="title" style="color:#38adff;cursor:pointer;" @click="urlToExpense">报销单号：{{item.BelongChargeBillID}}</div>
+        <div class="title">报销单号：<span style="color:#38adff;cursor:pointer;" @click="urlToExpense">{{item.BelongChargeBillID}}</span></div>
         <div class="title">支付：{{item.PayType}}</div>
         <div class="title">分类：{{item.OutType}}</div>
         <div class="title">小类：{{item.SmallType}}</div>

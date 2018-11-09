@@ -1,5 +1,5 @@
 <template>
-    <div class="box_hd" :style="{'z-index':fixIndex}">
+    <div class="box_hd" :class="{leftWidth:closeLeft}" :style="{'z-index':fixIndex}">
         <div class="title_wrap">
             <a class="phone_return iconfont" v-show="showBack" @click="back()"><span class="backArrow">&#xe697;</span></a>
             <div class="title">
@@ -15,6 +15,7 @@
 
 <script>
 
+import {mapState, mapMutations} from 'vuex'
 export default { 
     name: 'ChatHeader',
     props: {
@@ -59,6 +60,11 @@ export default {
         return {
             
         }
+    },
+    computed:{
+        ...mapState([
+            'closeLeft',
+        ]),
     },
     methods:{
         back(){
@@ -171,5 +177,8 @@ export default {
 }
 .title-btn{
     float: right;
+}
+.leftWidth{
+    margin-left:70px !important;
 }
 </style>

@@ -117,6 +117,7 @@ export default {
                 }
                 console.log(result)
             }).catch((err)=>{
+                closeLoading(loading);
                 alertError(this,"1308");
             });
         },

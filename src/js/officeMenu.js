@@ -27,17 +27,17 @@ export default () => {
             sortNum:10
         },
         "1011": {
-            router:"",
+            router:"/examineScore",
             modulesNum:"1",
             sortNum:11
         },
         "1012": {
-            router:"",
+            router:"/pointsScore",
             modulesNum:"1",
             sortNum:12
         },
         "1013": {
-            router:"",
+            router:"/commandTask",
             modulesNum:"1",
             sortNum:13
         },
@@ -55,6 +55,11 @@ export default () => {
             router:"",
             modulesNum:"1",
             sortNum:16
+        },
+        "1022": {
+            router:"",
+            modulesNum:"1",
+            sortNum:22
         },
         "1023": {
             router:"/goodsApplyTab",
@@ -92,17 +97,17 @@ export default () => {
             sortNum:1
         },
         "2011": {
-            router:"",
+            router:"/attendanceManage",
             modulesNum:"2",
             sortNum:11
         },
         "2012": {
-            router:"",
+            router:"/examineManage",
             modulesNum:"2",
             sortNum:12
         },
         "2013": {
-            router:"",
+            router:"/pointsManage",
             modulesNum:"2",
             sortNum:13
         },
@@ -115,12 +120,12 @@ export default () => {
         //     router:""
         // },
         "2016": {
-            router:"",
+            router:"/yearHoliday",
             modulesNum:"2",
             sortNum:16
         },
         "2017": {
-            router:"",
+            router:"/desertEntry",
             modulesNum:"2",
             sortNum:17
         },
@@ -145,6 +150,12 @@ export default () => {
             MenuName:"业绩评定-按教师",
             modulesNum:"2",
             sortNum:21
+        },
+        //trainingManage
+        "2022":{
+            router:"",
+            modulesNum:"2",
+            sortNum:22
         },
         "2023": {
             router:"/roleSetting",
@@ -215,6 +226,21 @@ export default () => {
             router:"/dueFind",
             modulesNum:"3",
             sortNum:8
+        },
+        "3015": {
+            router:"/expenseAccount",
+            modulesNum:"3",
+            sortNum:17
+        },
+        "3016": {
+            router:"/borrowAccount",
+            modulesNum:"3",
+            sortNum:18
+        },
+        "3017": {
+            router:"/dueAccount",
+            modulesNum:"3",
+            sortNum:19
         },
         "4001": {
             router:"",
@@ -299,6 +325,11 @@ export default () => {
             router:"/purchaseFind",
             modulesNum:"5",
             sortNum:6
+        },
+        "5008": {
+            router:"/intelligentDevice",
+            modulesNum:"5",
+            sortNum:8
         },
         "6004": {
             router:"/classManagement",

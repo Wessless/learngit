@@ -27,7 +27,7 @@
             </el-form>
         </div>
         <no-data :isShow="isNoData"></no-data>
-        <div class="staffInfoList">
+        <div class="staffInfoList" :class="{forthInfoList:closeLeft}">
             <staff-info-item v-for="item in allStaffList" :key="item.TemplateID" :item="item" @clickDelete="clickDelete" @clickReset="clickReset"></staff-info-item>
         </div>
         <scroll-top></scroll-top>
@@ -91,7 +91,8 @@ export default {
     computed:{
         ...mapState([
             'userInfo',
-            'allStaffs'
+            'allStaffs',
+            'closeLeft'
         ]),
         allNum(){
             let num = this.allStaffList.length;
@@ -106,6 +107,9 @@ export default {
         
     },
     methods:{
+        ...mapMutations([
+            'SET_ALLSTAFFS',
+        ]),
         // 添加员工
         addStaff(){
             this.$router.push(this.$route.fullPath+"/add");
@@ -128,6 +132,9 @@ export default {
             let loading = showLoading();
             findAllStaffs(this.selectContent).then((result)=>{
                 closeLoading(loading);
+                if(this.selectContent == ''){
+                    this.SET_ALLSTAFFS(result.data.data);
+                }
                 allStaffs = result;
                 // let isStaffDeletePromiseArray = [];
                 // for(let i=0;i<allStaffs.length;i++){
@@ -269,7 +276,7 @@ export default {
     flex-direction: row;
     flex-wrap: wrap; 
     max-height: 100%;
-    overflow: scroll;
+    /* overflow: scroll; */
     background: #fafafa;
     position: relative;
 }
@@ -283,17 +290,36 @@ export default {
     width: 100%;
     grid-template-columns: 33.3% 33.3% 33.3%;
 }
+.forthInfoList{
+    grid-template-columns: 25% 25% 25% 25%;
+}
 @media screen and (max-width: 1120px){
     .staffInfoList{
         display: grid;
         width: 100%;
         grid-template-columns: 50% 50%;
     }
+    .forthInfoList{
+        grid-template-columns: 33.3% 33.3% 33.3%;
+    }
 }
 @media screen and (max-width: 960px){
     .staffInfoList{
         display: grid;
         width: 100%;
+        grid-template-columns: 100%;
+    }
+    .forthInfoList{
+        grid-template-columns: 50% 50%;
+    }
+}
+@media screen and (max-width: 690px){
+    .staffInfoList{
+        display: grid;
+        width: 100%;
+        grid-template-columns: 100%;
+    }
+    .forthInfoList{
         grid-template-columns: 100%;
     }
 }

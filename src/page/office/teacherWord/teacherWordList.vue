@@ -1,10 +1,11 @@
 <template>
-    <div class="SchoolInformList">
+    <div class="TeacherWordList">
+        <router-view @showDialog="showDialog"></router-view>
         <chat-header :showBack="true" :title="'老师的话'"></chat-header>
-        <div style="width:100%;padding-top:54px;padding-bottom:20px;">
-            <el-form :inline="true" :model="form" class="demo-form-inline">
-                <el-form-item label="班级" style="margin-left:10px;">
-                    <el-select v-model="form.classID" filterable size="medium" @change="getChildsByClassID" style="width:150px;" placeholder="请选择班级">
+        <div style="overflow:scroll;width:100%;height:100vh;padding-top:54px;padding-bottom:20px;">
+            <el-form :inline="true" style="padding-bottom:10px;" :model="form" class="demo-form-inline">
+                <el-form-item label="班级">
+                    <el-select v-model="form.classID" filterable size="medium" @change="getChildsByClassID" style="width:160px;" placeholder="请选择班级">
                         <el-option
                             v-for="item in form.classArr"
                             :key="item.ID"
@@ -42,6 +43,10 @@
                     <el-radio v-model="radio" label="date" @change="clickDate">按日期</el-radio>
                 </el-form-item>
 
+                <el-form-item label="" style="float:right;margin-right: 0px;">
+                    <el-button type="primary" size="medium" @click="addTeacherWord">发布</el-button>
+                </el-form-item>
+
                 <!-- <el-form-item label="" style="float:right;transform:translateX(10px);">
                     <el-date-picker
                         style="width:250px;"
@@ -58,43 +63,60 @@
                     <el-button type="primary" style="margin-left:5px;" @click="loadList()">查询</el-button>
                 </el-form-item> -->
             </el-form>
-        </div>
-
-        <div class="midTableHeight" style="width:100%;display:block;transform:translateY(-10px);">
-            <el-table :data="teacherWordList" :row-class-name="tableRowClassName" :cell-style="getColStyle" :header-cell-style="getRowStyle" border max-height="485">
-                <el-table-column prop="WriteDate" v-if="radio=='name'" align="center" label="日期"  width="160"></el-table-column>
-                <el-table-column prop="ChildName" v-if="radio=='date'" align="center" label="姓名"  width="160"></el-table-column>
-                <el-table-column label="文字内容" width="">
-                    <template slot-scope="scope">
-                        <el-popover width="500" trigger="hover" v-show="scope.row.Note!=''" placement="bottom">
-                            <div v-html="scope.row.Note"></div>
-                            <div slot="reference">
-                                <span class="spanTitle" v-show="!scope.row.ellipsis" @click="examineNotice(scope.row)" v-html="scope.row.Note"></span>
-                                <span class="spanTitle" v-show="scope.row.ellipsis" @click="examineNotice(scope.row)" v-html="scope.row.ellipsisContent"></span>
-                            </div>
-                        </el-popover>
-                    </template>
-                </el-table-column>
-            </el-table>
-            <div>
-                <el-pagination
-                    style="float:left;"
-                    @size-change="handleSizeChange"
-                    @current-change="handleCurrentChange"
-                    :current-page="currentPage"
-                    :page-sizes="[10, 20, 30, 40]"
-                    :page-size="pageSize"
-                    layout="total, sizes, prev, pager, next, jumper"
-                    :total="form.informNum">
-                </el-pagination>
+            <div class="midTableHeight" style="width:100%;display:block;">
+                <el-table :data="teacherWordList" :row-class-name="tableRowClassName" :cell-style="getColStyle" :header-cell-style="getRowStyle" border max-height="485">
+                    <el-table-column prop="WriteDate" v-if="radio=='name'" align="center" label="日期"  width="160"></el-table-column>
+                    <el-table-column prop="ChildName" v-if="radio=='date'" align="center" label="姓名"  width="160"></el-table-column>
+                    <el-table-column label="文字内容" width="">
+                        <template slot-scope="scope">
+                            <el-popover width="500" trigger="hover" v-show="scope.row.Note!=''" placement="bottom">
+                                <div v-html="scope.row.Note" style="word-break:break-all;"></div>
+                                <div slot="reference">
+                                    <span class="spanTitle" v-show="!scope.row.ellipsis" @click="examineNotice(scope.row)" v-html="scope.row.Note"></span>
+                                    <span class="spanTitle" v-show="scope.row.ellipsis" @click="examineNotice(scope.row)" v-html="scope.row.ellipsisContent"></span>
+                                </div>
+                            </el-popover>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="操作" align="center"  width="80">
+                        <template slot-scope="scope">
+                            <el-button
+                                size="mini"
+                                type="danger"
+                                @click="deleteWord(scope.row,scope.$index)">删除</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <div>
+                    <el-pagination
+                        style="float:left;"
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page="currentPage"
+                        :page-sizes="[10, 20, 30, 40]"
+                        :page-size="pageSize"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="form.informNum">
+                    </el-pagination>
+                </div>
             </div>
+            <el-dialog
+                title="提示"
+                :visible.sync="dialogVisible"
+                width="30%">
+                <span>是否删除该老师的话</span>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="dialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="confirmDelete">确 定</el-button>
+                </span>
+            </el-dialog>
         </div>
     </div>
 </template>
 
 <script>
 
-import { getChildEveryDayLives,getAllClasses,getChildsByClassID } from '@/js/api'
+import { getChildEveryDayLives,getClasses,getChildsByClassID,deleteMemoByID } from '@/js/api'
 import { showLoading,closeLoading,alertError } from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
 import NoData from '@/components/chat/NoData'
@@ -102,7 +124,7 @@ import ChatHeader from '@/components/chat/ChatHeader'
 // import InternalEmailItem from '@/page/office/internalEmail/InternalEmailItem'
 
 export default {
-    name: 'SchoolInformList',
+    name: 'TeacherWordList',
     data(){
         return {
             form: {
@@ -116,7 +138,7 @@ export default {
                 childArr:[],
                 date:"",
             },
-            // dialogVisible:false,
+            dialogVisible:false,
             radio:"name",
             clickItem:{},
             teacherWordList:[],
@@ -128,7 +150,7 @@ export default {
         ChatHeader,
     },
     mounted(){
-        this.getAllClasses();
+        this.getClasses();
     },
     computed:{
         ...mapState([
@@ -144,6 +166,16 @@ export default {
         },
     },
     methods:{
+        showDialog(v,classID){
+            if (v) {
+                this.currentPage = 1;
+                this.pageSize = 10;
+                this.form.date = "";
+                this.radio = "date";
+                this.form.classID = classID;
+                this.clickDate();
+            }
+        },
         loadList(){
             this.teacherWordList = [];
             // pageNo
@@ -186,17 +218,17 @@ export default {
                 alertError(this,"1008");
             });
         },
-        getAllClasses(){
+        getClasses(){
             this.form.classArr = [];
-            let classStatus = "-1";
-            getAllClasses(classStatus).then((result)=>{
+            let staffID = this.userInfo.userStaffID;
+            getClasses(staffID).then((result)=>{
                 // console.log(result.data)
                 this.form.classArr = result.data.data;
                 this.form.classID = this.form.classArr[0].ID;
                 this.getChildsByClassID();
                 // this.loadList();
             }).catch((err)=>{
-                alertError(this,"1039");
+                alertError(this,"1002");
             });
         },
         getChildsByClassID(){
@@ -236,6 +268,9 @@ export default {
             let id = item.ID;
             this.$router.push(this.$route.fullPath+"/examine/"+id);
         },
+        addTeacherWord(){
+            this.$router.push(this.$route.fullPath+"/add");
+        },
         getNowDate() {
             let date = new Date();
             let year = date.getFullYear();
@@ -253,13 +288,39 @@ export default {
         clickName(){
             // this.form.classID = this.form.classArr[0].ID;
             // this.form.childID = this.form.childArr[0].Id;
-            this.getAllClasses();
+            this.getChildsByClassID();
             this.form.date = '';
-            this.loadList();
         },
         clickDate(){
             this.getNowDate();
             this.loadList();
+        },
+        deleteWord(item){
+            console.log(item);
+            this.clickItem = item;
+            this.dialogVisible = true;
+        },
+        confirmDelete(){
+            this.dialogVisible = false;
+            let loading = showLoading();
+            deleteMemoByID(this.clickItem.ID).then((result)=>{
+                closeLoading(loading);
+                if(result.data.ret=="1"){
+                    this.$message({
+                        type:"success",
+                        message:"删除成功"
+                    });
+                    this.loadList();
+                }else{
+                    this.$message({
+                        type:"error",
+                        message:"删除失败"
+                    });
+                }
+            }).catch((err)=>{
+                closeLoading(loading);
+                alertError(this,"2013");
+            });
         },
         //改变表样式
         getRowStyle({ row, column, rowIndex, columnIndex }){
@@ -290,13 +351,13 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 
 <style scoped>
-.SchoolInformList{
+.TeacherWordList{
     padding:20px;
-    display: flex;
-    flex-direction: row;
+    /* display: flex;
+    flex-direction: row; */
     flex-wrap: wrap; 
     max-height: 100%;
-    overflow: scroll;
+    overflow: hidden;
     background: #fafafa;
     position: relative;
     max-height: 100vh;

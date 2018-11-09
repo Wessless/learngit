@@ -34,7 +34,7 @@
 
 <script>
 
-import { getMenusByStaffID } from '@/js/api'
+import { getMenusByStaffID,getSettingValue } from '@/js/api'
 import { showLoading,closeLoading,alertError } from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
 import NoData from '@/components/chat/NoData'
@@ -60,7 +60,8 @@ export default {
                 { name:"违规"  ,id:"1018", router:"/illegalApply"},
                 { name:"应付款"  ,id:"1028", router:"/dueApply"},
             ],
-            approveName:""
+            approveName:"",
+            isshowExpense:false,
         }
     },
     components:{
@@ -85,6 +86,11 @@ export default {
         }else if (this.approveName == "fifth") {
             this.clickTabName = "抄送我的";
         }
+        getSettingValue("EXPENSE_APPLY_REQUIRED").then((result)=>{
+            this.isshowExpense = result.data.EXPENSE_APPLY_REQUIRED=="NO"?false:true;
+        }).catch((err)=>{
+            alertError(this,"1211");
+        });
         this.getMenusByStaffID();
     },
     computed:{
@@ -102,6 +108,9 @@ export default {
                     result = this.examineApproveList[j];
                     continue;
                 }
+                if ((j==5||j==6||j==9)&&!this.isshowExpense) {
+                    continue;
+                }
                 for(let i=0;i<this.itemList.length;i++){
                     let obj = this.itemList[i];
                     if(obj.Num==this.examineApproveList[j].id){
@@ -109,7 +118,6 @@ export default {
                     }
                 }
             }
-            // console.log(resultArr)
             resultArr.push(result);
             closeLoading(loading);
             return resultArr;
@@ -234,7 +242,7 @@ export default {
     width: 100%;
     grid-template-columns: 25% 25% 25% 25%;
     max-height: 100%;
-    overflow: scroll;
+    /* overflow: scroll; */
     background: #fafafa;
     /* background: red; */
 }

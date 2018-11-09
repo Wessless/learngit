@@ -63,19 +63,19 @@
                 </el-input>
             </el-form-item>
             <el-form-item label="签字人" style="width:500px;" class="ReceiveApplyDetail_signatory">
-                <div v-show="this.form.SellManager1Name!=''"> 
+                <div v-show="form.SellManager1Name!=''&&form.SellManager1==userInfo.userStaffID"> 
                     <label class="labeleg" :disabled="true">{{this.form.SellManager1Name}}</label>
                     <el-radio v-model="radio1" label="1">同意</el-radio>
                     <el-radio v-model="radio1" label="0">不同意</el-radio>
                     <el-input class="input_move" v-model="form.note1" size="small" style="width:400px;"></el-input>
                 </div>
-                <div v-show="this.form.SellManager2Name!=''">
+                <div v-show="form.SellManager2Name!=''&&form.SellManager2==userInfo.userStaffID">
                     <label class="labeleg" :disabled="true">{{this.form.SellManager2Name}}</label>
                     <el-radio v-model="radio2" label="1">同意</el-radio>
                     <el-radio v-model="radio2" label="0">不同意</el-radio>
                     <el-input class="input_move" v-model="form.note2" size="small" style="width:400px;"></el-input>
                 </div>
-                <div v-show="this.form.SellManager3Name!=''">
+                <div v-show="form.SellManager3Name!=''&&form.SellManager3==userInfo.userStaffID">
                     <label class="labeleg" :disabled="true">{{this.form.SellManager3Name}}</label>
                     <el-radio v-model="radio3" label="1">同意</el-radio>
                     <el-radio v-model="radio3" label="0">不同意</el-radio>

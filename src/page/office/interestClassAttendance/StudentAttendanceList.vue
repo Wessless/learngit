@@ -14,12 +14,12 @@
         <el-table :data="tableData" style="width:100%;display:block;" border max-height="600">
             <el-table-column :label="label1" align="center">
                 <el-table-column  prop="ClassName" align="center"  label="所在班级"  width="100"></el-table-column>
-                <el-table-column  prop="ChildNum" align="center"  label="学号"  width="100"></el-table-column>
+                <el-table-column  prop="ChildNum" align="center"  label="学号"  width="120"></el-table-column>
                 <el-table-column  prop="ChildName" align="center"  label="姓名"  width="100"></el-table-column>
                 <el-table-column  prop="ChildSex" align="center"  label="性别"  width="100"></el-table-column>
-                <el-table-column  prop="ClassInDate" align="center"  label="入班日期"  width="220"></el-table-column>
-                <el-table-column  prop="ClassOutDate" align="center"  label="退班日期"  width="220"></el-table-column>
-                <el-table-column prop="AttendFlag" align="center"  label="出勤状况">
+                <el-table-column  prop="ClassInDate" align="center"  label="入班日期" ></el-table-column>
+                <el-table-column  prop="ClassOutDate" align="center"  label="退班日期" ></el-table-column>
+                <el-table-column prop="AttendFlag" align="center"  label="出勤状况" width="110">
                     <template slot-scope="scope">
                         <el-select v-model="scope.row.AttendFlag" size="small" placeholder="请选择">
                             <el-option

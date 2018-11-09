@@ -72,7 +72,7 @@
                 <div v-show="this.form.SellManager2Name!=''">
                     <label class="labeleg" :disabled="true">{{this.form.SellManager2Name}}</label>
                     <el-radio v-model="radio2" label="1" :disabled="true">同意</el-radio>
-                    <el-radio v-model="radio2" label="0">不同意</el-radio>
+                    <el-radio v-model="radio2" label="0" :disabled="true">不同意</el-radio>
                     <el-input class="input_move" v-model="form.note2" size="small" style="width:400px;" :disabled="true">{{this.form.note2}}</el-input>
                 </div>
                 <div v-show="this.form.SellManager3Name!=''">

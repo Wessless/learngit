@@ -143,11 +143,13 @@ export default {
             this.getIClassByID(loading);
         },
         getIClassByID(loading){
+            
             getIClassByID(this.formInline.classID).then((result)=>{
                 let BeginDate = result.data.BeginDate.split(" ")[0];
                 this.BeginDate = BeginDate;
             })
-            getChildChargeMessage(this.formInline.classID,this.pageNo,this.pageSize).then((result)=>{          
+            getChildChargeMessage(this.formInline.classID,this.pageNo,this.pageSize).then((result)=>{       
+                this.tableData = [];   
                 if(this.$route.meta.type=="examine"){
                     for (let i = 0; i < result.data.data.length; i++) {
                         if (result.data.data[i].EndDate!='1900-01-01') {

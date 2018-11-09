@@ -45,7 +45,7 @@
                     </div>
                 </el-form-item>
 
-                <el-form-item :label="dateTypeName">
+                <!-- <el-form-item :label="dateTypeName">
                     <el-date-picker
                         v-model="form.startDate"
                         type="date"
@@ -62,6 +62,21 @@
                         style="width:240px;"
                         @change="changeEndDate"
                         placeholder="结束日期">
+                    </el-date-picker>
+                </el-form-item> -->
+
+                <el-form-item :label="dateTypeName">
+                    <el-date-picker
+                        style="width:501px;"
+                        v-model="form.dateRange"
+                        type="daterange"
+                        range-separator="一"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
+                        value-format="yyyy-MM-dd"
+                        size="small"
+                        unlink-panels
+                        :picker-options="pickerOptions">
                     </el-date-picker>
                 </el-form-item>
 
@@ -113,7 +128,8 @@ export default {
                 chargeEndDate:"",
                 bankAccountID:"-1",
                 bankArr:[],
-                dateType:"1"
+                dateType:"1",
+                dateRange:"",
             },
             isNoData:false,
             dialogVisible:false,
@@ -122,6 +138,33 @@ export default {
             currentPage:1,
             isDisabled:false,
             itemNum:"",
+            pickerOptions: {
+                shortcuts: [{
+                    text: '最近一周',
+                    onClick(picker) {
+                    const end = new Date();
+                    const start = new Date();
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                    picker.$emit('pick', [start, end]);
+                    }
+                }, {
+                    text: '最近一个月',
+                    onClick(picker) {
+                    const end = new Date();
+                    const start = new Date();
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                    picker.$emit('pick', [start, end]);
+                    }
+                }, {
+                    text: '最近三个月',
+                    onClick(picker) {
+                    const end = new Date();
+                    const start = new Date();
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                    picker.$emit('pick', [start, end]);
+                    }
+                }]
+            },
         }
     },
     components:{
@@ -192,16 +235,27 @@ export default {
             let userName = this.form.userName!=""?this.form.userName:"-1";
             let userNum = this.form.userNum!=""?this.form.userNum:"-1";
             let actualName = this.form.actualName!=""?this.form.actualName:"-1";
-            let signBeginDate = this.form.signBeginDate!=""?this.form.signBeginDate:"-1";
-            let signEndDate = this.form.signEndDate!=""?this.form.signEndDate:"-1";
-            let stockoutBeginDate = this.form.stockoutBeginDate!=""?this.form.stockoutBeginDate:"-1";
-            let stockoutEndDate = this.form.stockoutEndDate!=""?this.form.stockoutEndDate:"-1";
+            let signBeginDate = "-1";
+            let signEndDate = "-1";
+            let stockoutBeginDate = "-1";
+            let stockoutEndDate = "-1";
             let status = this.form.status!=""?this.form.status:"-1";
             let dealer = this.form.dealer!=""?this.form.dealer:"-1";
-            let chargeBeginDate = this.form.chargeBeginDate!=""?this.form.chargeBeginDate:"-1";
-            let chargeEndDate = this.form.chargeEndDate!=""?this.form.chargeEndDate:"-1";
+            let chargeBeginDate = "-1";
+            let chargeEndDate = "-1";
             let bankAccountID = this.form.bankAccountID!=""?this.form.bankAccountID:"-1";
             let searchText = "";
+            
+            if (this.form.dateType=="1") {
+                signBeginDate = this.form.dateRange?this.form.dateRange[0]:"";
+                signEndDate = this.form.dateRange?this.form.dateRange[1]:"";
+            }else if (this.form.dateType=="2") {
+                stockoutBeginDate = this.form.dateRange?this.form.dateRange[0]:"";
+                stockoutEndDate = this.form.dateRange?this.form.dateRange[1]:"";
+            }else if (this.form.dateType=="3") {
+                chargeBeginDate = this.form.dateRange?this.form.dateRange[0]:"";
+                chargeEndDate = this.form.dateRange?this.form.dateRange[1]:"";
+            }
 
             if(reload){
                 this.currentPage = 1;
@@ -254,30 +308,30 @@ export default {
                 alertError(this,"1164");
             });
         },
-        changeStartDate(value){
-            // signBeginDate:"",
-            // signEndDate:"",
-            // stockoutBeginDate:"",
-            // stockoutEndDate:"",
-            // chargeBeginDate:"",
-            // chargeEndDate:"",
-            if (this.form.dateType=="1") {
-                this.form.signBeginDate = value;
-            }else if (this.form.dateType=="2") {
-                this.form.stockoutBeginDate = value;
-            }else if (this.form.dateType=="3") {
-                this.form.chargeBeginDate = value;
-            }
-        },
-        changeEndDate(value){
-            if (this.form.dateType=="1") {
-                this.form.signEndDate = value;
-            }else if (this.form.dateType=="2") {
-                this.form.stockoutEndDate = value;
-            }else if (this.form.dateType=="3") {
-                this.form.chargeEndDate = value;
-            }
-        },
+        // changeStartDate(value){
+        //     // signBeginDate:"",
+        //     // signEndDate:"",
+        //     // stockoutBeginDate:"",
+        //     // stockoutEndDate:"",
+        //     // chargeBeginDate:"",
+        //     // chargeEndDate:"",
+        //     if (this.form.dateType=="1") {
+        //         this.form.signBeginDate = value;
+        //     }else if (this.form.dateType=="2") {
+        //         this.form.stockoutBeginDate = value;
+        //     }else if (this.form.dateType=="3") {
+        //         this.form.chargeBeginDate = value;
+        //     }
+        // },
+        // changeEndDate(value){
+        //     if (this.form.dateType=="1") {
+        //         this.form.signEndDate = value;
+        //     }else if (this.form.dateType=="2") {
+        //         this.form.stockoutEndDate = value;
+        //     }else if (this.form.dateType=="3") {
+        //         this.form.chargeEndDate = value;
+        //     }
+        // },
     }
 }
 </script>

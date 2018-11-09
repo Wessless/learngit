@@ -59,7 +59,7 @@
             </el-form-item>
 
             <el-form-item label="收款单位名称" v-show="form.payType=='3'||form.payType=='1'||form.payType=='2'">
-                <el-select v-model="form.customerID" size="small" style="width:600px;" @change="getBankDetail" placeholder="请选择收款单位">
+                <el-select v-model="form.customerID" size="small" style="width:600px;" @change="getBankDetail" filterable allow-create placeholder="请选择收款单位">
                     <el-option
                         v-for="item in form.CustomerList"
                         :key="item.CustomerID"
@@ -250,6 +250,7 @@ export default {
             pageSize:1000,
             customerType:"1",
             delImgUrl:[],
+            noCompany:false,
             form: {
                 chargeBillID:"",
                 chargeBillType:"01",
@@ -362,7 +363,11 @@ export default {
                 let obj = this.form.CustomerList.find((item)=>{
                     return this.form.customerID === item.CustomerID;
                 })
-                return obj.CompanyTitle;
+                if(obj){
+                    return obj.CompanyTitle;
+                }else{
+                    return '';
+                }
             }
         },
         transformCapital(){
@@ -506,11 +511,18 @@ export default {
             // {"OutType":"","DetailID":"","DetailName":"","Ratio":""}
             let billOutsList = [];
             for(let i=0;i<this.form.billOutsList.length;i++){
-                billOutsList.push({
-                "OutType":this.form.billOutsList[i].OutType,
-                "DetailID":this.form.billOutsList[i].DetailID,
-                "DetailName":this.form.billOutsList[i].DetailName,
-                "Ratio":this.form.billOutsList[i].Ratio})
+                let json = {
+                    "OutType":this.form.billOutsList[i].OutType,
+                    "DetailID":this.form.billOutsList[i].DetailID,
+                    "DetailName":"",
+                    "Ratio":this.form.billOutsList[i].Ratio
+                }
+                for(let j=0;j<this.form.billOutsList[i].Array.length;j++){
+                    if(this.form.billOutsList[i].Array[j].DetailID==this.form.billOutsList[i].DetailID){
+                        json.DetailName = this.form.billOutsList[i].Array[j].DetailName;
+                    }
+                }
+                billOutsList.push(json);
             }
             let json = {
                 id:"-1",
@@ -525,14 +537,14 @@ export default {
                 smallType : this.smallType,
                 subject : this.subject,
                 rateName : this.rateName,
-                receiverTitle : this.receiverTitle,
+                receiverTitle : this.noCompany?this.form.customerID:this.receiverTitle,
                 bigTypeID : this.form.bigTypeID,
                 smallTypeID : this.form.smallTypeID,
                 subjectID : this.form.subjectID,
                 sidAdditionalSigner1 : this.form.sidAdditionalSigner1?this.form.sidAdditionalSigner1:"-1",
                 sidAdditionalSigner2 : this.form.sidAdditionalSigner2?this.form.sidAdditionalSigner2:"-1",
                 warrantNumber : this.form.warrantNumber,
-                customerID : this.form.customerID?this.form.customerID:"-1",
+                customerID : this.noCompany?'-1':(this.form.customerID?this.form.customerID:"-1"),
                 bank : this.form.bank,
                 bankAccount : this.form.bankAccount,
                 chargeBillType : this.form.chargeBillType,
@@ -709,10 +721,16 @@ export default {
                 this.form.chargeBillType = obj.ChargeBillType;
                 this.form.companyID = obj.CompanyID;
                 this.form.chargeStaffID = obj.ChargeStaffID;
-                this.form.hasInvoice = obj.HasInvoice?"1":"0";
+                this.form.hasInvoice = obj.HasInvoice=="True"?"1":"0";
                 this.form.warrantNumber = obj.WarrantNumber;
                 this.form.payType = obj.PayType;
-                this.form.customerID = obj.ReceiverID!=-1?obj.ReceiverID:"";
+                // lixiaowei
+                if(obj.ReceiverID!=-1){
+                    this.form.customerID = obj.ReceiverID;
+                }else{
+                    this.form.customerID = obj.ReceiverTitle;
+                    this.noCompany = true;
+                }
                 this.form.bank = obj.Bank?obj.Bank:"";
                 this.form.bankAccount = obj.BankAccount?obj.BankAccount:"";
                 this.form.money = obj.Money;
@@ -899,12 +917,14 @@ export default {
             let cosNum = this.userInfo.cosNum;
             getCustomerManage(cosNum,this.pageNo,this.pageSize,this.customerType,'','CustomerNum','').then((result)=>{
                 this.form.CustomerList = result.data.data;
-                if (this.$route.meta.type == "add"||this.form.customerID=="") {
-                    if(this.form.CustomerList.length>0){
-                        this.form.customerID = this.form.CustomerList[0].CustomerID;
-                    }
+                // if (this.$route.meta.type == "add"||this.form.customerID=="") {
+                //     if(this.form.CustomerList.length>0){
+                //         this.form.customerID = this.form.CustomerList[0].CustomerID;
+                //     }
+                // }
+                if(this.form.customerID){
+                    this.getBankDetail(this.form.customerID);
                 }
-                this.getBankDetail(this.form.customerID);
             })
             .catch((err)=>{
                 alertError(this,"1108");
@@ -915,8 +935,14 @@ export default {
                 let obj = this.form.CustomerList.find((item)=>{
                     return item.CustomerID === value;
                 })
-                this.form.bank = obj.Bank;
-                this.form.bankAccount = obj.BankAccount;
+                // lixiaowei
+                if(obj){
+                    this.form.bank = obj.Bank;
+                    this.form.bankAccount = obj.BankAccount;
+                    this.noCompany = false;
+                }else{
+                    this.noCompany = true;
+                }
             }
         },
         //金额转换

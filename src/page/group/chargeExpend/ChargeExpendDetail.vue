@@ -45,7 +45,7 @@
             </div>
             <div class="detailItem">
                 <div class="detailTitle">摘要</div>
-                <div class="detailContent">{{detail.Summary}}</div>
+                <div class="detailContent" v-html="detail.Summary"></div>
             </div>
             <div class="detailItem">
                 <div class="detailTitle">资金分类</div>
@@ -65,7 +65,7 @@
             </div>
             <div class="detailItem">
                 <div class="detailTitle">详细说明</div>
-                <div class="detailContent" style="white-space: normal;">{{detail.Note}}</div>
+                <div class="detailContent" style="white-space: normal;" v-html="detail.Note"></div>
             </div>
             <div class="detailItem">
                 <div class="detailTitle">关联文件</div>

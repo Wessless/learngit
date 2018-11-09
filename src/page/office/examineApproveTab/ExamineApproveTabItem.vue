@@ -2,10 +2,10 @@
     <div class="expenseItem">
         <div class="headTitle">{{item.ApplyName}}的{{applyType}}申请</div>
         <div class="title">创建日期：{{item.CreateDate}}</div>
-        <div class="title" :style="{color: stateColor}">状态：{{applyStates}}</div>
-        <div class="title" :class="{blueColor:item.Type==15}" @click="urlToExpense">{{item.ChargeID?IDName+"ID："+item.ChargeID:`&nbsp;`}}</div>
+        <div class="title">状态：<span :style="{color: stateColor}">{{applyStates}}</span></div>
+        <div class="title">{{item.ChargeID?IDName+"ID：":`&nbsp;`}}<span :class="{blueColor:item.Type==15}" @click="urlToExpense">{{item.ChargeID?item.ChargeID:``}}</span></div>
         <div class="title" v-show="item.OrderApplyNum">{{item.OrderApplyNum?"订单编号："+item.OrderApplyNum:`&nbsp;`}}</div>
-        <div class="title" style="color:#FF9D00;">{{item.BillMoney?"金额："+item.BillMoney:`&nbsp;`}}</div>
+        <div class="title">{{item.BillMoney?"金额：":`&nbsp;`}}<span style="color:#333;font-size:16px;">{{item.BillMoney?item.BillMoney+'元':``}}</span></div>
         <!-- <div class="leftButton"  v-show="item.Result=='0'&&tabType=='2'&&isShowUpdate" @click="updateItem">修改</div> -->
         <!-- <div class="leftButton"  v-show="isShowExamine&&item.Result=='0'&&tabType=='2'" @click="examineItem">详情</div> -->
         <!-- <div class="rightButton" v-show="item.Result=='0'&&tabType=='2'" @click="delItem">撤销</div> -->

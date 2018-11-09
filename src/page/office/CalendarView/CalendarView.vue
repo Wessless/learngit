@@ -151,7 +151,7 @@ export default {
     flex-wrap: wrap;  */
     max-height: 100%;
     min-height: 100vh;
-    overflow: scroll;
+    /* overflow: scroll; */
     background: #fafafa;
     position: relative;
 }

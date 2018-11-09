@@ -97,16 +97,23 @@ export default {
         },
         examineGroupDetail(item2){
             this.item.isShowGroup = false;
+            let isGroup = this.isGroup?'1':'0';
+            if (item2.id=='1') {
+                this.$router.push("/mainpage/group/"+this.item.F_CosNum+'/'+isGroup+"/tuitionIncome");
+            }
             if (item2.id=='2') {
                 // this.$router.push("/mainpage/group");
                 // window.history.go(-1);
-                this.$router.push("/mainpage/group/"+this.item.F_CosNum+"/chargeExpend");
+                this.$router.push("/mainpage/group/"+this.item.F_CosNum+'/'+isGroup+"/chargeExpend");
             }
             if (item2.id=='4') {
-                this.$router.push("/mainpage/group/"+this.item.F_CosNum+"/staffData");
+                this.$router.push("/mainpage/group/"+this.item.F_CosNum+'/'+isGroup+"/staffData");
             }
             if (item2.id=='5') {
-                this.$router.push("/mainpage/group/"+this.item.F_CosNum+"/studentData");
+                this.$router.push("/mainpage/group/"+this.item.F_CosNum+'/'+isGroup+"/studentData");
+            }
+            if (item2.id=='6') {
+                this.$router.push("/mainpage/group/"+this.item.F_CosNum+'/'+isGroup+"/studentAttendance");
             }
         },
         changeLogin(){

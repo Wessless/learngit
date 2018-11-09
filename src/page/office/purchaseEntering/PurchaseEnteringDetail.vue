@@ -38,15 +38,15 @@
                     format="yyyy-MM-dd"
                     style="width:400px;"
                     value-format="yyyy-MM-dd"
-                    :placeholder="'选择日期'"
+                    :placeholder="'请选择采购日期'"
                     >
                 </el-date-picker>
             </el-form-item>
             <el-form-item label="采购价格">
-                <el-input v-model="form.PurchasePrice" size="small" :disabled="this.$route.meta.type=='purchaseFindEnter'" style="width:400px;"></el-input>
+                <el-input v-model="form.PurchasePrice" @keyup.native="changeMoney" size="small" :disabled="this.$route.meta.type=='purchaseFindEnter'" :placeholder="'请输入采购价格'" style="width:400px;"></el-input>
             </el-form-item>
             <el-form-item label="采购数量">
-                <el-input v-model="form.PurchaseCount" size="small" style="width:400px;" :disabled="this.$route.meta.type=='purchaseFindEnter'"></el-input>
+                <el-input v-model="form.PurchaseCount" size="small" style="width:400px;" :disabled="this.$route.meta.type=='purchaseFindEnter'" :placeholder="'请输入采购数量'"></el-input>
             </el-form-item>
         </el-form>
         <el-form ref="form" :model="form" label-width="90px" style="width:100%;">
@@ -68,7 +68,7 @@
 <script>
 
 import {getPurchaseDetailOutByAplyId,getGoodsSortMessage,getPurchaseApplyDetailByAplyId,PurchaseInput,updatePurchaseOutInfo,findAllRetiredStaffs} from '@/js/api'
-import { showLoading,closeLoading,alertError } from '@/config/utils'
+import { showLoading,closeLoading,alertError,money } from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
 import ChatHeader from '@/components/chat/ChatHeader'
 
@@ -221,7 +221,7 @@ export default {
                     this.form.GoodsSortID = obj[0].GoodsSrot?obj[0].GoodsSrot:"";
                     this.form.PurchaseCount = obj[0].PurchaseCount?obj[0].PurchaseCount:"";
                     this.formInline.staffID = obj[0].PurchaserstaffID?obj[0].PurchaserstaffID:"";
-                    this.form.PurchaseDate = obj[0].PurchaseDate?obj[0].PurchaseDate:"";
+                    this.form.PurchaseDate = obj[0].PurchaseDate&&obj[0].PurchaseDate!='1900-01-01'?obj[0].PurchaseDate:"";
                     this.form.PurchasePrice = obj[0].PurchasePrice?obj[0].PurchasePrice:"";
                     this.form.Explain = obj[0].Explain?obj[0].Explain:"";
                     this.loadGoodsSort(this.form.GoodsSortID,loading);
@@ -246,6 +246,15 @@ export default {
             }).catch((err)=>{
                 alertError(this,"1188");
             });
+        },
+        changeMoney(){
+            let value = this.form.PurchasePrice;
+            value = value.replace(/[^\d\.]/g,"").replace(/(\.\d{2}).+$/,"$1").replace(/^0+([1-9])/,"$1").replace(/^0+$/,"0");
+            if(value.indexOf(".")< 0 && value !=""){//以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额 
+                value= parseFloat(value); 
+            } 
+            value = money(value)
+            this.form.PurchasePrice = value;
         },
         getData(value){
             this.form.PurchaseDate = value;

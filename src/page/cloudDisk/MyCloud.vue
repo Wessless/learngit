@@ -10,7 +10,7 @@
                 <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
             </span> -->
         </el-dialog>
-        <div class="fix">
+        <div class="fix" :class="{leftPadding:closeLeft}">
             <div style="width:100%;position:relative;z-index:3">
                 <div class="cloudHeader">
                     <!-- <el-dropdown @command="handleCommand">
@@ -167,7 +167,8 @@ export default {
     },
     computed:{
         ...mapState([
-            'userInfo'
+            'userInfo',
+            'closeLeft'
         ]),
         noAllSelect(){//未全选也未全不选
             let arr = this.tableData;
@@ -268,7 +269,7 @@ export default {
                     }else if(data[i].Type=="D"){
                         type = "folder";
                     }
-                    let url = data[i].URL.replace("../../../",this.userInfo.currCOSIP+"COS"+this.userInfo.cosNum+"/");
+                    let url = data[i].URL.replace("../../../",this.userInfo.currCOSIP+"/COS"+this.userInfo.cosNum+"/");
                     let json = {
                         id: data[i].ID,
                         date: data[i].CreateDate,
@@ -575,5 +576,8 @@ export default {
     padding-left:404px;
     padding-right:28px;
     left:0;
+}
+.leftPadding{
+    padding-left:90px !important;
 }
 </style>

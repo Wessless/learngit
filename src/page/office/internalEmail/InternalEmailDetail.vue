@@ -6,18 +6,20 @@
         <chat-header :showBack="true" :title="title" :showRightBtn="true" :rightBtnTitle="'发送'" :rightBtnName="'confirm'" :rightBtnType="'btn'" @confirm="confirm"></chat-header>
         <el-form ref="form" :model="form" label-width="120px" style="width:100%;">
             <el-form-item label="收件人">
-                <el-select v-model="form.Receivers" size="small" style="width:600px;" multiple placeholder="请选择收件人">
+                <el-select v-model="form.Receivers" filterable size="small" style="width:470px;" multiple placeholder="请选择收件人">
                     <el-option
-                    v-for="item in allStaffs"
+                        v-for="item in form.ReceiversArr"
                         :key="item.StaffName"
                         :label="item.StaffName"
                         :value="item.StaffName">
                     </el-option>
                 </el-select>
+                <el-button @click="selectAll('Receivers')" type="primary" size="small" style="margin-left:5px;">全选</el-button>
+                <el-button @click="selectClear('Receivers')" type="primary" size="small" style="margin-left:5px;">清空</el-button>
             </el-form-item>
 
             <el-form-item label="抄送人">
-                <el-select v-model="form.CCs" size="small" style="width:600px;" multiple placeholder="请选择抄送人">
+                <el-select v-model="form.CCs" filterable size="small" style="width:470px;" multiple placeholder="请选择抄送人">
                     <el-option
                     v-for="item in allStaffs"
                         :key="item.StaffID"
@@ -25,10 +27,12 @@
                         :value="item.StaffID">
                     </el-option>
                 </el-select>
+                <el-button @click="selectAll('CCs')" type="primary" size="small" style="margin-left:5px;">全选</el-button>
+                <el-button @click="selectClear('CCs')" type="primary" size="small" style="margin-left:5px;">清空</el-button>
             </el-form-item>
 
             <el-form-item label="密送人">
-                <el-select v-model="form.BCCs" size="small" style="width:600px;" multiple placeholder="请选择密送人">
+                <el-select v-model="form.BCCs" filterable size="small" style="width:470px;" multiple placeholder="请选择密送人">
                     <el-option
                     v-for="item in allStaffs"
                         :key="item.StaffID"
@@ -36,6 +40,8 @@
                         :value="item.StaffID">
                     </el-option>
                 </el-select>
+                <el-button @click="selectAll('BCCs')" type="primary" size="small" style="margin-left:5px;">全选</el-button>
+                <el-button @click="selectClear('BCCs')" type="primary" size="small" style="margin-left:5px;">清空</el-button>
             </el-form-item>
             
             <el-form-item label="主题">
@@ -94,8 +100,10 @@ export default {
     data(){
         return {
             title:"",
+            checkAll:false,
             form: {
                 Receivers:[],   //收件人
+                ReceiversArr:[],
                 CCs:[],
                 BCCs:[],
                 Title:"",
@@ -110,6 +118,7 @@ export default {
                 ],
                 // images:[]
             },
+            oldOptions: [],
             cbOnlyText:false,
             showWhite:false,
             uploadArr:[],
@@ -133,6 +142,7 @@ export default {
         quillEditor
     },
     mounted(){
+        this.form.ReceiversArr = this.allStaffs;
         if(this.$route.meta.type=="add"){
             this.title = "写邮件";
         }else{
@@ -264,7 +274,9 @@ export default {
                 Id = this.$route.params.emailID;
                 WriteType = "1";
             }
+            let loading = showLoading();
             showLocalMailInfo(WriteType,staffId,Id,cosNum,ip).then((result)=>{
+                closeLoading(loading);
                 console.log(result.data);
                 // Receivers:[],   //收件人
                 // CCs:[],
@@ -285,38 +297,42 @@ export default {
                 this.form.EncodingValue = obj.Encoding;
                 this.form.content = obj.FCKeditorBody;
                 this.cbOnlyText = obj.cbOnlyText;
-                for (let i = 0; i < obj.link.length; i++) {
-                    let obj1 = {"ID":"","fileName":"","type":"","imgPath":"","attachmentSize":"","AttachmentPath":""};
-                    let array = obj.link[i].Text.split(".");
-                    obj1.type = array[array.length-1];
-                    obj1.AttachmentPath = obj.link[i].CommandArgument;
-                    if(obj1.type=="doc" || obj1.type=="docx"){
-                        obj1.imgPath = "static/images/doc.png";
-                    }else if(obj1.type=="xlsx" || obj1.type=="xls"){
-                        obj1.imgPath = "static/images/xlsx.png";
-                    }else if(obj1.type=="txt"){
-                        obj1.imgPath = "static/images/txt.png";
-                    }else if(obj1.type=="mp3"){
-                        obj1.imgPath = "static/images/mp3.png";
-                    }else if(obj1.type=="mp4"){
-                        obj1.imgPath = "static/images/mp4.png";
-                    }else if(obj.type=="jpg" || obj1.type=="jpeg" || obj1.type=="png" || obj1.type=="bmp"){
-                        obj1.imgPath = "static/images/pic.png";
-                    }else if(obj.type=="pdf"){
-                        obj1.imgPath = "static/images/pdf.png";
-                    }else if(obj.type=="imageText"){
-                        obj1.imgPath = "static/images/imageText.png";
-                    }else{
-                        obj1.imgPath = "static/images/undefined.png";
+                if (obj.link) {
+                    for (let i = 0; i < obj.link.length; i++) {
+                        let obj1 = {"ID":"","fileName":"","type":"","imgPath":"","attachmentSize":"","AttachmentPath":""};
+                        let array = obj.link[i].Text.split(".");
+                        obj1.type = array[array.length-1];
+                        obj1.AttachmentPath = obj.link[i].CommandArgument;
+                        if(obj1.type=="doc" || obj1.type=="docx"){
+                            obj1.imgPath = "static/images/doc.png";
+                        }else if(obj1.type=="xlsx" || obj1.type=="xls"){
+                            obj1.imgPath = "static/images/xlsx.png";
+                        }else if(obj1.type=="txt"){
+                            obj1.imgPath = "static/images/txt.png";
+                        }else if(obj1.type=="mp3"){
+                            obj1.imgPath = "static/images/mp3.png";
+                        }else if(obj1.type=="mp4"){
+                            obj1.imgPath = "static/images/mp4.png";
+                        }else if(obj.type=="jpg" || obj1.type=="jpeg" || obj1.type=="png" || obj1.type=="bmp"){
+                            obj1.imgPath = "static/images/pic.png";
+                        }else if(obj.type=="pdf"){
+                            obj1.imgPath = "static/images/pdf.png";
+                        }else if(obj.type=="imageText"){
+                            obj1.imgPath = "static/images/imageText.png";
+                        }else{
+                            obj1.imgPath = "static/images/undefined.png";
+                        }
+                        obj1.fileName = obj.link[i].Text;
+                        obj1.attachmentSize = obj.link[i].attachmentSize;
+                        obj1.ID = obj.link[i].ID;
+                        this.uploadArr.push(obj1);
+                        this.uploadFileArr.push(obj1);
                     }
-                    obj1.fileName = obj.link[i].Text;
-                    obj1.attachmentSize = obj.link[i].attachmentSize;
-                    obj1.ID = obj.link[i].ID;
-                    this.uploadArr.push(obj1);
-                    this.uploadFileArr.push(obj1);
                 }
             })
             .catch((err)=>{
+                console.log(err);
+                closeLoading(loading);
                 alertError(this,"2204");
             });
         },
@@ -403,6 +419,54 @@ export default {
             this.uploadArr.splice(index,1);
             this.uploadFileArr.splice(index,1);
         },
+        selectAll(type){
+            let allValues = [];
+            for (let i = 0; i < this.form.ReceiversArr.length; i++) {
+                allValues.push(this.form.ReceiversArr[i].StaffName);
+            }
+            if (type=="Receivers") {
+                this.form.Receivers = allValues;
+            }else if (type=="CCs") {
+                this.form.CCs = allValues;
+            }else if (type=="BCCs") {
+                this.form.BCCs = allValues;
+            }
+        },
+        selectClear(type){
+            if (type=="Receivers") {
+                this.form.Receivers = [];
+            }else if (type=="CCs") {
+                this.form.CCs = [];  
+            }else if (type=="BCCs") {
+                this.form.BCCs = [];
+            }
+        }
+        // selectAll(val){
+        //     let allValues = [];
+        //     for (let i = 0; i < this.form.ReceiversArr.length; i++) {
+        //         allValues.push(this.form.ReceiversArr[i].StaffName);
+        //     }
+        //     let oldVal = this.oldOptions.length === 1 ? this.oldOptions[0] : [];
+            
+        //     if(val.includes("全部")){
+        //         this.form.Receivers = allValues;
+        //     }
+        //     if (oldVal.includes("全部")&&!val.includes("全部")) {
+        //         this.form.Receivers = [];
+        //     }
+        //     if (oldVal.includes("全部")&&val.includes("全部")) {
+        //         let index = val.indexOf("全部");
+        //         val.splice(index,1);
+        //         console.log(val)
+        //         this.form.Receivers = val;
+        //     }
+        //     if (!oldVal.includes("全部")&&!val.includes("全部")) {
+        //         if (val.length == allValues.length-1) {
+        //             this.form.Receivers = ["全部"].concat(val);
+        //         }
+        //     }
+        //     this.oldOptions[0] = this.form.Receivers;
+        // }
     }
 }
 </script>

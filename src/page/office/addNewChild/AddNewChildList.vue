@@ -519,7 +519,7 @@ export default {
         },
         // 下载模板
         downloadTemplate(){
-            let url = this.userInfo.currProxy+"/COS"+this.userInfo.cosNum+"/Data/Templates/ChildrenInsertTemplate.xls";
+            let url = "/COS1Z/COS999/Data/Templates/ChildrenInsertTemplate.xls";
             downloadFile(url).then((result)=>{
                 const content = result.data;
                 const blob = new Blob([content]);
@@ -537,7 +537,7 @@ export default {
                     navigator.msSaveBlob(blob, fileName)
                 }
             }).catch(()=>{
-                console.log("error")
+                console.log("error");
             });
         },
         // excel导入
@@ -558,7 +558,9 @@ export default {
             var reg = /^[1-9]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/;
             var regExp = new RegExp(reg);
             let info = [];
+            console.log(dataArray)
             for(let i=0;i<dataArray.length;i++){
+                dataArray[i].birthday = dataArray[i].birthday.replace(/\//g,'-');
                 if(!regExp.test(dataArray[i].birthday)){
                 　　info.push(dataArray[i].index+"-"+dataArray[i].childName+"的出生日期格式不正确");
                 }

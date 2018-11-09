@@ -2,7 +2,7 @@
     <div class="borrowItem">
         <div class="headTitle">{{item.ApplyStaffName}}的延期支付</div>
         <div class="title">单号：{{item.ChargeBillID}}</div>
-        <div class="title" style="color:#FF9D00;">金额：{{money}}{{item.MoneyUnit}}</div>
+        <div class="title">金额：<span style="color:#333;font-size:16px;">{{money}}{{item.MoneyUnit=='人民币'?'元':item.MoneyUnit}}</span></div>
         <div class="title">填表日期：{{item.FillDate}}</div>
         <div class="title">支付日期：{{item.PayDate}}</div>
         <div class="title">当前状态：{{item.State}}</div>

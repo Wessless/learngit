@@ -83,6 +83,10 @@ export default {
 
 <style scoped>
 /**/ 
+.chatList{
+    width: 100%;
+    overflow: hidden;
+}
 .chat_item {
     overflow: hidden;
     /*padding: 12px 18px 11px;*/

@@ -1,153 +1,193 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import MainPage from '@/page/MainPage'
-import Login from '@/page/login/Login'
-import chatBox from '@/page/chat/ChatBox'
-import MyCloud from '@/page/cloudDisk/MyCloud'
-import BusinessFile from '@/page/cloudDisk/BusinessFile'
-import CreateGroup from '@/page/user/CreateGroup'
-import StaffInfo from '@/page/user/StaffInfo'
-import GroupInfo from '@/page/user/GroupInfo'
-import OfficeContent from '@/page/office/OfficeContent'
-import ExpensePaymentList from '@/page/office/expensePayment/ExpensePaymentList'
-import ExpensePaymentDetail from '@/page/office/expensePayment/ExpensePaymentDetail'
-import BorrowPaymentList from '@/page/office/borrowPayment/BorrowPaymentList'
-import BorrowPaymentDetail from '@/page/office/borrowPayment/BorrowPaymentDetail'
-import ExamineTemplateList from '@/page/office/examineTemplate/ExamineTemplateList'
-import ExamineTemplateDetail from '@/page/office/examineTemplate/ExamineTemplateDetail'
-import StaffInfoList from '@/page/office/staffInfo/StaffInfoList'
-import StaffInfoDetail from '@/page/office/staffInfo/StaffInfoDetail'
-import NoteAttendanceList from '@/page/office/noteAttendance/NoteAttendanceList'
-import ChildInfoList from '@/page/office/childInfo/ChildInfoList'
-import ChildInfoDetail from '@/page/office/childInfo/ChildInfoDetail'
-import PaymentSubjectList from '@/page/office/childInfo/PaymentSubjectList'
-import EditFamilyMember from '@/page/office/childInfo/EditFamilyMember'
-import FamilyMemberInfo from '@/page/office/childInfo/FamilyMemberInfo'
-import AddNewChildList from '@/page/office/addNewChild/AddNewChildList'
-import NewChildPayment from '@/page/office/addNewChild/NewChildPayment'
-import AssignChildList from '@/page/office/assignChild/AssignChildList'
-import ClassManagementList from '@/page/office/classManagement/ClassManagementList'
-import ClassManagementDetail from '@/page/office/classManagement/ClassManagementDetail'
-import BeeBindList from '@/page/office/beeBind/BeeBindList'
-import ClassEvaluationList from '@/page/office/classEvaluation/ClassEvaluationList'
-import ClassEvaluationMonth from '@/page/office/classEvaluation/ClassEvaluationMonth'
-import ClassEvaluationChild from '@/page/office/classEvaluation/ClassEvaluationChild'
-import TeacherEvaluationList from '@/page/office/teacherEvaluation/TeacherEvaluationList'
-import TeacherEvaluationDay from '@/page/office/teacherEvaluation/TeacherEvaluationDay'
-import TeacherEvaluationMonth from '@/page/office/teacherEvaluation/TeacherEvaluationMonth'
-import TeacherEvaluationNotice from '@/page/office/teacherEvaluation/TeacherEvaluationNotice'
+let MainPage = (resolve) => require(['@/page/MainPage'],resolve);//
+let IndexLogin = (resolve) => require(['@/page/login/Index'],resolve);//
+let Login = (resolve) => require(['@/page/login/Login'],resolve);//
+let MyCloud = (resolve) => require(['@/page/cloudDisk/MyCloud'],resolve);//
+let BusinessFile = (resolve) => require(['@/page/cloudDisk/BusinessFile'],resolve);//
+let CreateGroup = (resolve) => require(['@/page/user/CreateGroup'],resolve);//
+let StaffInfo = (resolve) => require(['@/page/user/StaffInfo'],resolve);//
+let GroupInfo = (resolve) => require(['@/page/user/GroupInfo'],resolve);//
+let OfficeContent = (resolve) => require(['@/page/office/OfficeContent'],resolve);//
+let ExpensePaymentList = (resolve) => require(['@/page/office/expensePayment/ExpensePaymentList'],resolve);//
+let ExpensePaymentDetail = (resolve) => require(['@/page/office/expensePayment/ExpensePaymentDetail'],resolve);//
+let BorrowPaymentList = (resolve) => require(['@/page/office/borrowPayment/BorrowPaymentList'],resolve);//
+let BorrowPaymentDetail = (resolve) => require(['@/page/office/borrowPayment/BorrowPaymentDetail'],resolve);//
+let ExamineTemplateList = (resolve) => require(['@/page/office/examineTemplate/ExamineTemplateList'],resolve);//
+let ExamineTemplateDetail = (resolve) => require(['@/page/office/examineTemplate/ExamineTemplateDetail'],resolve);//
+let StaffInfoList = (resolve) => require(['@/page/office/staffInfo/StaffInfoList'],resolve);//
+let StaffInfoDetail = (resolve) => require(['@/page/office/staffInfo/StaffInfoDetail'],resolve);//
+let NoteAttendanceList = (resolve) => require(['@/page/office/noteAttendance/NoteAttendanceList'],resolve);//
+let ChildInfoList = (resolve) => require(['@/page/office/childInfo/ChildInfoList'],resolve);//
+let ChildInfoDetail = (resolve) => require(['@/page/office/childInfo/ChildInfoDetail'],resolve);//
+let PaymentSubjectList = (resolve) => require(['@/page/office/childInfo/PaymentSubjectList'],resolve);//
+let EditFamilyMember = (resolve) => require(['@/page/office/childInfo/EditFamilyMember'],resolve);//
+let FamilyMemberInfo = (resolve) => require(['@/page/office/childInfo/FamilyMemberInfo'],resolve);//
+let AddNewChildList = (resolve) => require(['@/page/office/addNewChild/AddNewChildList'],resolve);//
+let NewChildPayment = (resolve) => require(['@/page/office/addNewChild/NewChildPayment'],resolve);//
+let AssignChildList = (resolve) => require(['@/page/office/assignChild/AssignChildList'],resolve);//
+let ClassManagementList = (resolve) => require(['@/page/office/classManagement/ClassManagementList'],resolve);//
+let ClassManagementDetail = (resolve) => require(['@/page/office/classManagement/ClassManagementDetail'],resolve);//
+let BeeBindList = (resolve) => require(['@/page/office/beeBind/BeeBindList'],resolve);//
+let ClassEvaluationList = (resolve) => require(['@/page/office/classEvaluation/ClassEvaluationList'],resolve);//
+let ClassEvaluationMonth = (resolve) => require(['@/page/office/classEvaluation/ClassEvaluationMonth'],resolve);//
+let ClassEvaluationChild = (resolve) => require(['@/page/office/classEvaluation/ClassEvaluationChild'],resolve);//
+let TeacherEvaluationList = (resolve) => require(['@/page/office/teacherEvaluation/TeacherEvaluationList'],resolve);//
+let TeacherEvaluationDay = (resolve) => require(['@/page/office/teacherEvaluation/TeacherEvaluationDay'],resolve);//
+let TeacherEvaluationMonth = (resolve) => require(['@/page/office/teacherEvaluation/TeacherEvaluationMonth'],resolve);//
+let TeacherEvaluationNotice = (resolve) => require(['@/page/office/teacherEvaluation/TeacherEvaluationNotice'],resolve);//
 // 物品申领
-// import ReceiveApplyList from '@/page/office/ReceiveApply/ReceiveApplyList'// 申领申请
-import ReceiveApplyDetail from '@/page/office/ReceiveApply/ReceiveApplyDetail'
-// import ApplyExamineList from '@/page/office/applyExamine/ApplyExamineList'// 申领审批
-import ApplyExamineDetail from '@/page/office/applyExamine/ApplyExamineDetail'
-// import ApplyOutstorageList from '@/page/office/applyOutstorage/ApplyOutstorageList'// 申领出库
-import ApplyOutstorageDetail from '@/page/office/applyOutstorage/ApplyOutstorageDetail'
-// import ApplyInstorageList from '@/page/office/applyInstorage/ApplyInstorageList'// 申领归还
-import ApplyInstorageDetail from '@/page/office/applyInstorage/ApplyInstorageDetail'
-import ApplyFindList from '@/page/office/applyFind/ApplyFindList'
-import ApplyFindDetail from '@/page/office/applyFind/ApplyFindDetail'
+let ReceiveApplyDetail = (resolve) => require(['@/page/office/ReceiveApply/ReceiveApplyDetail'],resolve);//
+let ApplyExamineDetail = (resolve) => require(['@/page/office/applyExamine/ApplyExamineDetail'],resolve);//
+let ApplyOutstorageDetail = (resolve) => require(['@/page/office/applyOutstorage/ApplyOutstorageDetail'],resolve);//
+let ApplyInstorageDetail = (resolve) => require(['@/page/office/applyInstorage/ApplyInstorageDetail'],resolve);//
+let ApplyFindList = (resolve) => require(['@/page/office/applyFind/ApplyFindList'],resolve);//
+let ApplyFindDetail = (resolve) => require(['@/page/office/applyFind/ApplyFindDetail'],resolve);//
 // 物品采购
-import PurchaseApplyList from '@/page/office/purchaseApply/PurchaseApplyList'// 采购申请
-import PurchaseApplyDetail from '@/page/office/purchaseApply/PurchaseApplyDetail'
-import PurchaseSignList from '@/page/office/purchaseSign/PurchaseSignList'// 采购审批
-import PurchaseSignDetail from '@/page/office/purchaseSign/PurchaseSignDetail'
-import PurchaseEnteringList from '@/page/office/purchaseEntering/PurchaseEnteringList'// 采购录入
-import PurchaseEnteringDetail from '@/page/office/purchaseEntering/PurchaseEnteringDetail'
-import PurchaseInstorageList from '@/page/office/purchaseInstorage/PurchaseInstorageList'//采购入库
-import EditPurchaseInstorage from '@/page/office/purchaseInstorage/EditPurchaseInstorage'
-import EditPurchaseInstorageDetail from '@/page/office/purchaseInstorage/EditPurchaseInstorageDetail'
-import PurchaseFindList from '@/page/office/purchaseFind/PurchaseFindList'
+let PurchaseApplyList = (resolve) => require(['@/page/office/purchaseApply/PurchaseApplyList'],resolve);// 采购申请
+let PurchaseApplyDetail = (resolve) => require(['@/page/office/purchaseApply/PurchaseApplyDetail'],resolve);//
+let PurchaseSignList = (resolve) => require(['@/page/office/purchaseSign/PurchaseSignList'],resolve);// 采购审批
+let PurchaseSignDetail = (resolve) => require(['@/page/office/purchaseSign/PurchaseSignDetail'],resolve);//
+let PurchaseEnteringList = (resolve) => require(['@/page/office/purchaseEntering/PurchaseEnteringList'],resolve);// 采购录入
+let PurchaseEnteringDetail = (resolve) => require(['@/page/office/purchaseEntering/PurchaseEnteringDetail'],resolve);//
+let PurchaseInstorageList = (resolve) => require(['@/page/office/purchaseInstorage/PurchaseInstorageList'],resolve);//采购入库
+let EditPurchaseInstorage = (resolve) => require(['@/page/office/purchaseInstorage/EditPurchaseInstorage'],resolve);//
+let EditPurchaseInstorageDetail = (resolve) => require(['@/page/office/purchaseInstorage/EditPurchaseInstorageDetail'],resolve);//
+let PurchaseFindList = (resolve) => require(['@/page/office/purchaseFind/PurchaseFindList'],resolve);//
 // 兴趣班
-import InterestClassTeacherList from '@/page/office/interestClassTeacher/InterestClassTeacherList'
-import CalendarView from '@/page/office/calendarView/CalendarView'
-import SetTuitionSubjectList from '@/page/office/setTuitionSubject/SetTuitionSubjectList'
-import SetTuitionSubjectDetail from '@/page/office/setTuitionSubject/SetTuitionSubjectDetail'
-import InterestClassTeacherDetail from '@/page/office/interestClassTeacher/InterestClassTeacherDetail'
-import InterestClassManageList from '@/page/office/interestClassManage/InterestClassManageList'
-import InterestClassManageDetail from '@/page/office/interestClassManage/InterestClassManageDetail'
-import EditSchedule from '@/page/office/interestClassManage/EditSchedule'
-import InterestClassChildList from '@/page/office/interestClassChild/InterestClassChildList'
-import InterestClassChildDetail from '@/page/office/interestClassChild/InterestClassChildDetail'
-import InterestClassAttendanceList from '@/page/office/interestClassAttendance/InterestClassAttendanceList'
-import InterestClassAttendanceDetail from '@/page/office/interestClassAttendance/InterestClassAttendanceDetail'
-import TeacherAttendanceList from '@/page/office/interestClassAttendance/TeacherAttendanceList'
-import StudentAttendanceList from '@/page/office/interestClassAttendance/StudentAttendanceList'
-import InterestClassExpenseList from '@/page/office/interestClassExpense/InterestClassExpenseList'
-import ExamineExpenseList from '@/page/office/interestClassExpense/ExamineExpenseList'
-import ExamineExpenseDetail from '@/page/office/interestClassExpense/ExamineExpenseDetail'
-import IssueExpenseList from '@/page/office/interestClassExpense/IssueExpenseList'
-import InterestClassOperationList from '@/page/office/interestClassOperation/InterestClassOperationList'
-import InterestClassTexpendList from '@/page/office/interestClassTexpend/InterestClassTexpendList'
-import InterestClassTexpendDetail from '@/page/office/interestClassTexpend/InterestClassTexpendDetail'
-import SetScheduleList from '@/page/office/setSchedule/SetScheduleList'
-import SetScheduleDetail from '@/page/office/setSchedule/SetScheduleDetail'
-import CoursePlanManageList from '@/page/office/coursePlanManage/CoursePlanManageList'
-import CoursePlanManageDetail from '@/page/office/coursePlanManage/CoursePlanManageDetail'
-import CoursePlanExamineList from '@/page/office/coursePlanExamine/CoursePlanExamineList'
-import PerfectManageList from '@/page/office/coursePlanPerfectManage/PerfectManageList'
-import PerfectManageDetail from '@/page/office/coursePlanPerfectManage/PerfectManageDetail'
-import examineApproveList from '@/page/office/examineApprove/examineApproveList'
-import expenseApplyDetail from '@/page/office/examineApproveTab/expenseApplyDetail'
-import borrowApplyDetail from '@/page/office/examineApproveTab/borrowApplyDetail'
-import ExpenseFindList from '@/page/office/expenseFind/ExpenseFindList'
-import RoleSettingList from '@/page/office/roleSetting/RoleSettingList'
-import RoleSettingDetail from '@/page/office/roleSetting/RoleSettingDetail'
-import BorrowFindList from '@/page/office/borrowFind/BorrowFindList'
-import commonApplyDetail from '@/page/office/examineApproveTab/commonApplyDetail'
-import gooutApplyDetail from '@/page/office/examineApproveTab/gooutApplyDetail'
-import businessTripApplyDetail from '@/page/office/examineApproveTab/businessTripApplyDetail'
-import holidayApplyDetail from '@/page/office/examineApproveTab/holidayApplyDetail'
-import extraWorkApplyDetail from '@/page/office/examineApproveTab/extraWorkApplyDetail'
-import orderformApplyDetail from '@/page/office/examineApproveTab/orderformApplyDetail'
-import illegalApplyDetail from '@/page/office/examineApproveTab/illegalApplyDetail'
-import commonApproveDetail from '@/page/office/otherApprove/commonApproveDetail'
-import outsideApproveDetail from '@/page/office/otherApprove/outsideApproveDetail'
-import businessApproveDetail from '@/page/office/otherApprove/businessApproveDetail'
-import holidayApproveDetail from '@/page/office/otherApprove/holidayApproveDetail'
-import extraWorkApproveDetail from '@/page/office/otherApprove/extraWorkApproveDetail'
-import illegalApproveDetail from '@/page/office/otherApprove/illegalApproveDetail'
-import orderformApproveDetail from '@/page/office/otherApprove/orderformApproveDetail'
-import OrderformFindList from '@/page/office/orderformFind/OrderformFindList'
-import OrderformFindDetail from '@/page/office/orderformFind/OrderformFindDetail'
-import MyDatabaseList from '@/page/office/myDatabase/MyDatabaseList'
-import MyDatabaseManager from '@/page/office/myDatabase/MyDatabaseManager'
-import MyDatabaseBrowse from '@/page/office/myDatabase/MyDatabaseBrowse'
-import MyDatabaseMaintenance from '@/page/office/myDatabase/MyDatabaseMaintenance'
-import MyDatabaseArticleDetail from '@/page/office/myDatabase/MyDatabaseArticleDetail'
-import InternalEmailList from '@/page/office/internalEmail/InternalEmailList'
-import InternalEmailDetail from '@/page/office/internalEmail/InternalEmailDetail'
-import ExamineEmailDetail from '@/page/office/internalEmail/ExamineEmailDetail'
-import GoodsApplyTabList from '@/page/office/goodsApply/GoodsApplyTabList'
-import GoodsPurchaseTabList from '@/page/office/goodsPurchase/GoodsPurchaseTabList'
-import BorrowRepaymentList from '@/page/office/borrowRepayment/BorrowRepaymentList'
-import ExpenseCertificateList from '@/page/office/expenseCertificate/ExpenseCertificateList'
-import BorrowCertificateList from '@/page/office/borrowCertificate/BorrowCertificateList'
-import DueExpenseList from '@/page/office/dueExpense/DueExpenseList'
-import DueExpenseIdList from '@/page/office/dueExpense/DueExpenseIdList'
-import DueExpenseIdDetail from '@/page/office/dueExpense/DueExpenseIdDetail'
-import SchoolInformList from '@/page/office/schoolInform/SchoolInformList'
-import SchoolInformDetail from '@/page/office/schoolInform/SchoolInformDetail'
-import ParentschoolContactList from '@/page/office/parentschoolContact/ParentschoolContactList'
-import ParentschoolContactDetail from '@/page/office/parentschoolContact/ParentschoolContactDetail'
-import SchoolPhotoesList from '@/page/office/schoolInform/SchoolPhotoesList'
-import SchoolPhotoesDetail from '@/page/office/schoolInform/SchoolPhotoesDetail'
-import ParentschoolPhotoesList from '@/page/office/parentschoolContact/ParentschoolPhotoesList'
-import ParentschoolPhotoesDetail from '@/page/office/parentschoolContact/ParentschoolPhotoesDetail'
-import ChildPhotoesList from '@/page/office/childPhotoes/ChildPhotoesList'
-import ChildPhotoesDetail from '@/page/office/childPhotoes/ChildPhotoesDetail'
-import teacherWordList from '@/page/office/teacherWord/teacherWordList'
-import teacherWordDetail from '@/page/office/teacherWord/teacherWordDetail'
-import ChargeExpendList from '@/page/group/chargeExpend/ChargeExpendList'
-import ChargeExpendDetail from '@/page/group/chargeExpend/ChargeExpendDetail'
-import StaffDataList from '@/page/group/staffData/StaffDataList'
-import StudentDataList from '@/page/group/studentData/StudentDataList'
-import DuePaymentList from '@/page/office/duePayment/DuePaymentList'
-import DuePaymentDetail from '@/page/office/duePayment/DuePaymentDetail'
-import DueCertificateList from '@/page/office/dueCertificate/DueCertificateList'
-import DueFindList from '@/page/office/dueFind/DueFindList'
-import BankAccountList from '@/page/office/bankAccount/BankAccountList'
-import BankAccountDetail from '@/page/office/bankAccount/BankAccountDetail'
+let InterestClassTeacherList = (resolve) => require(['@/page/office/interestClassTeacher/InterestClassTeacherList'],resolve);//
+let CalendarView = (resolve) => require(['@/page/office/calendarView/CalendarView'],resolve);//
+let SetTuitionSubjectList = (resolve) => require(['@/page/office/setTuitionSubject/SetTuitionSubjectList'],resolve);//
+let SetTuitionSubjectDetail = (resolve) => require(['@/page/office/setTuitionSubject/SetTuitionSubjectDetail'],resolve);//
+let InterestClassTeacherDetail = (resolve) => require(['@/page/office/interestClassTeacher/InterestClassTeacherDetail'],resolve);//
+let InterestClassManageList = (resolve) => require(['@/page/office/interestClassManage/InterestClassManageList'],resolve);//
+let InterestClassManageDetail = (resolve) => require(['@/page/office/interestClassManage/InterestClassManageDetail'],resolve);//
+let EditSchedule = (resolve) => require(['@/page/office/interestClassManage/EditSchedule'],resolve);//
+let InterestClassChildList = (resolve) => require(['@/page/office/interestClassChild/InterestClassChildList'],resolve);//
+let InterestClassChildDetail = (resolve) => require(['@/page/office/interestClassChild/InterestClassChildDetail'],resolve);//
+let InterestClassAttendanceList = (resolve) => require(['@/page/office/interestClassAttendance/InterestClassAttendanceList'],resolve);//
+let InterestClassAttendanceDetail = (resolve) => require(['@/page/office/interestClassAttendance/InterestClassAttendanceDetail'],resolve);//
+let TeacherAttendanceList = (resolve) => require(['@/page/office/interestClassAttendance/TeacherAttendanceList'],resolve);//
+let StudentAttendanceList = (resolve) => require(['@/page/office/interestClassAttendance/StudentAttendanceList'],resolve);//
+let InterestClassExpenseList = (resolve) => require(['@/page/office/interestClassExpense/InterestClassExpenseList'],resolve);//
+let ExamineExpenseList = (resolve) => require(['@/page/office/interestClassExpense/ExamineExpenseList'],resolve);//
+let ExamineExpenseDetail = (resolve) => require(['@/page/office/interestClassExpense/ExamineExpenseDetail'],resolve);//
+let IssueExpenseList = (resolve) => require(['@/page/office/interestClassExpense/IssueExpenseList'],resolve);//
+let InterestClassOperationList = (resolve) => require(['@/page/office/interestClassOperation/InterestClassOperationList'],resolve);//
+let InterestClassTexpendList = (resolve) => require(['@/page/office/interestClassTexpend/InterestClassTexpendList'],resolve);//
+let InterestClassTexpendDetail = (resolve) => require(['@/page/office/interestClassTexpend/InterestClassTexpendDetail'],resolve);//
+let SetScheduleList = (resolve) => require(['@/page/office/setSchedule/SetScheduleList'],resolve);//
+let SetScheduleDetail = (resolve) => require(['@/page/office/setSchedule/SetScheduleDetail'],resolve);//
+let CoursePlanManageList = (resolve) => require(['@/page/office/coursePlanManage/CoursePlanManageList'],resolve);//
+let CoursePlanManageDetail = (resolve) => require(['@/page/office/coursePlanManage/CoursePlanManageDetail'],resolve);//
+let CoursePlanExamineList = (resolve) => require(['@/page/office/coursePlanExamine/CoursePlanExamineList'],resolve);//
+let PerfectManageList = (resolve) => require(['@/page/office/coursePlanPerfectManage/PerfectManageList'],resolve);//
+let PerfectManageDetail = (resolve) => require(['@/page/office/coursePlanPerfectManage/PerfectManageDetail'],resolve);//
+let examineApproveList = (resolve) => require(['@/page/office/examineApprove/examineApproveList'],resolve);//
+let expenseApplyDetail = (resolve) => require(['@/page/office/examineApproveTab/expenseApplyDetail'],resolve);//
+let borrowApplyDetail = (resolve) => require(['@/page/office/examineApproveTab/borrowApplyDetail'],resolve);//
+let ExpenseFindList = (resolve) => require(['@/page/office/expenseFind/ExpenseFindList'],resolve);//
+let RoleSettingList = (resolve) => require(['@/page/office/roleSetting/RoleSettingList'],resolve);//
+let RoleSettingDetail = (resolve) => require(['@/page/office/roleSetting/RoleSettingDetail'],resolve);//
+let BorrowFindList = (resolve) => require(['@/page/office/borrowFind/BorrowFindList'],resolve);//
+let commonApplyDetail = (resolve) => require(['@/page/office/examineApproveTab/commonApplyDetail'],resolve);//
+let gooutApplyDetail = (resolve) => require(['@/page/office/examineApproveTab/gooutApplyDetail'],resolve);//
+let businessTripApplyDetail = (resolve) => require(['@/page/office/examineApproveTab/businessTripApplyDetail'],resolve);//
+let holidayApplyDetail = (resolve) => require(['@/page/office/examineApproveTab/holidayApplyDetail'],resolve);//
+let extraWorkApplyDetail = (resolve) => require(['@/page/office/examineApproveTab/extraWorkApplyDetail'],resolve);//
+let orderformApplyDetail = (resolve) => require(['@/page/office/examineApproveTab/orderformApplyDetail'],resolve);//
+let illegalApplyDetail = (resolve) => require(['@/page/office/examineApproveTab/illegalApplyDetail'],resolve);//
+let commonApproveDetail = (resolve) => require(['@/page/office/otherApprove/commonApproveDetail'],resolve);//
+let outsideApproveDetail = (resolve) => require(['@/page/office/otherApprove/outsideApproveDetail'],resolve);//
+let businessApproveDetail = (resolve) => require(['@/page/office/otherApprove/businessApproveDetail'],resolve);//
+let holidayApproveDetail = (resolve) => require(['@/page/office/otherApprove/holidayApproveDetail'],resolve);//
+let extraWorkApproveDetail = (resolve) => require(['@/page/office/otherApprove/extraWorkApproveDetail'],resolve);//
+let illegalApproveDetail = (resolve) => require(['@/page/office/otherApprove/illegalApproveDetail'],resolve);//
+let orderformApproveDetail = (resolve) => require(['@/page/office/otherApprove/orderformApproveDetail'],resolve);//
+let OrderformFindList = (resolve) => require(['@/page/office/orderformFind/OrderformFindList'],resolve);//
+let OrderformFindDetail = (resolve) => require(['@/page/office/orderformFind/OrderformFindDetail'],resolve);//
+let MyDatabaseList = (resolve) => require(['@/page/office/myDatabase/MyDatabaseList'],resolve);//
+let MyDatabaseManager = (resolve) => require(['@/page/office/myDatabase/MyDatabaseManager'],resolve);//
+let MyDatabaseBrowse = (resolve) => require(['@/page/office/myDatabase/MyDatabaseBrowse'],resolve);//
+let MyDatabaseMaintenance = (resolve) => require(['@/page/office/myDatabase/MyDatabaseMaintenance'],resolve);//
+let MyDatabaseArticleDetail = (resolve) => require(['@/page/office/myDatabase/MyDatabaseArticleDetail'],resolve);//
+let InternalEmailList = (resolve) => require(['@/page/office/internalEmail/InternalEmailList'],resolve);//
+let InternalEmailDetail = (resolve) => require(['@/page/office/internalEmail/InternalEmailDetail'],resolve);//
+let ExamineEmailDetail = (resolve) => require(['@/page/office/internalEmail/ExamineEmailDetail'],resolve);//
+let GoodsApplyTabList = (resolve) => require(['@/page/office/goodsApply/GoodsApplyTabList'],resolve);//
+let GoodsPurchaseTabList = (resolve) => require(['@/page/office/goodsPurchase/GoodsPurchaseTabList'],resolve);//
+let BorrowRepaymentList = (resolve) => require(['@/page/office/borrowRepayment/BorrowRepaymentList'],resolve);//
+let ExpenseCertificateList = (resolve) => require(['@/page/office/expenseCertificate/ExpenseCertificateList'],resolve);//
+let BorrowCertificateList = (resolve) => require(['@/page/office/borrowCertificate/BorrowCertificateList'],resolve);//
+let DueExpenseList = (resolve) => require(['@/page/office/dueExpense/DueExpenseList'],resolve);//
+let DueExpenseIdList = (resolve) => require(['@/page/office/dueExpense/DueExpenseIdList'],resolve);//
+let DueExpenseIdDetail = (resolve) => require(['@/page/office/dueExpense/DueExpenseIdDetail'],resolve);//
+let SchoolInformList = (resolve) => require(['@/page/office/schoolInform/SchoolInformList'],resolve);//
+let SchoolInformDetail = (resolve) => require(['@/page/office/schoolInform/SchoolInformDetail'],resolve);//
+let ParentschoolContactList = (resolve) => require(['@/page/office/parentschoolContact/ParentschoolContactList'],resolve);//
+let ParentschoolContactDetail = (resolve) => require(['@/page/office/parentschoolContact/ParentschoolContactDetail'],resolve);//
+let SchoolPhotoesList = (resolve) => require(['@/page/office/schoolInform/SchoolPhotoesList'],resolve);//
+let SchoolPhotoesDetail = (resolve) => require(['@/page/office/schoolInform/SchoolPhotoesDetail'],resolve);//
+let ParentschoolPhotoesList = (resolve) => require(['@/page/office/parentschoolContact/ParentschoolPhotoesList'],resolve);//
+let ParentschoolPhotoesDetail = (resolve) => require(['@/page/office/parentschoolContact/ParentschoolPhotoesDetail'],resolve);//
+let ChildPhotoesList = (resolve) => require(['@/page/office/childPhotoes/ChildPhotoesList'],resolve);//
+let ChildPhotoesDetail = (resolve) => require(['@/page/office/childPhotoes/ChildPhotoesDetail'],resolve);//
+let teacherWordList = (resolve) => require(['@/page/office/teacherWord/teacherWordList'],resolve);//
+let teacherWordDetail = (resolve) => require(['@/page/office/teacherWord/teacherWordDetail'],resolve);//
+let ChargeExpendList = (resolve) => require(['@/page/group/chargeExpend/ChargeExpendList'],resolve);//
+let ChargeExpendDetail = (resolve) => require(['@/page/group/chargeExpend/ChargeExpendDetail'],resolve);//
+let StaffDataList = (resolve) => require(['@/page/group/staffData/StaffDataList'],resolve);//
+let StudentDataList = (resolve) => require(['@/page/group/studentData/StudentDataList'],resolve);//
+let GroupStudentAttendanceList = (resolve) => require(['@/page/group/studentAttendance/StudentAttendanceList'],resolve);//
+let TuitionIncomeList = (resolve) => require(['@/page/group/tuitionIncome/TuitionIncomeList'],resolve);//
+let DuePaymentList = (resolve) => require(['@/page/office/duePayment/DuePaymentList'],resolve);//
+let DuePaymentDetail = (resolve) => require(['@/page/office/duePayment/DuePaymentDetail'],resolve);//
+let DueCertificateList = (resolve) => require(['@/page/office/dueCertificate/DueCertificateList'],resolve);//
+let DueFindList = (resolve) => require(['@/page/office/dueFind/DueFindList'],resolve);//
+let BankAccountList = (resolve) => require(['@/page/office/bankAccount/BankAccountList'],resolve);//
+let BankAccountDetail = (resolve) => require(['@/page/office/bankAccount/BankAccountDetail'],resolve);//
+let YearHolidayList = (resolve) => require(['@/page/office/yearHoliday/YearHolidayList'],resolve);//
+let ExpenseAccountDetail = (resolve) => require(['@/page/office/expenseAccount/ExpenseAccountDetail'],resolve);//
+let BorrowAccountDetail = (resolve) => require(['@/page/office/borrowAccount/BorrowAccountDetail'],resolve);//
+let DueAccExpenseList = (resolve) => require(['@/page/office/dueAccount/DueAccExpenseList'],resolve);//
+let DueAccExpenseIdList = (resolve) => require(['@/page/office/dueAccount/DueAccExpenseIdList'],resolve);//
+let DueAccExpenseIdDetail = (resolve) => require(['@/page/office/dueAccount/DueAccExpenseIdDetail'],resolve);//
+
+//积分管理
+let PointsManageList = (resolve) => require(['@/page/office/pointsManage/PointsManageList'],resolve);//
+let PointsClassifyList = (resolve) => require(['@/page/office/pointsManage/PointsClassifyList'],resolve);//
+let PointsClassifyDetail = (resolve) => require(['@/page/office/pointsManage/PointsClassifyDetail'],resolve);//
+let PointsSubjectList = (resolve) => require(['@/page/office/pointsManage/PointsSubjectList'],resolve);//
+let PointsSubjectDetail = (resolve) => require(['@/page/office/pointsManage/PointsSubjectDetail'],resolve);//
+//考勤管理
+let AttendanceManageList = (resolve) => require(['@/page/office/attendanceManage/AttendanceManageList'],resolve);//
+let IllegalManageList = (resolve) => require(['@/page/office/attendanceManage/IllegalManageList'],resolve);//
+//智能设备
+let IntelligentDeviceList = (resolve) => require(['@/page/office/intelligentDevice/IntelligentDeviceList'],resolve);//
+//积分评分
+let PointsScoreList = (resolve) => require(['@/page/office/pointsScore/PointsScoreList'],resolve);//
+let PointsScoreDetail = (resolve) => require(['@/page/office/pointsScore/PointsScoreDetail'],resolve);//
+//考核管理
+let ExamineManageList = (resolve) => require(['@/page/office/examineManage/ExamineManageList'],resolve);//
+let CommonExamineList = (resolve) => require(['@/page/office/examineManage/CommonExamineList'],resolve);//
+let CommonExamineDetail = (resolve) => require(['@/page/office/examineManage/CommonExamineDetail'],resolve);//
+let MonthlyExamineList = (resolve) => require(['@/page/office/examineManage/MonthlyExamineList'],resolve);//
+let MonthlyExamineDetail = (resolve) => require(['@/page/office/examineManage/MonthlyExamineDetail'],resolve);//
+//考核评分
+let ExamineScoreList = (resolve) => require(['@/page/office/examineScore/ExamineScoreList'],resolve);//
+let CommonScoreDetail = (resolve) => require(['@/page/office/examineScore/CommonScoreDetail'],resolve);//
+let MonthlyScoreDetail = (resolve) => require(['@/page/office/examineScore/MonthlyScoreDetail'],resolve);//
+//赏罚管理
+let DesertEntryList = (resolve) => require(['@/page/office/desertEntry/DesertEntryList'],resolve);//
+let RewardSubjectList = (resolve) => require(['@/page/office/desertEntry/RewardSubjectList'],resolve);//
+//交办任务
+let CommandTaskList = (resolve) => require(['@/page/office/commandTask/CommandTaskList'],resolve);//
+let CommandTaskDetail = (resolve) => require(['@/page/office/commandTask/CommandTaskDetail'],resolve);//
+//培训管理
+let TrainingManageList = (resolve) => require(['@/page/office/trainingManage/TrainingManageList'],resolve);//
+
+
+
 
 Vue.use(Router);
 
@@ -155,7 +195,12 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/login',
+      redirect: '/index',
+    },
+    {
+      path: '/index',
+      name: 'Index',
+      component: IndexLogin
     },
     {
       path: '/login',
@@ -301,20 +346,23 @@ export default new Router({
         // 幼儿管理
         {
           path: "office/:id/childInfo",
-          meta: { pageType: "office" },
+          meta: { pageType: "office",keepAlive:true },
           component: ChildInfoList
         },
         {
+          name:"ChildInfoUpdate",
           path: "office/:id/childInfo/update/:childID",
           meta: { pageType: "office", type: "update" },
           component: ChildInfoDetail
         },
         {
+          name:"PaymentSubjectList",
           path: "office/:id/childInfo/paymentSubject",
           meta: { pageType: "office" },
           component: PaymentSubjectList
         },
         {
+          name:"EditFamilyMember",
           path: "office/:id/childInfo/familyMember/:childID",
           meta: { pageType: "office" },
           component: EditFamilyMember
@@ -875,23 +923,27 @@ export default new Router({
         {
           path:"office/:id/expenseFind",
           meta: { pageType: "office" },
-          component: ExpenseFindList
-        },
-        {
-          path:"office/:id/expenseFind/:expenseID",
-          meta: { pageType: "office" ,type:"find"},
-          component: ExpensePaymentDetail
+          component: ExpenseFindList,
+          children:[
+            {
+              path:":expenseID",
+              meta: { pageType: "office" ,type:"find"},
+              component: ExpensePaymentDetail
+            },
+          ]
         },
         //借款查询
         {
           path:"office/:id/borrowFind",
           meta: { pageType: "office" },
-          component: BorrowFindList
-        },
-        {
-          path:"office/:id/borrowFind/:borrowID",
-          meta: { pageType: "office" ,type:"find"},
-          component: BorrowPaymentDetail
+          component: BorrowFindList,
+          children:[
+            {
+              path:":borrowID",
+              meta: { pageType: "office" ,type:"find"},
+              component: BorrowPaymentDetail
+            },
+          ]
         },
         //通用
         {
@@ -1272,68 +1324,331 @@ export default new Router({
         {
           path:"office/:id/schoolInform",
           meta: { pageType: "office" },
-          component: SchoolInformList
-        },
-        {
-          path:"office/:id/schoolInform/examine/:noticeID",
-          meta: { pageType: "office" ,type:"examine"},
-          component: SchoolInformDetail
+          component: SchoolInformList,
+          children:[
+            {
+              path:"examine/:noticeID",
+              meta: { pageType: "office" ,type:"examine"},
+              component: SchoolInformDetail
+            },
+            {
+              path:"add",
+              meta: { pageType: "office" ,type:"add"},
+              component: SchoolInformDetail
+            },
+          ]
         },
         //家校联络
         {
           path:"office/:id/parentschoolContact",
           meta: { pageType: "office" },
-          component: ParentschoolContactList
-        },
-        {
-          path:"office/:id/parentschoolContact/examine/:noticeID",
-          meta: { pageType: "office" ,type:"examine"},
-          component: ParentschoolContactDetail
+          component: ParentschoolContactList,
+          children:[
+            {
+              path:"examine/:noticeID",
+              meta: { pageType: "office" ,type:"examine"},
+              component: ParentschoolContactDetail
+            },
+            {
+              path:"add",
+              meta: { pageType: "office" ,type:"add"},
+              component: ParentschoolContactDetail
+            },
+          ]
         },
         //园所相册
         {
           path:"office/:id/schoolPhotoes",
           meta: { pageType: "office" },
-          component: SchoolPhotoesList
-        },
-        {
-          path:"office/:id/schoolPhotoes/examine/:noticeID",
-          meta: { pageType: "office" ,type:"examine"},
-          component: SchoolPhotoesDetail
+          component: SchoolPhotoesList,
+          children:[
+            {
+              path:"examine/:noticeID",
+              meta: { pageType: "office" ,type:"examine"},
+              component: SchoolPhotoesDetail
+            },
+            {
+              path:"add",
+              meta: { pageType: "office" ,type:"add"},
+              component: SchoolPhotoesDetail
+            },
+          ]
         },
         //班级相册
         {
           path:"office/:id/parentschoolPhotoes",
           meta: { pageType: "office" },
-          component: ParentschoolPhotoesList
-        },
-        {
-          path:"office/:id/parentschoolPhotoes/examine/:noticeID",
-          meta: { pageType: "office" ,type:"examine"},
-          component: ParentschoolPhotoesDetail
+          component: ParentschoolPhotoesList,
+          children:[
+            {
+              path:"examine/:noticeID",
+              meta: { pageType: "office" ,type:"examine"},
+              component: ParentschoolPhotoesDetail
+            },
+            {
+              path:"add",
+              meta: { pageType: "office" ,type:"add"},
+              component: ParentschoolPhotoesDetail
+            },
+          ]
         },
         //个人相册
         {
           path:"office/:id/childPhotoes",
           meta: { pageType: "office" },
-          component: ChildPhotoesList
-        },
-        {
-          path:"office/:id/childPhotoes/examine/:photoesID",
-          meta: { pageType: "office" ,type:"examine"},
-          component: ChildPhotoesDetail
+          component: ChildPhotoesList,
+          children:[
+            {
+              path:"examine/:photoesID",
+              meta: { pageType: "office" ,type:"examine"},
+              component: ChildPhotoesDetail
+            },
+            {
+              path:"add",
+              meta: { pageType: "office" ,type:"add"},
+              component: ChildPhotoesDetail
+            },
+          ]
         },
         //老师的话
         {
           path:"office/:id/teacherWord",
           meta: { pageType: "office" },
-          component: teacherWordList
+          component: teacherWordList,
+          children:[
+            {
+              path:"examine/:wordID",
+              meta: { pageType: "office" ,type:"examine"},
+              component: teacherWordDetail
+            },
+            {
+              path:"add",
+              meta: { pageType: "office" ,type:"add"},
+              component: teacherWordDetail
+            },
+          ]
+        },
+        //年假管理
+        {
+          path:"office/:id/yearHoliday",
+          meta: { pageType: "office" },
+          component: YearHolidayList
+        },
+        //报销记账
+        {
+          path:"office/:id/expenseAccount",
+          meta: { pageType: "office" ,type:"add"},
+          component: ExpenseAccountDetail
+        },
+        //借款记账
+        {
+          path:"office/:id/borrowAccount",
+          meta: { pageType: "office" ,type:"add"},
+          component: BorrowAccountDetail
+        },
+        //应付款记账
+        {
+          path:"office/:id/dueAccount",
+          meta: { pageType: "office" },
+          component: DueAccExpenseList
         },
         {
-          path:"office/:id/teacherWord/examine/:wordID",
-          meta: { pageType: "office" ,type:"examine"},
-          component: teacherWordDetail
+          path:"office/:id/dueAccount/:expenseID",
+          meta: { pageType: "office" },
+          component: DueAccExpenseIdList
         },
+        {
+          path: "office/:id/dueAccount/:expenseID/detail",// 报销详情
+          meta: { pageType: "office" },
+          component: ExpensePaymentDetail
+        },
+        {
+          path:"office/:id/dueAccount/:expenseID/dueDetail/:staffID/:dueID/:isAccount",
+          meta: { pageType: "office" },
+          component: DuePaymentDetail
+        },
+        {
+          path: "office/:id/dueAccount/:expenseID/add",// 添加审批
+          meta: { pageType: "office", type:"add" },
+          component: DueAccExpenseIdDetail
+        },
+        //积分管理
+        {
+          path:"office/:id/pointsManage",
+          meta: { pageType: "office" },
+          component: PointsManageList
+        },
+        {
+          path:"office/:id/pointsManage/pointsClassify",
+          meta: { pageType: "office" },
+          component: PointsClassifyList
+        },
+        {
+          path:"office/:id/pointsManage/pointsClassify/add",
+          meta: { pageType: "office" ,type:"add"},
+          component: PointsClassifyDetail
+        },
+        {
+          path:"office/:id/pointsManage/pointsClassify/update/:classifyID",
+          meta: { pageType: "office" ,type:"update"},
+          component: PointsClassifyDetail
+        },
+        {
+          path:"office/:id/pointsManage/pointsSubject",
+          meta: { pageType: "office" },
+          component: PointsSubjectList,
+          children:[
+            {
+              path:"update",
+              meta: { pageType: "office" ,type:"update"},
+              component: PointsSubjectDetail
+            },
+            {
+              path:"add",
+              meta: { pageType: "office" ,type:"add"},
+              component: PointsSubjectDetail
+            },
+          ]
+        },
+        //考勤管理
+        {
+          path:"office/:id/attendanceManage",
+          meta: { pageType: "office" },
+          component: AttendanceManageList,
+          children:[
+            {
+              path:"illegalManage",
+              meta: { pageType: "office"},
+              component: IllegalManageList
+            },
+          ]
+        },
+        //智能设备
+        {
+          path:"office/:id/intelligentDevice",
+          meta: { pageType: "office" },
+          component: IntelligentDeviceList
+        },
+        //积分评分
+        {
+          path:"office/:id/pointsScore",
+          meta: { pageType: "office" },
+          component: PointsScoreList,
+          children:[
+            {
+              path:"add",
+              meta: { pageType: "office" ,type:"add"},
+              component: PointsScoreDetail
+            }
+          ]
+        },
+        //考核管理
+        {
+          path:"office/:id/examineManage",
+          meta: { pageType: "office" },
+          component: ExamineManageList,
+          children:[
+            {
+              path:"showCommonDetail",
+              meta: { pageType: "office" ,type:"show"},
+              component: CommonScoreDetail
+            },
+            {
+              path:"showMonthDetail",
+              meta: { pageType: "office" ,type:"show"},
+              component: MonthlyScoreDetail
+            }
+          ]
+        },
+        {
+          path:"office/:id/examineManage/commonExamine",
+          meta: { pageType: "office" },
+          component: CommonExamineList,
+          children:[
+            {
+              path:"add",
+              meta: { pageType: "office" ,type:"add"},
+              component: CommonExamineDetail
+            },
+            {
+              path:"update",
+              meta: { pageType: "office" ,type:"update"},
+              component: CommonExamineDetail
+            }
+          ]
+        },
+        {
+          path:"office/:id/examineManage/monthlyExamine",
+          meta: { pageType: "office" },
+          component: MonthlyExamineList,
+          children:[
+            {
+              path:"update",
+              meta: { pageType: "office" ,type:"update"},
+              component: MonthlyExamineDetail
+            }
+          ]
+        },
+        //考核评分
+        {
+          path:"office/:id/examineScore",
+          meta: { pageType: "office" },
+          component: ExamineScoreList,
+          children:[
+            {
+              path:"commonScore",
+              meta: { pageType: "office" ,type:"update"},
+              component: CommonScoreDetail
+            },
+            {
+              path:"monthlyScore",
+              meta: { pageType: "office" ,type:"update"},
+              component: MonthlyScoreDetail
+            },
+            {
+              path:"showCommonDetail",
+              meta: { pageType: "office" ,type:"show"},
+              component: CommonScoreDetail
+            },
+            {
+              path:"showMonthDetail",
+              meta: { pageType: "office" ,type:"show"},
+              component: MonthlyScoreDetail
+            },
+          ]
+        },
+        //赏罚管理
+        {
+          path:"office/:id/desertEntry",
+          meta: { pageType: "office" },
+          component: DesertEntryList
+        },
+        {
+          path:"office/:id/desertEntry/rewardSubject",
+          meta: { pageType: "office" },
+          component: RewardSubjectList
+        },
+        //交办任务
+        {
+          path:"office/:id/commandTask",
+          meta: { pageType: "office" },
+          component: CommandTaskList,
+          children:[
+            {
+              path:"examine",
+              meta: { pageType: "office" },
+              component: CommandTaskDetail
+            },
+          ]
+        },
+        //培训管理
+        {
+          path:"office/:id/trainingManage",
+          meta: { pageType: "office" },
+          component: TrainingManageList
+        },
+        
+
         //集团
         {
           path: "group",
@@ -1341,7 +1656,7 @@ export default new Router({
         },
         //费用支出
         {
-          path: "group/:cosNum/chargeExpend",
+          path: "group/:cosNum/:isGroup/chargeExpend",
           meta: { pageType: "group" },
           component: ChargeExpendList,
           children:[
@@ -1354,17 +1669,33 @@ export default new Router({
         },
         //员工数据
         {
-          path: "group/:cosNum/staffData",
+          path: "group/:cosNum/:isGroup/staffData",
           meta: { pageType: "group" },
           component: StaffDataList,
         },
         //学员数据
         {
-          path: "group/:cosNum/studentData",
+          path: "group/:cosNum/:isGroup/studentData",
           meta: { pageType: "group" },
           component: StudentDataList,
         },
-
+        //学员出勤
+        {
+          path: "group/:cosNum/:isGroup/studentAttendance",
+          meta: { pageType: "group" },
+          component: GroupStudentAttendanceList,
+        },
+        //学费收入
+        {
+          path: "group/:cosNum/0/tuitionIncome",
+          meta: { pageType: "group" },
+          component: TuitionIncomeList,
+        },
+        {
+          path: "group/:cosNum/1/tuitionIncome",
+          meta: { pageType: "group" },
+          component: TuitionIncomeList,
+        },
       ]
     }
   ]

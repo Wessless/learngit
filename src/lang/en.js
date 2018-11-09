@@ -18,8 +18,8 @@ export const message = {
         passwordError:"用户名或密码输入有误",
         name:"蜂堡办公系统",
         findPassword:"找回密码",
-        copyRight:"Copyright © 2016 Sendy Technology. All Rights Reserved.",
-        ICP:"",
+        copyRight:"Copyright © 2016 CDTec Co., Ltd. All Rights Reserved.",
+        ICP:"津ICP备13004905号-2",
     },
     mainPage:{
         no_network:"当前网络不可用，请检查你的网络设置",

@@ -40,13 +40,17 @@
                     &#xe71f;
                 </div>
             </router-link>
-            <router-link class="LeftNav-item iconfont iconfont-group" style="font-size: 32px;" v-show="userInfo.mobile" :title="'集团'" v-bind:class="{ 'cur': $route.meta.pageType=='group' }" @click="removeChat" :to="'/mainpage/group'">
-                <div class="groupChat" v-show="$route.meta.pageType!='group'" @click="removeChat">
+            <router-link class="LeftNav-item iconfont iconfont-group iconfont-add" style="font-size: 32px;" v-show="userInfo.mobile" :title="'集团'" v-bind:class="{ 'cur': $route.meta.pageType=='group' }" @click="removeChat" :to="'/mainpage/group'">
+                <div class="groupChat groupItem" v-show="$route.meta.pageType!='group'" @click="removeChat">
                     &#xe805;
                 </div>
-                <div class="groupChat" v-show="$route.meta.pageType=='group'" @click="removeChat">
+                <div class="groupChat groupItem" v-show="$route.meta.pageType=='group'" @click="removeChat">
                     &#xe807;
                 </div>
+                <!-- <div class="groupItem">集团</div> -->
+                <!-- <div class="allItem" @click="removeChat">
+                    <div class="groupItem" :class="{'selected':$route.meta.pageType=='group'}">集团</div>
+                </div> -->
             </router-link>
 
             <div class="LeftNav-item iconfont-add bottomBtn hide"  addbtn @click.stop="changeFlag">
@@ -76,13 +80,17 @@
                     </ul>
                 </div>
             </div>
+            <!-- <div class="cosType">
+                <div class="type">{{cosTypeName}}</div>
+                <div class="status">{{cosStatusName}}</div>
+            </div> -->
         </div>
     </div>
 </template>
 
 <script>
 import {mapState, mapMutations} from 'vuex'
-import {getQRCode,getSettingValue,getQRPng} from '@/js/api'
+import {getQRCode,getSettingValue,getQRPng,getTableName} from '@/js/api'
 import { showLoading,closeLoading ,alertError} from '@/config/utils'
 import imageProxy from '@/components/chat/ImageProxy'
 
@@ -112,6 +120,7 @@ export default {
             kindgardenURL: '',
             addNewChildQRCode:'',
             kindgardenQRCode:[],
+            cosStatusName:"",
         }
     },
     computed:{
@@ -143,12 +152,24 @@ export default {
             }else{
                 return "";
             }
+        },
+        cosTypeName(){
+            if(this.userInfo.cosType=='1'){
+                return '幼儿园';
+            }else if(this.userInfo.cosType=='2'){
+                return '培训学校';
+            }else if(this.userInfo.cosType=='3'){
+                return '学校';
+            }else{
+                return '';
+            }
         }
     },
     mounted(){
         this.getKindgardenURL();
         this.getAddNewChildQRCode();
         this.getQRPng();
+        
     },
     components:{
         imageProxy
@@ -351,6 +372,35 @@ export default {
     transform: translateX(-50%) translateY(-50%);
 }
 
+.allItem{
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.groupItem{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    width:50px;
+    height:50px;
+    border-radius: 50%;
+    border:2px solid #ffffff;
+    content:"";
+    left:50%;
+    top:50%;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    color: #ffffff;
+    font-size: 30px;
+}
+
+.selected{
+    background: #ffffff;
+    color: #38adff;
+}
+
 .iconfont-single a {
     background: url(../img/icons.png) 17px 0/108px auto no-repeat;
 
@@ -382,7 +432,7 @@ export default {
 
 .iconfont-add {
     position: absolute;
-    bottom: 85px;
+    bottom: 105px;
     left: 0;
 }
 /* .iconfont-add div> a {
@@ -393,7 +443,7 @@ export default {
 }
 .iconfont-more{
     position: absolute;
-    bottom: 15px;
+    bottom: 35px;
     left: 0;
 }
 .iconfont-more div> a:after {
@@ -523,5 +573,15 @@ export default {
     width:100%;
     height: 100%;
     background:#38adff;
+}
+.cosType{
+    position:absolute;
+    height: 35px;
+    width:100%;
+    /* background:#FF9D00; */
+    bottom:0;
+    font-size: 12px;
+    text-align: center;
+    color: #FF9D00;
 }
 </style>

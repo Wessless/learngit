@@ -7,7 +7,7 @@ var path = require('path')
 module.exports = {
   dev: {
     autoOpenBrowser: true,
-    // Paths
+    // Paths https://top.top16.top/webin/servlet/webapi
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
@@ -17,6 +17,14 @@ module.exports = {
         changeOrigin:true,
         pathRewrite: {
           '^/COSCenter':'/'
+        }
+      },
+      '/IotDevice':{
+        target:'https://top.top16.top/',
+        // target:'http://127.0.0.1:1337/',
+        changeOrigin:true,
+        pathRewrite: {
+          '^/IotDevice':'/'
         }
       },
       '/COS0IN':{
@@ -103,7 +111,7 @@ module.exports = {
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
-    port: 80, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    port: 81, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,
     errorOverlay: true,
     notifyOnErrors: true,
@@ -228,13 +236,13 @@ module.exports = {
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
-    port: 80,
+    port: 81,
 
     /**
      * Source Maps
      */
 
-    productionSourceMap: true,
+    productionSourceMap: false,
     // https://webpack.js.org/configuration/devtool/#production
     devtool: '#source-map',
 

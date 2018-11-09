@@ -7,10 +7,10 @@
 <script>
   export default {
     name: 'App',
-    beforeCreate(){
-      // 刷新页面时重新定位到主页
-      this.$router.push('/mainPage');
-    }
+    // beforeCreate(){
+    //   // 刷新页面时重新定位到主页
+    //   this.$router.push('/mainPage');
+    // }
   }
 </script>
 

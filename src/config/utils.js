@@ -436,7 +436,7 @@ export const xmlStr2json = (str)=>{
  * 正则表达式验证手机号
  */
 export const PhoneNumValid = (phoneNum) => {
-    return /^((1[3,5,8][0-9])|(14[5,7])|(17[0,1,6,7,8])|(166))\d{8}$/.test(phoneNum);
+    return /^((1[3,5,8][0-9])|(14[5,7])|(17[0-9])|(166))\d{8}$/.test(phoneNum);
 }
 
 /**

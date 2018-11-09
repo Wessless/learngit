@@ -1,10 +1,11 @@
 <template>
     <div class="SchoolInformList">
+        <router-view @showDialog="showDialog"></router-view>
         <chat-header :showBack="true" :title="'个人相册'"></chat-header>
-        <div style="width:100%;padding-top:54px;padding-bottom:20px;">
-            <el-form :inline="true" :model="form" class="demo-form-inline">
-                <el-form-item label="班级" style="margin-left:10px;">
-                    <el-select v-model="form.classID" filterable size="medium" @change="getChildsByClassID" style="width:150px;" placeholder="请选择班级">
+        <div style="overflow:scroll;width:100%;height:100vh;padding-top:54px;padding-bottom:20px;">
+            <el-form :inline="true" style="padding-bottom:10px;" :model="form" class="demo-form-inline">
+                <el-form-item label="班级">
+                    <el-select v-model="form.classID" filterable size="medium" @change="getChildsByClassID" style="width:160px;" placeholder="请选择班级">
                         <el-option
                             v-for="item in form.classArr"
                             :key="item.ID"
@@ -42,6 +43,10 @@
                     <el-radio v-model="radio" label="date"  @change="clickDate">按日期</el-radio>
                 </el-form-item>
 
+                <el-form-item label="" style="float:right;margin-right: 0px;">
+                    <el-button type="primary" size="medium" @click="addPhoto">发布</el-button>
+                </el-form-item>
+
                 <!-- <el-form-item label="" style="float:right;transform:translateX(10px);">
                     <el-date-picker
                         style="width:250px;"
@@ -58,48 +63,65 @@
                     <el-button type="primary" style="margin-left:5px;" @click="loadList()">查询</el-button>
                 </el-form-item> -->
             </el-form>
-        </div>
-
-        <div class="midTableHeight" style="width:100%;display:block;transform:translateY(-10px);">
-            <el-table :data="childPhotoesList" :row-class-name="tableRowClassName" :cell-style="getColStyle" :header-cell-style="getRowStyle" border max-height="485">
-                <el-table-column prop="PromulgateTime" v-if="radio=='name'" align="center" label="日期"  width="160"></el-table-column>
-                <el-table-column prop="ChildName" v-if="radio=='date'" align="center" label="姓名"  width="160"></el-table-column>
-                <el-table-column label="文字内容" width="">
-                    <template slot-scope="scope">
-                        <el-popover width="500" trigger="hover" v-show="scope.row.PhotoDescribe!=''" placement="bottom">
-                            <div v-html="scope.row.PhotoDescribe"></div>
-                            <div slot="reference">
-                                <span class="spanTitle" v-show="!scope.row.ellipsis" @click="examinePhotoes(scope.row)" v-html="scope.row.PhotoDescribe"></span>
-                                <span class="spanTitle" v-show="scope.row.ellipsis" @click="examinePhotoes(scope.row)" v-html="scope.row.ellipsisContent"></span>
-                            </div>
-                        </el-popover>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="hasImage" align="center"  label="图片"  width="60">
-                    <template slot-scope="scope">
-                        <span :style="{color:scope.row.hasImage=='有'?'#4DC060':'#e51c23'}">{{scope.row.hasImage}}</span>
-                    </template>
-                </el-table-column>
-            </el-table>
-            <div>
-                <el-pagination
-                    style="float:left;"
-                    @size-change="handleSizeChange"
-                    @current-change="handleCurrentChange"
-                    :current-page="currentPage"
-                    :page-sizes="[10, 20, 30, 40]"
-                    :page-size="pageSize"
-                    layout="total, sizes, prev, pager, next, jumper"
-                    :total="form.informNum">
-                </el-pagination>
+            <div class="midTableHeight" style="width:100%;display:block;">
+                <el-table :data="childPhotoesList" :row-class-name="tableRowClassName" :cell-style="getColStyle" :header-cell-style="getRowStyle" border max-height="485">
+                    <el-table-column prop="PromulgateTime" v-if="radio=='name'" align="center" label="日期"  width="160"></el-table-column>
+                    <el-table-column prop="ChildName" v-if="radio=='date'" align="center" label="姓名"  width="160"></el-table-column>
+                    <el-table-column label="文字内容" width="">
+                        <template slot-scope="scope">
+                            <el-popover width="500" trigger="hover" v-show="scope.row.PhotoDescribe!=''" placement="bottom">
+                                <div v-html="scope.row.PhotoDescribe" style="word-break:break-all;"></div>
+                                <div slot="reference">
+                                    <span class="spanTitle" v-show="!scope.row.ellipsis" @click="examinePhotoes(scope.row)" v-html="scope.row.PhotoDescribe"></span>
+                                    <span class="spanTitle" v-show="scope.row.ellipsis" @click="examinePhotoes(scope.row)" v-html="scope.row.ellipsisContent"></span>
+                                </div>
+                            </el-popover>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="hasImage" align="center"  label="图片"  width="60">
+                        <template slot-scope="scope">
+                            <span class="imageSpan" @click="examinePhotoes(scope.row)" :style="{color:scope.row.hasImage=='有'?'#4DC060':'#e51c23'}">{{scope.row.hasImage}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="操作" align="center"  width="80">
+                        <template slot-scope="scope">
+                            <el-button
+                                size="mini"
+                                type="danger"
+                                @click="deletePhoto(scope.row,scope.$index)">删除</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <div>
+                    <el-pagination
+                        style="float:left;"
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page="currentPage"
+                        :page-sizes="[10, 20, 30, 40]"
+                        :page-size="pageSize"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="form.informNum">
+                    </el-pagination>
+                </div>
             </div>
+            <el-dialog
+                title="提示"
+                :visible.sync="dialogVisible"
+                width="30%">
+                <span>是否删除该相册</span>
+                <span slot="footer" class="dialog-footer">
+                    <el-button @click="dialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="confirmDelete">确 定</el-button>
+                </span>
+            </el-dialog>
         </div>
     </div>
 </template>
 
 <script>
 
-import { getChildPhotoesForPC,getAllClasses,getChildsByClassID } from '@/js/api'
+import { getChildPhotoesForPC,getClasses,getChildsByClassID,deletePhotoByID } from '@/js/api'
 import { showLoading,closeLoading,alertError } from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
 import NoData from '@/components/chat/NoData'
@@ -121,7 +143,7 @@ export default {
                 childArr:[],
                 date:"",
             },
-            // dialogVisible:false,
+            dialogVisible:false,
 
             radio:"name",
             clickItem:{},
@@ -134,7 +156,7 @@ export default {
         ChatHeader,
     },
     mounted(){
-        this.getAllClasses();
+        this.getClasses();
     },
     computed:{
         ...mapState([
@@ -150,13 +172,23 @@ export default {
         },
     },
     methods:{
+        showDialog(v,item){
+            if (v) {
+                this.currentPage = 1;
+                this.pageSize = 10;
+                this.form.classID = item.classID.split("-")[0];
+                this.form.startDate = "";
+                this.radio = "date";
+                this.form.endDate = "";
+                this.clickDate();
+            }
+        },
         loadList(){
             this.childPhotoesList = [];
             // pageNo
             // pageSize
             // staffID  传0即可
             // childID
-            console.log(this.form.date);
             let childID;
             let classID;
             if (this.radio == "date") {
@@ -198,17 +230,17 @@ export default {
                 alertError(this,"1322");
             });
         },
-        getAllClasses(){
+        getClasses(){
             this.form.classArr = [];
-            let classStatus = "-1";
-            getAllClasses(classStatus).then((result)=>{
+            let staffID = this.userInfo.userStaffID;
+            getClasses(staffID).then((result)=>{
                 // console.log(result.data)
                 this.form.classArr = result.data.data;
                 this.form.classID = this.form.classArr[0].ID;
                 this.getChildsByClassID();
                 // this.loadList();
             }).catch((err)=>{
-                alertError(this,"1039");
+                alertError(this,"1002");
             });
         },
         getChildsByClassID(){
@@ -248,6 +280,9 @@ export default {
             let id = item.ID;
             this.$router.push(this.$route.fullPath+"/examine/"+id);
         },
+        addPhoto(){
+            this.$router.push(this.$route.fullPath+"/add");
+        },
         getNowDate() {
             let date = new Date();
             let year = date.getFullYear();
@@ -264,13 +299,40 @@ export default {
         },
         clickName(){
             // this.form.childID = this.form.childArr[0].Id;
-            this.getAllClasses();
+            // this.getClasses();
+            this.getChildsByClassID();
             this.form.date = '';
-            this.loadList();
         },
         clickDate(){
             this.getNowDate();
             this.loadList();
+        },
+        deletePhoto(item){
+            console.log(item);
+            this.clickItem = item;
+            this.dialogVisible = true;
+        },
+        confirmDelete(){
+            this.dialogVisible = false;
+            let loading = showLoading();
+            deletePhotoByID(this.clickItem.ID).then((result)=>{
+                closeLoading(loading);
+                if(result.data.ret=="1"){
+                    this.$message({
+                        type:"success",
+                        message:"删除成功"
+                    });
+                    this.loadList();
+                }else{
+                    this.$message({
+                        type:"error",
+                        message:"删除失败"
+                    });
+                }
+            }).catch((err)=>{
+                closeLoading(loading);
+                alertError(this,"2012");
+            });
         },
         //改变表样式
         getRowStyle({ row, column, rowIndex, columnIndex }){
@@ -303,11 +365,11 @@ export default {
 <style scoped>
 .SchoolInformList{
     padding:20px;
-    display: flex;
-    flex-direction: row;
+    /* display: flex;
+    flex-direction: row; */
     flex-wrap: wrap; 
     max-height: 100%;
-    overflow: scroll;
+    overflow: hidden;
     background: #fafafa;
     position: relative;
     max-height: 100vh;
@@ -355,5 +417,8 @@ export default {
 .iconfont{
     font-weight: normal;
     font-size: 20px;
+}
+.imageSpan{
+    cursor: pointer;
 }
 </style>

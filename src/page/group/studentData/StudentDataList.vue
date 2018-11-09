@@ -11,7 +11,9 @@
                 </div>
                 <div class="childCardItem">
                     <div class="title" style="background-color: #FF9D00;">正常<br />毕业</div>
-                    <div class="childNum"><span style="display:block;width:100%;text-align: center;">{{data.GraduationNumber}}&nbsp;名</span></div>
+                    <div class="childNum">
+                        <span style="display:block;width:100%;text-align: center;">{{data.GraduationNumber}}&nbsp;名<span class="iconfont icon" @click.stop="examineEcharts">&#xe73b;</span></span>
+                    </div>
                 </div>
                 <div class="childCardItem">
                     <div class="title" style="background-color: #e51c23;">中途<br />退学</div>
@@ -21,15 +23,15 @@
             <div class="echartsCard">
                 <div class="echartsCardItem">
                     <div class="title">按年龄统计图</div>
-                    <v-chart class="echarts" :options="data.optionAge"/>
+                    <v-chart class="echarts" v-if="isNotCloseLeft" :options="data.optionAge"/>
                 </div>
                 <div class="echartsCardItem">
                     <div class="title">按班级类型统计图</div>
-                    <v-chart class="echarts" :options="data.optionType"/>
+                    <v-chart class="echarts" v-if="isNotCloseLeft" :options="data.optionType"/>
                 </div>
                 <div class="echartsCardItem">
                     <div class="title">按性别统计图</div>
-                    <v-chart class="echarts" :options="data.optionSex"/>
+                    <v-chart class="echarts" v-if="isNotCloseLeft" :options="data.optionSex"/>
                 </div>
                 <div class="echartsCardItem">
                     <div class="title">班级人数</div>
@@ -46,19 +48,14 @@
                     </div>
                 </div>
             </div>
-            <!-- <el-dialog
-                title=""
+            <el-dialog
+                title="已毕业学年统计图"
+                class="subDialog"
                 :center="true"
-                class="chargeBillDialog"
-                :visible.sync="dialogVisible"
-                width="40%">
-                <div class="midTableHeight" style="width:95%;display:block;margin:10px auto;">
-                    <el-table :data="data.staffDataList" border max-height="400" :row-class-name="tableRowClassName" :cell-style="getColStyle" :header-cell-style="getRowStyle">
-                        <el-table-column prop="StaffName" align="center"  label="姓名"></el-table-column>
-                        <el-table-column prop="StaffNum" align="center"  label="员工编号"></el-table-column>
-                    </el-table>
-                </div>
-            </el-dialog> -->
+                :visible.sync="echartsDialogVisible"
+                width="50%">
+                <v-chart :options="option" style="margin:0 auto;"/>
+            </el-dialog>
         </div>
     </div>
 </template>
@@ -66,7 +63,7 @@
 <script>
 
 import { getCosByCosNum,getCosChildCountStatistic,getCosChildStatisticByAge,getCosChildStatisticByType,
-         getCosChildStatisticByClass,getCosChildStatisticBySex } from '@/js/api'
+         getCosChildStatisticByClass,getCosChildStatisticBySex,getCosChildStatisticByGraduation } from '@/js/api'
 import { showLoading,closeLoading,alertError,money } from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
 import ChatHeader from '@/components/chat/ChatHeader'
@@ -93,9 +90,12 @@ export default {
                 classDataList:[],
                 staffDataList:[],
             },
+            option:{},
             // dialogVisible:false,
             pageSize:10,
             currentPage:1,
+            echartsDialogVisible:false,
+            isNotCloseLeft:true,
         }
     },
     
@@ -110,12 +110,19 @@ export default {
         cosNum(newVal,oldVal){
             this.getCosByCosNum();
             this.loadList();
+        },
+        closeLeft(newVal,oldVal){
+            this.isNotCloseLeft = false;
+            setTimeout(()=>{
+                this.isNotCloseLeft = true;
+            },0);
         }
     },
     computed:{
         ...mapState([
             'userInfo',
             'allStaffs',
+            'closeLeft',
         ]),
         cosNum(){
             return this.$route.params.cosNum;
@@ -344,6 +351,7 @@ export default {
                     offset:0,
                     boundaryGap: [0, '20%'],
                 },
+                color:"#38adff",
                 series: [
                     {
                         name:'幼儿人数',
@@ -403,31 +411,101 @@ export default {
                 ]
             };
         },
+        graduationEchartsLoad(months,alreadyMoney){
+            this.option = {
+                grid:{
+                    y2:"80px"
+                },
+                toolbox: {
+                    show: true,
+                    right: '20',
+                    itemSize:12,
+                    feature: {
+                        // dataView: { //数据视图
+                        //     show: true
+                        // },
+                        // restore: { //重置
+                        //     show: true
+                        // },
+                        saveAsImage: {//保存图片
+                            show: true,                         //是否显示该工具。
+                            type:"png",                         //保存的图片格式。支持 'png' 和 'jpeg'。
+                            name:"已毕业学年统计",                        //保存的文件名称，默认使用 title.text 作为名称
+                            backgroundColor:"#ffffff",        //保存的图片背景色，默认使用 backgroundColor，如果backgroundColor不存在的话会取白色
+                            title:"保存为图片",
+                            pixelRatio:1  
+                        },
+                        // magicType: {//动态类型切换
+                        //     type: ['bar', 'line']
+                        // }
+                    }
+                },
+                tooltip: {//弹出数据提示
+                    trigger: 'axis',
+                },
+                title: {
+                    left: 'center',
+                    text: '已毕业学年统计',
+                    top:10,
+                },
+                legend: {
+                    x: 'center',
+                    data:["幼儿人数"]
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: true,
+                    data: months,
+                    axisLabel:{
+                        rotate:-35,
+                        interval:0
+                    },
+                },
+                yAxis: [{
+                    type: 'value',
+                    name:'幼儿人数/人',
+                    boundaryGap: [0, '20%'],
+                    minInterval:1,
+                    splitLine:{
+                        show:true
+                    },
+                    axisLabel:{
+                        formatter:'{value}'
+                    }
+                }],
+                series: [
+                    {
+                        name:'幼儿人数',
+                        type:'bar',// line 折线图 bar 柱状图
+                        symbol: 'none',
+                        sampling: 'average',
+                        data: alreadyMoney,
+                        barWidth: "40px"
+                    }
+                ]
+            };
+        },
         goback(){
             this.$router.push("/mainpage/group");
         },
-        // examineCertification(item){
-        //     this.data.staffDataList = [];
-        //     // this.dialogVisible = true;
-        //     // numCos,
-        //     // acctID,
-        //     // monthYear,
-        //     // certificationName
-        //     let numCos = this.$route.params.cosNum;
-        //     let acctID = this.userInfo.mobile;
-        //     let date = new Date();
-        //     let monthYear = date.getFullYear() + "-" + (Array(3).join(0) + (date.getMonth() + 1)).slice(-2) + "-01";
-        //     let loading = showLoading();
-        //     let certificationName = item.certificationName;
-        //     getStaffByCertification(numCos,acctID,monthYear,certificationName).then((result)=>{
-        //         closeLoading(loading);
-        //         console.log(result.data.data)
-        //         this.data.staffDataList = result.data.data;
-        //     }).catch((err)=>{
-        //         closeLoading(loading);
-        //         alertError(this,"1270");
-        //     });
-        // },
+        examineEcharts(){
+            this.echartsDialogVisible = true;
+            let numCos = this.$route.params.cosNum;
+            let acctID = this.userInfo.mobile;
+            getCosChildStatisticByGraduation(numCos,acctID).then((result)=>{
+                let ret = result.data;
+                let year = [];
+				let num = [];
+				for(let i=0;i<ret.ClassType.length;i++){
+					year.push(ret.ClassType[i]+"年毕业");
+					num.push(ret.ChildCount[i]);
+				}
+				this.graduationEchartsLoad(year,num);
+            }).catch((err)=>{
+                alertError(this,"1282");
+            });
+        },
+
          //改变表样式
         getRowStyle({ row, column, rowIndex, columnIndex }){
             if (rowIndex == 0||rowIndex == 1) {
@@ -642,5 +720,12 @@ export default {
 	text-overflow: ellipsis;
 	word-wrap: normal;
 	overflow: hidden;
+}
+.icon{
+    margin-left: 5px;
+    display: inline-block;
+    font-size: 18px;
+    cursor: pointer;
+    color: #38ADFF;
 }
 </style>

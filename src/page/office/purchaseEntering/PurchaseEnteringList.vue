@@ -131,7 +131,7 @@ export default {
     flex-direction: row;
     flex-wrap: wrap; 
     max-height: 100%;
-    overflow: scroll;
+    /* overflow: scroll; */
     background: #fafafa;
     position: relative;
     max-height: 100vh;

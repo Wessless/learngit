@@ -66,7 +66,7 @@
             <main-header @changeFlag="changeFlag" :hideflag="hideflag" @quitLogin="quitLogin" @changeMoreFlag="changeMoreFlag" @clickUserInfo="clickUserInfo" @showKindgardenQRCode="showKindgardenQRCode" :hideMoreflag="hideMoreflag" ></main-header>
             <friend-list v-show="!showText"></friend-list>
             <div class="showText" v-show="showText">{{ cosName+"蜂堡办公系统" }}</div>
-            <div class="elseComponent" style="padding-left:384px;">
+            <div class="elseComponent" :class="{leftSmall:closeLeft}">
                 <!-- <div class="emptyBox" v-if="!this.currConversation&&!this.currFriendList&&($route.meta.pageType=='conversation'||$route.meta.pageType=='friendList')">
                     <div class="cosName">{{ cosName }}<br/>欢迎您！</div>
                 </div> -->
@@ -76,7 +76,10 @@
                 
                 <chat-box v-show="this.currConversation&&!this.currFriendList&&!showText"></chat-box>
                 <!-- <friend-list-info v-show="!this.currConversation&&this.currFriendList"></friend-list-info>    -->
-                <router-view v-show="!showText"></router-view>
+                <keep-alive :max="5">
+                    <router-view v-show="!showText" v-if="$route.meta.keepAlive"></router-view>
+                </keep-alive>
+                <router-view v-show="!showText" v-if="!$route.meta.keepAlive"></router-view>
                 <!-- <user-setting></user-setting> -->
             </div>
             <!-- <div class="elseComponent">
@@ -135,7 +138,8 @@ export default {
             'currFriendList',
             'login',
             'uploadFile',
-            'browserImg'
+            'browserImg',
+            'closeLeft',
         ]),
         showUploadImg(){
             // if(){
@@ -174,6 +178,12 @@ export default {
         showUploadImg(newVal,oldVal){
         }
     },
+    beforeCreate(){
+        // 刷新页面时重新定位到主页
+        this.$router.push('/mainPage');
+        document.title = '蜂堡办公系统';
+        document.getElementById("titleIcon").href = 'static/cos.ico';
+    },
     beforeMount(){
         if(!this.login){
             let user_info = _getSession('user_info');
@@ -181,7 +191,7 @@ export default {
                 let userInfo = JSON.parse(aesDecrypt(user_info));
                 this.SAVE_USERINFO(userInfo);
             }else{
-                this.$router.push('/login')
+                this.$router.push('/login');
             }
         }
     },
@@ -238,7 +248,7 @@ export default {
         },
         quitLogin(){
             _removeSession('user_info');
-            this.$router.push('/login')
+            this.$router.push('/login');
         },
         trueFlag(){// 点击其他区域隐藏添加列表
             this.hideflag = true;
@@ -332,7 +342,6 @@ export default {
     height: 100vh;
     overflow: hidden;
 }
-
 .elseComponent > .emptyBox {
     width: 100%;
     height: 100vh;
@@ -403,6 +412,10 @@ export default {
     background-color: #fafafa;
     padding-left:384px;
     min-height: 100vh;
+}
+
+.leftSmall{
+    padding-left: 70px !important;
 }
 
 /* 没有网络 */

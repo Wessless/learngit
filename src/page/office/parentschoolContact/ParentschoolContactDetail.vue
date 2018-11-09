@@ -1,18 +1,26 @@
 <template>
-    <div class="ParentschoolContactDetail">
-        <chat-header :showBack="true" :title="title"></chat-header>
+    <div class="ParentschoolContactDetail" @drop="drop($event)" @dragenter="dragenter($event)" @dragleave="dragleave($event)" @dragover="dragover($event)">
+        <chat-header :fixIndex="10" :showRightBtn="$route.meta.type=='add'" :rightBtnTitle="'确认'" :rightBtnName="'confirm'" :rightBtnType="'btn'" @confirm="confirm" :showBack="true" :title="title" :isgoBack="true" :gobackName="'goback'" @goback="goback"></chat-header>
+        <div class="whiteBg" v-show="showWhite"></div>
+        <input  name="file" type="file" multiple="multiple" id="uploadMyDatabaseFile" style="display:none" @change="uploadFile"/>
+        <div style="width:100%;height:100%;overflow:scroll;">
         <el-form ref="form" :model="form" label-width="100px" style="width:100%;">
-            <el-form-item label="班级">
-                <el-select v-model="form.classID" size="small" disabled filterable style="width:400px;" placeholder="请选择班级">
-                        <el-option
-                            v-for="item in form.classArr"
-                            :key="item.ID"
-                            :label="item.ClassName"
-                            :value="item.ID">
-                        </el-option>
-                    </el-select>
+            <el-form-item label="" v-show="$route.meta.type=='add'">
+                <el-radio v-model="form.type" label="0">班级通知</el-radio>
+                <el-radio style="margin-left:30px;" v-model="form.type" label="1">班级作业</el-radio>
+                <el-radio style="margin-left:30px;" v-model="form.type" label="2">今日所学</el-radio>
             </el-form-item>
-            <el-form-item label="发布时间">
+            <el-form-item label="班级">
+                <el-select v-model="form.classID" size="small" :disabled="disabled" filterable style="width:400px;" placeholder="请选择班级">
+                    <el-option
+                        v-for="item in form.classArr"
+                        :key="item.ID"
+                        :label="item.ClassName"
+                        :value="item.ID">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="发布时间" v-show="$route.meta.type=='examine'">
                 <el-date-picker
                     style="width:400px;"
                     disabled
@@ -33,23 +41,25 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="通知内容" style="margin-top:3px;">
-                <el-input v-model="form.NoticeContent" readonly size="small" type="textarea" :rows="6" style="width:400px;" placeholder="请输入内容"></el-input>
+                <el-input v-model="form.NoticeContent" :readonly="disabled" size="small" type="textarea" :rows="12" style="width:400px;" placeholder="请输入内容"></el-input>
             </el-form-item>
-            <el-form-item label="图片" style="margin-top:12px;" v-show="form.images.length!='0'">
+            <el-form-item label="图片" :style="{margin:$route.meta.type!='add'?'12px 0 0 0':'3px 0 0 0'}" v-show="form.images.length!='0'||$route.meta.type=='add'">
+                <el-button size="mini" type="primary" v-show="$route.meta.type=='add'" @click="clickUploadFile" style="margin-bottom:8px;">添加图片</el-button>
                 <div class="uploadImages">
-                    <div class="imagediv" @click="borwserImage(item)" v-for="item in form.images" :key="item.compressImage">
+                    <div class="imagediv" @click="borwserImage(item)" v-for="(item,index) in form.images" :key="item.compressImage">
                         <img :src="item.compressImage" alt="">
-                        <!-- <div class="deleteImgBtn iconfont" @click.stop="deleteImage(item,number)">&#xe69a;</div> -->
+                        <div class="deleteImgBtn iconfont" v-show="$route.meta.type=='add'" @click.stop="deleteImage(item,index)">&#xe69a;</div>
                     </div>
                 </div>
             </el-form-item>
         </el-form>
+        </div>
     </div>
 </template>
 
 <script>
 
-import { findNoticeByID,getAllClasses } from '@/js/api'
+import { findNoticeByID,getClasses,addNotice } from '@/js/api'
 import { showLoading,closeLoading,imageCompress,alertError,getExtImagePath} from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
 import ChatHeader from '@/components/chat/ChatHeader'
@@ -58,7 +68,7 @@ export default {
     name: 'ParentschoolContactDetail',
     data(){
         return {
-            title:"通知详情",
+            title:"",
             form: {
                 PromulgateTime:"",//发布时间
                 Promulgator:"",   //发布人ID
@@ -66,15 +76,26 @@ export default {
                 images:[],
                 classID:"",
                 classArr:[],
+                type:"0",
             },
+            disabled:true,
+            showWhite:false,
+            photofaceList:[],
         }
     },
     components:{
         ChatHeader
     },
     mounted(){
-        this.getAllClasses();
-        this.findNoticeByID();
+        this.getClasses();
+        if (this.$route.meta.type=="examine") {
+            this.title = "通知详情";
+            this.findNoticeByID();
+        }else if (this.$route.meta.type=="add") {
+            this.title = "发布通知"
+            this.form.Promulgator = this.userInfo.userStaffID;
+            this.disabled = false;
+        }
     },
     computed:{
         ...mapState([
@@ -88,6 +109,44 @@ export default {
         ...mapMutations([
             'SET_BROWSERIMG'
         ]),
+        confirm(){
+            let json = {
+                staffID:this.form.Promulgator,
+                classID:this.form.classID,
+                content:this.form.NoticeContent,
+                type:this.form.type,
+            }
+            if(json.classID==""){
+                this.$message.error({
+                    message:"请选择班级"
+                });
+                return;
+            }
+            let photofaceList = this.photofaceList;
+            let loading = showLoading();
+            addNotice(json,photofaceList).then((result)=>{
+                closeLoading(loading);
+                if(result.data.ret=='1'){
+                    this.$message({
+                        message:"发布成功",
+                        type:"success"
+                    });
+                    this.$emit("showDialog",true,json);
+                    window.history.go(-1);
+                }else{
+                    this.$message.error({
+                        message:"发布失败"
+                    });
+                }
+            })
+            .catch((err)=>{
+                alertError(this,"2003");
+                closeLoading(loading);
+            });
+        },
+        goback(){
+            window.history.go(-1);
+        },
         findNoticeByID(){
             let loading = showLoading();
             findNoticeByID(this.$route.params.noticeID)
@@ -234,15 +293,111 @@ export default {
                 imgPath:item.oldImage
             });
         },
-        getAllClasses(){
-            let classStatus = "-1";
-            getAllClasses(classStatus).then((result)=>{
+        getClasses(){
+            let staffID = this.userInfo.userStaffID;
+            getClasses(staffID).then((result)=>{
                 // console.log(result.data)
                 this.form.classArr = result.data.data;
             }).catch((err)=>{
-                alertError(this,"1039");
+                alertError(this,"1002");
                 closeLoading(loading);
             });
+        },
+        drop(e){
+            e.preventDefault();
+            this.showWhite = false;
+            console.log(e)
+            this.fileList(e.dataTransfer);
+        },
+        dragleave(e){
+            e.preventDefault();
+            this.showWhite = false;
+        },
+        dragenter(e){
+            e.preventDefault();
+        },
+        dragover(e){
+            e.preventDefault();
+            this.showWhite = true;
+        },
+        fileList(fileList) {
+            let files = fileList.files;
+            for (let i = 0; i < files.length; i++) {
+                // 判断是否为文件夹
+                if (files[i].type != '') {
+                    this.fileAdd(files[i]);
+                } else {
+                    // 文件夹处理
+                    // this.folders(fileList.items[i]);
+                    this.$message.error({
+                        message:'无法上传文件夹'
+                    })
+                }
+            }
+        },
+        foldersAdd(entry) {
+            entry.file((file) => {
+                this.fileAdd(file);
+            })
+        },
+        fileAdd(file) {
+            this.uploadOneFile(file);
+        },
+        clickUploadFile(){
+            document.getElementById("uploadMyDatabaseFile").click();
+        },
+        uploadFile(e){
+            let files = e.target.files;
+            for(let i=0;i<files.length;i++){
+                this.uploadOneFile(files[i]);
+            }
+        },
+        uploadOneFile(file){
+            let names = file.name.split(".");
+            let fileName = file.name;
+            let ext = names[names.length-1];
+            if(ext=="jpg" || ext=="jpeg" || ext=="png" || ext=="bmp"|| ext=="gif"|| ext=="ico"){
+                if((ext=="jpg" || ext=="jpeg" || ext=="png" || ext=="bmp"|| ext=="gif"|| ext=="ico")&&this.form.images.length>=8){
+                    this.$message({
+                        message: '图片最多选择8张',
+                        type: 'error'
+                    });
+                    return;
+                }
+                this.photofaceList.push(file);
+            }else{
+                this.$message({
+                    message: '图片格式错误',
+                    type: 'error'
+                });
+                return;
+            }
+            imageCompress(file,0.5,(base64)=>{
+                let base64Image = base64;
+                let path = base64Image;
+                if(this.form.images.length<8){
+                    let everyImage = path;
+                    let compressImage = everyImage.replace('../../../',this.userInfo.currProxy+"/COS"+this.userInfo.cosNum+"/");
+                    let oldImages = compressImage.split('/');
+                    if(oldImages[oldImages.length-1].substring(0,2)=='s_'){
+                        oldImages[oldImages.length-1] = oldImages[oldImages.length-1].substring(2,oldImages[oldImages.length-1].length);
+                    }
+                    let oldImage = oldImages.join('/');
+                    this.form.images.push({
+                        AttachmentPath: everyImage,
+                        compressImage: compressImage,
+                        oldImage: oldImage,
+                        isNew:true
+                    });
+                }
+            })
+        },
+        deleteImage(item,index){
+            if(!item.isNew){
+                this.delImgUrl.push(item.AttachmentPath);
+            }
+            this.form.images.splice(index,1);
+            this.photofaceList.splice(index,1);
         },
     }
 }
@@ -256,10 +411,12 @@ export default {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap; 
-    max-height: 100%;
+    overflow: hidden;
+    /* max-height: 100%; */
     background: #fafafa;
-    padding-top:74px;
+    padding-top:54px;
     position: relative;
+    height: 100vh;
 }
 .el-form-item {
     margin-bottom: 0px;

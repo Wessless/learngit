@@ -13,6 +13,7 @@ import {
 	SET_SELFIMAGEPATH,
 	SET_KNOWLEDGEID,
 	SET_TREENODEID,
+	SET_CLOSELEFT,
 } from './mutation-types.js'
 
 export default {
@@ -57,8 +58,8 @@ export default {
 	[SET_BROWSERIMG](state, browserImg){
 		state.browserImg = browserImg;
 	},
-  // 设置审批tab栏
-  [SET_APPROVETABTYPE](state, approveTabType){
+	// 设置审批tab栏
+	[SET_APPROVETABTYPE](state, approveTabType){
 		state.approveTabType = approveTabType;
 	},
 	// 设置员工头像
@@ -71,6 +72,9 @@ export default {
 	},
 	[SET_TREENODEID](state, treeNode){
 		state.myDatabase.treeNode = treeNode;
+	},
+	[SET_CLOSELEFT](state, closeLeft){
+		state.closeLeft = closeLeft;
 	},
 	// [RECORD_SHOPDETAIL](state, detail) {
 	// 	state.shopDetail = detail;

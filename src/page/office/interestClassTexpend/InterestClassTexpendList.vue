@@ -116,7 +116,7 @@ export default {
             let staffID = this.userInfo.userStaffID;
             getChargeTeacher(this.pageNo,this.pageSize,this.formInline.classID).then((result)=>{
                 this.employTeacherList = result.data.data;
-                console.log(this.employTeacherList)
+                // console.log(this.employTeacherList)
                 if(this.employTeacherList.length==0){
                     this.isNoData = true;
                 }else{
@@ -187,7 +187,7 @@ export default {
         confirmCount(){
             this.statusDialogVisible = false;
             let iClassID = this.formInline.classID;
-            let startDate = this.clickItem.StartDate;
+            let startDate = this.clickItem.StartDate.split(" ")[0];
             let endDate = this.formInline.endDate;
             // console.log(iClassID,startDate,endDate)
             let loading = showLoading();
@@ -207,7 +207,7 @@ export default {
                     this.statusDialogVisible = true;
                 }else{
                     this.$message({
-                        message: '计算失败',
+                        message: '该时间段没有教师考勤，请重新输入',
                         type: 'error'
                     });
                 }

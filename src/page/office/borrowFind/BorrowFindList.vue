@@ -1,22 +1,77 @@
 <template>
     <div class="BorrowFindList">
+        <router-view></router-view>
         <chat-header :showBack="true" :title="'借款查询'"></chat-header>
-        <div style="width:100%;padding-top:54px;padding-bottom:20px;">
+        <div style="width:100%;padding:74px 20px 20px 20px;overflow:scroll;">
             <el-form :inline="true" :model="form" class="demo-form-inline">
                 <el-form-item>
-                    <span style="color:#999;margin-left:10px;">共{{ this.itemNum }}条，总金额：{{ this.itemMoney }}元</span>
+                    <span style="color:#999;margin-left:10px;">共{{ this.itemNum==0?" ":this.itemNum }}条，总金额：{{ this.itemMoney }}元</span>
                 </el-form-item>
                 <el-form-item style="float:right;">
-                    <el-button type="primary" @click="dialogVisible=true">查询</el-button>
+                    <el-button type="primary" size="medium" @click="dialogVisible=true">查询</el-button>
                 </el-form-item>
             </el-form>
+
+            <div class="midTableHeight" style="width:100%;display:block;padding:10px;">
+                <el-table :data="borrowFindList" :row-class-name="tableRowClassName" :cell-style="getColStyle" :header-cell-style="getRowStyle" border max-height="470">
+                    <el-table-column prop="BookChargeID" align="center"  label="单号"  width="60"></el-table-column>
+                    <el-table-column prop="FillStaff" align="center"  label="申请人"  width="100"></el-table-column>
+                    <el-table-column align="center" label="金额"  width="150">
+                        <template slot-scope="scope">
+                            <span style="color:#000;">{{scope.row.Money}}{{scope.row.MoneyUnitName=="人民币"?"元":scope.row.MoneyUnitName}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column align="center" label="状态"  width="100">
+                        <template slot-scope="scope">
+                            <span :style="{color:scope.row.stateColor}">{{scope.row.State}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="FillDate" align="center"  label="创建日期"  width="120"></el-table-column>
+                    <el-table-column align="center" label="支付方式"  width="100">
+                        <template slot-scope="scope">
+                            <span>{{payTypeArr[scope.row.PayType]}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="用途说明">
+                        <template slot-scope="scope">
+                            <div class="ellipsis" :title="scope.row.BigType +'-'+ scope.row.SmallType +'-'+ scope.row.Subject">
+                                {{scope.row.BigType}} - {{scope.row.SmallType}} - {{scope.row.Subject}}
+                            </div>
+                            <!-- <el-popover width="500" trigger="hover" placement="bottom">
+                                <div style="word-break:break-all;">
+                                    {{scope.row.BigType}} - {{scope.row.SmallType}} - {{scope.row.Subject}}
+                                </div>
+                                <div slot="reference" class="ellipsis">
+                                    {{scope.row.BigType}} - {{scope.row.SmallType}} - {{scope.row.Subject}}
+                                </div>
+                            </el-popover> -->
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="详情" width="80">
+                        <template slot-scope="scope">
+                            <el-button
+                                size="mini"
+                                type="primary"
+                                @click="showDetail(scope.row)">查看</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <div>
+                    <el-pagination
+                        style="float:left;"
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page="currentPage"
+                        :page-sizes="[10, 20, 30, 40]"
+                        :page-size="pageSize"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="itemNum">
+                    </el-pagination>
+                </div>
+            </div>
         </div>
-        <no-data :isShow="isNoData"></no-data>
-        <div class="borrowFindList" v-infinite-scroll="loadList" infinite-scroll-disabled="isDisabled" infinite-scroll-distance="10">
-            <Borrow-Find-item v-for="item in borrowFindList" :key="item.num" :item="item"></Borrow-Find-item>
-        </div>
-        <el-dialog title="查询条件" :visible.sync="dialogVisible" width="55%">
-            <el-form :model="form" label-width="120px">
+        <el-dialog title="查询条件" :visible.sync="dialogVisible" width="790px">
+            <el-form :model="form" label-width="150px">
                 <el-form-item :label="'单号'">
                     <el-input v-model="form.startID" size="small" style="width:240px;" placeholder="请输入起始单号"></el-input>
                     至
@@ -32,7 +87,7 @@
                     </div>
                 </el-form-item>
 
-                <el-form-item :label="dateTypeName">
+                <!-- <el-form-item :label="dateTypeName">
                     <el-date-picker
                         v-model="form.startDate"
                         type="date"
@@ -49,6 +104,21 @@
                         style="width:240px;"
                         @change="changeEndDate"
                         placeholder="结束日期">
+                    </el-date-picker>
+                </el-form-item> -->
+
+                <el-form-item :label="dateTypeName">
+                    <el-date-picker
+                        style="width:501px;"
+                        v-model="form.dateRange"
+                        type="daterange"
+                        range-separator="一"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
+                        value-format="yyyy-MM-dd"
+                        size="small"
+                        unlink-panels
+                        :picker-options="pickerOptions">
                     </el-date-picker>
                 </el-form-item>
                 
@@ -140,10 +210,9 @@
 <script>
 
 import { getBookCharge,getDepartments,findAllRetiredStaffs,getOutBill,getOutBillDetail,getBankAccount } from '@/js/api'
-import { showLoading,closeLoading,alertError } from '@/config/utils'
+import { showLoading,closeLoading,alertError,money } from '@/config/utils'
 import { mapState, mapMutations } from 'vuex'
 import ChatHeader from '@/components/chat/ChatHeader'
-import BorrowFindItem from '@/page/office/borrowFind/BorrowFindItem'
 import NoData from '@/components/chat/NoData'
 
 export default {
@@ -172,8 +241,9 @@ export default {
                 includeProject:false,
                 fillStaff:[],
                 dateType:"1",
-                startDate:"",
-                endDate:"",
+                // startDate:"",
+                // endDate:"",
+                dateRange:"",
                 outBillList:[],
                 outBillDetailList:[{"DetailID":'-1',"DetailName":'全部'}],
                 bankArr:[],
@@ -187,31 +257,63 @@ export default {
                         {value:"-1",label:"未通过审批"},
                       ],
             },
-            isNoData:false,
+            payTypeArr:{
+                "0":"现金",
+                "1":"支票",
+                "2":"银行汇款",
+                "3":"其他",
+                "4":"汇票",
+                "5":"虚拟账户",
+            },
             dialogVisible:false,
             clickItem:{},
-            pageNo : 1,
             borrowFindList:[],
-            pageSize:15,
+            pageSize:10,
             currentPage:1,
-            isDisabled:false,
             checked:false,
             outBillIDDisabled:false,
             includeProjectDisabled:true,
             itemNum:0,
             itemMoney:0,
+            pickerOptions: {
+                shortcuts: [{
+                    text: '最近一周',
+                    onClick(picker) {
+                    const end = new Date();
+                    const start = new Date();
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                    picker.$emit('pick', [start, end]);
+                    }
+                }, {
+                    text: '最近一个月',
+                    onClick(picker) {
+                    const end = new Date();
+                    const start = new Date();
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                    picker.$emit('pick', [start, end]);
+                    }
+                }, {
+                    text: '最近三个月',
+                    onClick(picker) {
+                    const end = new Date();
+                    const start = new Date();
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                    picker.$emit('pick', [start, end]);
+                    }
+                }]
+            },
         }
     },
     components:{
         NoData,
         ChatHeader,
-        BorrowFindItem
     },
     mounted(){
         this.findAllstaffs();
         this.getOutBill();
         this.getBankAccount();
         this.getDepartments();
+        this.loadList();
     },
     computed:{
         ...mapState([
@@ -233,21 +335,21 @@ export default {
     methods:{
         confirm(){
             this.dialogVisible = false;
-            this.borrowFindList = [];
             this.loadList(true);
         },
-        loadList(reload){
+        loadList(){
+            this.borrowFindList = [];
             let staffID = this.userInfo.userStaffID;
             let startID = this.form.startID!=""?this.form.startID:"-1";
             let endID = this.form.endID!=""?this.form.endID:"-1";
-            let fillDateFrom = this.form.fillDateFrom!=""?this.form.fillDateFrom:"-1";
-            let fillDateTo = this.form.fillDateTo!=""?this.form.fillDateTo:"-1";
-            let chargeDateFrom = this.form.chargeDateFrom!=""?this.form.chargeDateFrom:"-1";
-            let chargeDateTo = this.form.chargeDateTo!=""?this.form.chargeDateTo:"-1";
-            let payDateFrom = this.form.payDateFrom!=""?this.form.payDateFrom:"-1";
-            let payDateTo = this.form.payDateTo!=""?this.form.payDateTo:"-1";
-            let returnDateFrom = this.form.returnDateFrom!=""?this.form.returnDateFrom:"-1";
-            let returnDateTo = this.form.returnDateTo!=""?this.form.returnDateTo:"-1";
+            let fillDateFrom = "-1";
+            let fillDateTo = "-1";
+            let chargeDateFrom = "-1";
+            let chargeDateTo = "-1";
+            let payDateFrom = "-1";
+            let payDateTo = "-1";
+            let returnDateFrom = "-1";
+            let returnDateTo = "-1";
             let hasInvoice = this.form.hasInvoice!=""?this.form.hasInvoice:"-1";
             let payType = this.form.payType!=""?this.form.payType:"-1";
             let departmentID = this.form.departmentID!=""?this.form.departmentID:"-1";
@@ -258,44 +360,48 @@ export default {
             let outBillID = this.form.outBillID!=""?this.form.outBillID:"-1";
             let includeProject = this.form.includeProject?"1":"0";
             
-            if(reload){
-                this.currentPage = 1;
-                this.isDisabled = false;
+            if (this.form.dateType=="1") {
+                fillDateFrom = this.form.dateRange?this.form.dateRange[0]:"";
+                fillDateTo = this.form.dateRange?this.form.dateRange[1]:"";
+            }else if (this.form.dateType=="2") {
+                chargeDateFrom = this.form.dateRange?this.form.dateRange[0]:"";
+                chargeDateTo = this.form.dateRange?this.form.dateRange[1]:"";
+            }else if (this.form.dateType=="3") {
+                payDateFrom = this.form.dateRange?this.form.dateRange[0]:"";
+                payDateTo = this.form.dateRange?this.form.dateRange[1]:"";
+            }else if (this.form.dateType=="4") {
+                returnDateFrom = this.form.dateRange?this.form.dateRange[0]:"";
+                returnDateTo = this.form.dateRange?this.form.dateRange[1]:"";
             }
-            if(!this.isDisabled){
-                this.isDisabled = true;
-                let loading = showLoading();
-                getBookCharge(this.currentPage,this.pageSize,staffID,startID,endID,
-                fillDateFrom,fillDateTo,chargeDateFrom,chargeDateTo,payDateFrom,payDateTo,returnDateFrom,returnDateTo,hasInvoice,
-                payType,departmentID,fillStaffID,status,bankAccountID,outBillType,
-                outBillID,includeProject).then((result)=>{
-                    if(reload){
-                        this.borrowFindList = [];
-                    }
-                    if(result.data.totalCount<this.currentPage*this.pageSize){
-                        this.isDisabled = true;
+
+            let loading = showLoading();
+            getBookCharge(this.currentPage,this.pageSize,staffID,startID,endID,
+            fillDateFrom,fillDateTo,chargeDateFrom,chargeDateTo,payDateFrom,payDateTo,returnDateFrom,returnDateTo,hasInvoice,
+            payType,departmentID,fillStaffID,status,bankAccountID,outBillType,
+            outBillID,includeProject).then((result)=>{
+                closeLoading(loading);
+                let objArr = result.data.data;
+                for (let i = 0; i < objArr.length; i++) {
+                    objArr[i].Money = money(objArr[i].Money);
+                    if (objArr[i].State=='未通过审批') {
+                        objArr[i].stateColor = "#e51c23";
+                    }else if (objArr[i].State=='处理完毕') {
+                        objArr[i].stateColor = "#4DC060";
                     }else{
-                        this.isDisabled = false;
+                        objArr[i].stateColor = "#FF9D00";
                     }
-                    closeLoading(loading);
-                    this.currentPage++;
-                    for(let i=0;i<result.data.data.length;i++){
-                        this.borrowFindList.push(result.data.data[i]);
-                    }
-                    this.itemNum = result.data.totalCount;
-                    this.itemMoney = result.data.TotalMoney?result.data.TotalMoney:"0";
-                    if(this.borrowFindList.length==0){
-                        this.isNoData = true;
-                        this.itemNum = 0;
-                        this.itemMoney = 0;
-                    }else{
-                        this.isNoData = false;
-                    }
-                })
-                .catch((err)=>{
-                    alertError(this,"1174");
-                });
-            }
+                }
+                this.borrowFindList = objArr;
+                this.itemNum = parseInt(result.data.totalCount);
+                this.itemMoney = result.data.TotalMoney?result.data.TotalMoney:"0";
+                if(this.borrowFindList.length==0){
+                    this.itemNum = 0;
+                    this.itemMoney = 0;
+                }
+            })
+            .catch((err)=>{
+                alertError(this,"1177");
+            });
         },
         getOutBill(){
             let cosNum = this.userInfo.cosNum;
@@ -423,28 +529,41 @@ export default {
                 alertError(this,"1053");
             });
         },
-        changeStartDate(value){
-            if (this.form.dateType=="1") {
-                this.form.fillDateFrom = value;
-            }else if (this.form.dateType=="2") {
-                this.form.chargeDateFrom = value;
-            }else if (this.form.dateType=="3") {
-                this.form.payDateFrom = value;
-            }else if (this.form.dateType=="4") {
-                this.form.returnDateFrom = value;
+        showDetail(item){
+            let BookChargeID = item.BookChargeID;
+            this.$router.push(this.$route.fullPath+"/"+BookChargeID);
+        },
+        handleSizeChange(val){
+            this.pageSize = val;
+            this.loadList();
+        },
+        handleCurrentChange(val){
+            this.currentPage = val;
+            this.loadList();
+        },
+
+        //改变表样式
+        getRowStyle({ row, column, rowIndex, columnIndex }){
+            if (rowIndex == 0) {
+                if (columnIndex == 0) {
+				    return 'padding-bottom:7px;background:#38ADFF;color:#fff;'
+                }
+                return 'background:#38ADFF;color:#fff;text-align:center;'
             }
         },
-        changeEndDate(value){
-            if (this.form.dateType=="1") {
-                this.form.fillDateTo = value;
-            }else if (this.form.dateType=="2") {
-                this.form.chargeDateTo = value;
-            }else if (this.form.dateType=="3") {
-                this.form.payDateTo = value;
-            }else if (this.form.dateType=="4") {
-                this.form.returnDateTo = value;
+        getColStyle({ row, column, rowIndex, columnIndex }){
+            if (columnIndex == 0) {
+				return 'padding-bottom:7px;text-align:center;'
+			} else {
+				return ''
             }
         },
+        tableRowClassName({row, rowIndex}) {
+            if (rowIndex%2 ==0) {
+                return 'grayRow';
+            } 
+            return '';
+        }
     }
 }
 </script>
@@ -453,12 +572,11 @@ export default {
 
 <style scoped>
 .BorrowFindList{
-    padding:20px;
+    /* padding:20px; */
     display: flex;
     flex-direction: row;
     flex-wrap: wrap; 
-    max-height: 100%;
-    overflow: scroll;
+    overflow: hidden;
     background: #fafafa;
     position: relative;
     max-height: 100vh;
@@ -500,6 +618,12 @@ export default {
     position: relative;
 }
 .smallTableHeight .el-input--small .el-input__inner{
+    white-space: nowrap;
+	text-overflow: ellipsis;
+	word-wrap: normal;
+	overflow: hidden;
+}
+.ellipsis{
     white-space: nowrap;
 	text-overflow: ellipsis;
 	word-wrap: normal;

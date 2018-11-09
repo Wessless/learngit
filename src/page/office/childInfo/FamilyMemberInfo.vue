@@ -190,10 +190,10 @@ export default {
                 });
                 return;
             }
-
-            if(json.cardID!=""&&!/^\d{10}$/.test(json.cardID)){
+            
+            if(json.cardID!=""&&!/^[a-zA-Z0-9]{8,10}$/.test(json.cardID)){
                 this.$message.error({
-                    message:"考勤卡号为十位数"
+                    message:"考勤卡号为八到十位数"
                 });
                 return;
             }

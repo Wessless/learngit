@@ -383,7 +383,7 @@ export default {
             }
             let phoneNum = this.form.ConnectPhone;
             let remark = this.form.Remark;
-            let discountUntil = this.form.DiscountUntil;
+            let discountUntil = this.form.DiscountUntil?this.form.DiscountUntil:'';
             let mealFeeTypeID = this.form.MealFeeTypeID;
             let mealFeeRefundTypeID = this.form.MealFeeRefundTypeID;
             let tuitionTypeID = this.form.TuitionTypeID;

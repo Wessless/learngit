@@ -130,6 +130,16 @@
             </el-table-column>
             <el-table-column prop="AttNum" fixed="right" align="center" label="出勤天数" width="100"></el-table-column>
         </el-table>  -->
+        <el-dialog
+            title="提示"
+            :visible.sync="dialogVisible"
+            width="30%">
+        <span>{{flag}}</span>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="confirmChange">确 定</el-button>
+        </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -146,6 +156,9 @@ export default {
     data(){
         return {
             isMonth:true,
+            dialogVisible: false,
+            flag:'点击“确定”将设置全月为“出勤”且不可恢复原来的状态，您确定吗？',
+            flagJSON:{},
             formInline:{
                 classID:"",
                 classList:[],
@@ -709,6 +722,22 @@ export default {
         },
         // 设置一月的出勤未出勤
         setMonthAtts(type,scope){
+            let json = {
+                type,
+                scope
+            };
+            if(type==0){
+                this.flag = '点击“确定”将设置全月为“出勤”且不可恢复原来的状态，您确定吗？';
+            }else if(type==3){
+                this.flag = '点击“确定”将设置全月为“未出勤”且不可恢复原来的状态，您确定吗？';
+            }
+            this.flagJSON = json;
+            this.dialogVisible = true;
+        },
+        confirmChange(){
+            this.dialogVisible = false;
+            let type = this.flagJSON.type;
+            let scope = this.flagJSON.scope;
             let childID = scope.row.ChildID;
             let attDateArr = [];
             let attArray = scope.row.AttData;
@@ -724,7 +753,9 @@ export default {
             if(attDateArr.length==0){
                 return;
             }
+            let loading = showLoading();
             updateChilAtts(JSON.stringify(attDateArr)).then((result)=>{
+                closeLoading(loading);
                 if(result.data.Result=="1"){
                     // this.reloadList();
                     for(let i=0;i<attArray.length;i++){
@@ -742,6 +773,9 @@ export default {
                         message:"修改失败"
                     });
                 }
+            }).catch((err)=>{
+                alertError(this,'2177');
+                closeLoading(loading);
             });
         },
         // 加载全月模式列表

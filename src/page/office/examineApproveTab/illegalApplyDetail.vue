@@ -205,7 +205,9 @@ export default {
             let staffID = this.userInfo.userStaffID;
             findStaffByStaffID(staffID).then((result)=>{
                 this.ignoreFlag = result.data.data[0].IgnorePuncherData.toLowerCase();
-            })
+            }).catch((err)=>{
+                alertError(this,"1015");
+            });
         },
         //加载未添加的红日子
         getVacDate(loading){

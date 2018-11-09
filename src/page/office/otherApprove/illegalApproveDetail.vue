@@ -26,7 +26,7 @@
                 <div class="detailContent">{{detail.justifyReason}}</div>
             </div>
 
-            <div class="detailItem" v-for="(item,index) in detail.approvalArr" :key="index+1">
+            <div class="detailItem signer" v-for="(item,index) in detail.approvalArr" :key="index+1">
                 <div class="detailTitle">签字人姓名</div>
                 <div class="detailContent flexItemCenter">
                     <span>{{item.ApprovalName}}</span>
@@ -314,5 +314,12 @@ export default {
     right: 40px;
     top: 50px;
     /* background:#fafafa; */
+}
+.signer > .detailTitle{
+    font-weight: 600;
+    color:#000;
+}
+.signer{
+    background: rgba(255,182,193,.4);
 }
 </style>

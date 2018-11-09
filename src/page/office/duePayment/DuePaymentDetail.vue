@@ -215,17 +215,25 @@ export default {
                 }
 
                 let status = "";
-				let color = "";
-				if(obj.signState=="-1"){
-					status = "待签字";// gray 
-					color = "#8f8f94";
-				}else if(obj.signState=="1"){
-					status = "审批同意";// green 
-					color = "#2ecc71";
-				}else if(obj.signState=="0"){
-					status = "审批拒绝";// orange 
-					color = "#e51c23";
-				}
+                let color = "";
+                if (this.$route.params.isAccount == "1") {
+                    status = "审批同意";// green 
+                    color = "#2ecc71";
+                    for (let i = 0; i < this.detail.approvalArr.length; i++) {
+                        this.detail.approvalArr[i].Result = "1";
+                    }
+                }else{
+                    if(obj.signState=="-1"){
+                        status = "待签字";// gray 
+                        color = "#8f8f94";
+                    }else if(obj.signState=="1"){
+                        status = "审批同意";// green 
+                        color = "#2ecc71";
+                    }else if(obj.signState=="0"){
+                        status = "审批拒绝";// orange 
+                        color = "#e51c23";
+                    }
+                }
                 if(this.$route.meta.type!="approve"){
                     let imgurl = stamper({
                         outsideInfo : this.userInfo.cosName,

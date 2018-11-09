@@ -451,7 +451,7 @@ export const payBookCharge = (bookChargeID,payDate,bankAccountID) => {
         urlTo:"CosApp",
         method:"post",
         params: {
-            method: 'payChargeBill'
+            method: 'payBookCharge'
         },
         data:{
             bookChargeID,
@@ -2320,6 +2320,19 @@ export const getCalendar = (classID,beginTime,endTime) => {
     });
 }
 
+//得到拼图道场列表
+export const getCalendarTime = (interestClassID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getCalendarTime',
+            interestClassID
+        }
+    });
+}
+
+
 //兴趣班 得到缴费任务
 export const getChargeMessionByIClassID = (pageNo,pageSize,iClassID,startDate,endDate,status) => {
     return axios({
@@ -3000,6 +3013,21 @@ export const getSettingValue = (settingKey) => {
         params: {
             method: 'getSettingValue',
             settingKey
+        }
+    });
+}
+
+// 设置Setting表的值 2139
+export const setSettingValue = (settingKey,settingValue) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'setSettingValue',
+        },
+        data:{
+            settingKey,
+            settingValue
         }
     });
 }
@@ -4837,6 +4865,130 @@ export const findEverydayLiveByID = (id) => {
     });
 }
 
+// 添加通知/通知/今日所学 2003
+export const addNotice = ({staffID,classID,content,type},photofaceList) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'addNotice'
+        },
+        data:{
+            staffID,
+            classID,
+            content,
+            type,
+        },
+        uploadFile:{
+            file:photofaceList
+        }
+    });
+}
+
+// 添加园所通知(同步到考勤机显示) 2216
+export const addNoticeCospos = ({staffID,classID,content,type,startDate,endDate}) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'addNoticeCospos'
+        },
+        data:{
+            staffID,
+            classID,
+            content,
+            type,
+            startDate,
+            endDate
+        },
+    });
+}
+
+// 添加照片 2004
+export const addPhoto = ({staffID,classID,content,flag},photofaceList) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'addPhoto'
+        },
+        data:{
+            staffID,
+            classID,
+            content,
+            flag
+        },
+        uploadFile:{
+            file:photofaceList
+        }
+    });
+}
+
+// 添加修改老师的话 2010
+export const addOrUpdateMemo = ({childID,liveDate,drink,dinner,sleep,egest,pee,redf,remark,staffID}) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'addOrUpdateMemo'
+        },
+        data:{
+            childID,
+            liveDate,
+            drink,
+            dinner,
+            sleep,
+            egest,
+            pee,
+            redf,
+            remark,
+            staffID
+        },
+    });
+}
+
+//删除信息 2011
+export const deleteNoteByID = (id) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'deleteNoteByID'
+        },
+        data:{
+            id
+        },
+    });
+}
+
+//删除照片信息 2012
+export const deletePhotoByID = (id) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'deletePhotoByID'
+        },
+        data:{
+            id
+        },
+    });
+}
+
+//删除老师的话 2013
+export const deleteMemoByID = (id) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'deleteMemoByID'
+        },
+        data:{
+            id
+        },
+    });
+}
+
 //集团报销统计_按资金科目、资金出处分组统计
 export const getChargeByCosNum = (numCos,acctID,startDate,endDate) => {
     return axios({
@@ -4917,6 +5069,20 @@ export const getChargeBillByIDForGroup = (currProxy,cosNum,id) => {
     });
 }
 
+// 集团员工统计_按年龄统计(集团)
+export const getCosStaffStatisticByAge = (numCos,acctID,monthYear) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getCosStaffStatisticByAge',
+            numCos,
+            acctID,
+            monthYear
+        }
+    });
+}
+
 // 集团员工统计_按年龄统计
 export const getStaffStatisticByAge = (numCos,acctID,monthYear) => {
     return axios({
@@ -4924,6 +5090,20 @@ export const getStaffStatisticByAge = (numCos,acctID,monthYear) => {
         method:"get",
         params: {
             method: 'getStaffStatisticByAge',
+            numCos,
+            acctID,
+            monthYear
+        }
+    });
+}
+
+// 集团员工统计_按性别统计(集团)
+export const getCosStaffStatisticBySex = (numCos,acctID,monthYear) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getCosStaffStatisticBySex',
             numCos,
             acctID,
             monthYear
@@ -5049,6 +5229,75 @@ export const getCosChildStatisticBySex = (numCos,acctID) => {
             method: 'getCosChildStatisticBySex',
             numCos,
             acctID,
+        }
+    });
+}
+
+//单园学籍统计_按已毕业年份统计 1282
+export const getCosChildStatisticByGraduation = (numCos,acctID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getCosChildStatisticByGraduation',
+            numCos,
+            acctID,
+        }
+    });
+}
+
+
+//单园出勤统计_今日应出勤、实际出勤、出勤率   1288
+export const getCosStaffStatisticByDate = (numCos,acctID,queryDate) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getCosStaffStatisticByDate',
+            numCos,
+            acctID,
+            queryDate
+        }
+    });
+}
+
+//单园出勤统计_一个月趋势   1289
+export const getCosMonthStaffStatisticByDate = (numCos,acctID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getCosMonthStaffStatisticByDate',
+            numCos,
+            acctID
+        }
+    });
+}
+
+//单园出勤统计_半年趋势   1290
+export const getCosHalfYearStaffStatisticByDate = (numCos,acctID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getCosHalfYearStaffStatisticByDate',
+            numCos,
+            acctID
+        }
+    });
+}
+
+//单园出勤统计_某日按班统计出勤率   1292
+export const getCosStaffStatisticByClass = (numCos,acctID,startDate,endDate) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getCosStaffStatisticByClass',
+            numCos,
+            acctID,
+            startDate,
+            endDate
         }
     });
 }
@@ -5262,6 +5511,1227 @@ export const findPaymentChargecheck = (staffId,startDate,endDate,payType,departm
     });
 }
 
+// 获取cos版本 1104
+export const getTableName = () => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getTableName'
+        }
+    });
+}
+
+// 得到年假变更列表 1166
+export const getHolidayChangeRecordList = (pageNo,pageSize,staffID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getHolidayChangeRecordList',
+            pageNo,
+            pageSize,
+            staffID
+        }
+    });
+}
+
+//修改员工下次自动增加时间 2217
+export const updateStaffAutoTime = (staffID,autoTime) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'updateStaffAutoTime',
+        },
+        data:{
+            staffID,
+            autoTime
+        }
+    });
+}
+
+//手动修改年假
+export const updateHolidayChange = (staffID,updateStaffID,leftHolidays,reason) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'updateHolidayChange',
+        },
+        data:{
+            staffID,
+            updateStaffID,
+            leftHolidays,
+            reason
+        }
+    });
+}
+
+// 是否可以删除班级 1326
+export const ifCanDelete = (classID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'ifCanDelete',
+            classID
+        }
+    });
+}
+//添加或修改报销记账 2218
+export const addBillRecord = ({staffID,hasInvoice,payType,chargeStaffID,money,rateID,rateName,companyID,bigType,
+    bigTypeID,smallType,smallTypeID,subject,subjectID,warrantNumber,receiverTitle,customerID,bank,bankAccount,
+    chargeBillType,note,transformCapital,summary,billOutsList,path,photoList,state,attachment,attachmentID,payDate,
+    isSetDelayPay,bankAccountID}) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'addBillRecord',
+        },
+        data:{
+            staffID,
+            hasInvoice,
+            payType,
+            chargeStaffID,
+            money,
+            rateID,
+            rateName,
+            companyID,
+            bigType,
+            bigTypeID,
+            smallType,
+            smallTypeID,
+            subject,
+            subjectID,
+            warrantNumber,
+            receiverTitle,
+            customerID,
+            bank,
+            bankAccount,
+            chargeBillType,
+            note,
+            transformCapital,
+            summary,
+            billOutsList,
+            path,
+            photoList,
+            state,
+            attachment,
+            attachmentID,
+            payDate,
+            isSetDelayPay,
+            bankAccountID
+        }
+    });
+}
+
+//添加或修改借款记账 2219
+export const addChargeRecord = ({staffID,hasInvoice,payType,chargeStaffID,money,rateID,rateName,companyID,bigType,
+    bigTypeID,smallType,smallTypeID,subject,subjectID,warrantNumber,receiverTitle,customerID,bank,bankAccount,
+    chargeBillType,note,transformCapital,summary,billOutsList,path,photoList,state,attachment,attachmentID,payDate,
+    bankAccountID}) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'addChargeRecord',
+        },
+        data:{
+            staffID,
+            hasInvoice,
+            payType,
+            chargeStaffID,
+            money,
+            rateID,
+            rateName,
+            companyID,
+            bigType,
+            bigTypeID,
+            smallType,
+            smallTypeID,
+            subject,
+            subjectID,
+            warrantNumber,
+            receiverTitle,
+            customerID,
+            bank,
+            bankAccount,
+            chargeBillType,
+            note,
+            transformCapital,
+            summary,
+            billOutsList,
+            path,
+            photoList,
+            state,
+            attachment,
+            attachmentID,
+            payDate,
+            bankAccountID
+        }
+    });
+}
+
+//添加或修改应付款记账 2220
+export const addPaymentRecord = (state,staffId,ChargeBillID,belongChargeBillID,currentMoney,note,payDate,bankAccountID,warrantNumber,files) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'addPaymentRecord',
+        },
+        data:{
+            state,
+            staffId,
+            ChargeBillID,
+            belongChargeBillID,
+            currentMoney,
+            note,
+            payDate,
+            bankAccountID,
+            warrantNumber
+        },
+        uploadFile:{
+            file:files
+        }
+    });
+}
+
+//员工积分列表 1218
+export const getTotalCredit = (isBeStaff) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getTotalCredit',
+            isBeStaff
+        }
+    });
+}
+
+//得到积分变更列表 1209
+export const getCreditDetailList = (pageNo,pageSize,staffID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getCreditDetailList',
+            pageNo,
+            pageSize,
+            staffID
+        }
+    });
+}
+
+// 修改密码 2066
+export const changePassword = (currProxy,cosNum,userAcctID,oldPassword,newPassword) => {
+    return axios({
+        urlTo:"CosApp",
+        currProxy,
+        cosNum,
+        method:"post",
+        params: {
+            method: 'changePassword',
+        },
+        data:{
+            userAcctID,
+            oldPassword,
+            newPassword
+        }
+    });
+}
+
+// 发送验证码 2064
+export const sendMessage = (currProxy,cosNum,userAcctID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        currProxy,
+        cosNum,
+        params: {
+            method: 'sendMessage',
+        },
+        data:{
+            userAcctID
+        }
+    });
+}
+
+// 重置密码 2055
+export const resetPassword = (currProxy,cosNum,userAcctID,password) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        currProxy,
+        cosNum,
+        params: {
+            method: 'resetPassword',
+        },
+        data:{
+            userAcctID,
+            password
+        },
+    });
+}
+//获取积分设置 1213
+export const getCreditSetting = () => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getCreditSetting',
+        }
+    });
+}
+
+//获取所有积分分类 1205
+export const getAllCreditType = (pageNo,pageSize,type) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getAllCreditType',
+            pageNo,
+            pageSize,
+            type
+        }
+    });
+}
+
+//得到积分模板 1206
+export const getCreditTemplate = (delFlag,type) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getCreditTemplate',
+            delFlag,
+            type
+        }
+    });
+}
+
+//积分设置 2140
+export const setCreditSetting = (aStaff,bStaff,bStaffs) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'setCreditSetting',
+        },
+        data:{
+            aStaff,
+            bStaff,
+            bStaffs
+        },
+    });
+}
+
+//删除积分分类 2137
+export const delCreditType = (id) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'delCreditType',
+        },
+        data:{
+            id
+        },
+    });
+}
+
+//添加积分类型 2135
+export const addCreditType = (staffID,id,typeName,type) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'addCreditType',
+        },
+        data:{
+            staffID,
+            id,
+            typeName,
+            type
+        },
+    });
+}
+
+//添加积分科目 2136
+export const addCreditSubject = (staffID,id,typeID,subjectName,point,delFlag) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'addCreditSubject',
+        },
+        data:{
+            staffID,
+            id,
+            typeID,
+            subjectName,
+            point,
+            delFlag
+        },
+    });
+}
+
+//获得某时间段内的所有未免扣、已免扣条数 1137
+export const getNGNum = (beginDate,endDate) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getNGNum',
+            beginDate,
+            endDate
+        }
+    });
+}
+
+//获得所有未免扣数据 1131
+export const getAllNGMessage = (pageNo,pageSize,staffID,beginTime,endTime) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getAllNGMessage',
+            pageNo,
+            pageSize,
+            staffID,
+            beginTime,
+            endTime
+        }
+    });
+}
+
+//获得所有已免扣数据 1132
+export const getAllNGDelMessage = (pageNo,pageSize,staffID,beginTime,endTime) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getAllNGDelMessage',
+            pageNo,
+            pageSize,
+            staffID,
+            beginTime,
+            endTime
+        }
+    });
+}
+
+//根据ID得到迟到早退漏打卡申辩详情 1134
+export const getJustifyByID = (id,type) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getJustifyByID',
+            id,
+            type
+        }
+    });
+}
+
+//获取考勤管理相关设置 1138
+export const getWorkTimeSetting = () => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getWorkTimeSetting',
+        }
+    });
+}
+
+//按日期获取员工考勤 1327
+export const getTimesBookByDay = (queryDay) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getTimesBookByDay',
+            queryDay
+        }
+    });
+}
+
+//获得出退勤时间 1135
+export const getTimesBookMessage = (staffID,yearMonth) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getTimesBookMessage',
+            staffID,
+            yearMonth
+        }
+    });
+}
+
+//员工出勤管理 1133
+export const getStaffTimesBook = (staffID,beginDate,endDate) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getStaffTimesBook',
+            staffID,
+            beginDate,
+            endDate
+        }
+    });
+}
+
+//根据上线任务ID得到明细 1113
+export const getSaleactivityByApplyCompanyID = (pageNo,pageSize,applyCompanyID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getSaleactivityByApplyCompanyID',
+            pageNo,
+            pageSize,
+            applyCompanyID
+        }
+    });
+}
+
+//根据员工ID和时间获取访客记录 1328
+export const getSaleActivityByStaffID = (pageNo,pageSize,staffID,visitDateFrom,visitDateTo) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getSaleActivityByStaffID',
+            pageNo,
+            pageSize,
+            staffID,
+            visitDateFrom,
+            visitDateTo
+        }
+    });
+}
+
+//考勤Excel 
+export const getTimeBookStatisticByDate = (beginDate,endDate) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getTimeBookStatisticByDate',
+            beginDate,
+            endDate
+        }
+    });
+}
+
+//修改实际出勤 2080
+export const updateTimeBook = (theDate,staffID,firstActualTime, lastActualTime, updateStaffID, updateReason) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'updateTimeBook',
+        },
+        data:{
+            theDate,
+            staffID,
+            firstActualTime, 
+            lastActualTime, 
+            updateStaffID, 
+            updateReason
+        },
+    });
+}
+
+//设为免扣 2076
+export const insertTimeBookNGDel = (deletePersonID, deleteReason, scheduleID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'insertTimeBookNGDel',
+        },
+        data:{
+            deletePersonID,
+            deleteReason,
+            scheduleID
+        },
+    });
+}
+
+//取消免扣 2077
+export const cancelDelete = (IDs) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'cancelDelete',
+        },
+        data:{
+            IDs
+        },
+    });
+}
+
+//更新违规出勤数据 2079
+export const updateTimeBookNG = (yearMonth) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'updateTimeBookNG',
+        },
+        data:{
+            yearMonth
+        },
+    });
+}
+
+//设置不计考勤人员 2082
+export const setIgnorePunchStaffs = (staffIds) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'setIgnorePunchStaffs',
+        },
+        data:{
+            staffIds
+        },
+    });
+}
+
+//根据StaffID设置不计考勤人员 2083
+export const setIgnorePunchStaffsByStaffID = (staffIds) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'setIgnorePunchStaffsByStaffID',
+        },
+        data:{
+            staffIds
+        },
+    });
+}
+
+//设置考勤管理相关设置 2084
+export const modifyWorkTime = (workIgnore,workOverTime,workUnit,timebookType,timebookAuto) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'modifyWorkTime',
+        },
+        data:{
+            workIgnore, 
+            workOverTime,
+            workUnit,
+            timebookType,
+            timebookAuto
+        },
+    });
+}
+
+//得到积分列表 1207
+export const getCreditList = (staffID,managerID,yearMonth) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getCreditList',
+            staffID,
+            managerID,
+            yearMonth
+        }
+    });
+}
+
+//得到积分评分详情_修改 1208
+export const getAllCreditDetail = (yearMonth,staffID,managerID,type) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getAllCreditDetail',
+            yearMonth,
+            staffID,
+            managerID,
+            type
+        }
+    });
+}
+
+//添加积分 2138
+export const addCreditDetail = (yearMonth,staffID,managerID,pointData,strComment,type) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'addCreditDetail',
+        },
+        data:{
+            yearMonth,
+            staffID,
+            managerID,
+            pointData,
+            strComment,
+            type
+        },
+    });
+}
+
+//获取智能设备列表 
+export const getDeviceList = () => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getDeviceList',
+        }
+    });
+}
+
+//获取设备运行时信息 
+export const getPosinfo = (devCode) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getPosinfo',
+            devCode
+        }
+    });
+}
+
+//更新设备用户信息
+export const getCosposUser = (devCode) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getCosposUser',
+            devCode
+        }
+    });
+}
+
+//重启设备 
+export const rebootPos = (devCode) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'rebootPos',
+        },
+        data:{
+            devCode
+        },
+    });
+}
+
+// 关闭设备
+export const shutdownPos = (devCode) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'shutdownPos',
+        },
+        data:{
+            devCode
+        },
+    });
+}
+
+// 设备连接wifi（自动获取IP）
+export const wifidhcpPos = (devCode,wifiName,wifiPasswd) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'wifidhcpPos',
+        },
+        data:{
+            devCode,
+            wifiName,
+            wifiPasswd
+        },
+    });
+}
+
+// 设备连接wifi（手动输入IP）
+export const wifimanualPos = (devCode,wifiName,wifiPasswd,ipAddr,ipGate) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'shutdownPos',
+        },
+        data:{
+            devCode,
+            wifiName,
+            wifiPasswd,
+            ipAddr,
+            ipGate
+        },
+    });
+}
+
+//获得所有考核名称 1212
+export const getOtherEvaluationName = () => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getOtherEvaluationName',
+        }
+    });
+}
+
+//考核管理查询 1198
+export const getOtherEvaluationMessage = (year,name,staffID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getOtherEvaluationMessage',
+            year,
+            name,
+            staffID
+        }
+    });
+}
+
+//得到其他考核列表 1199
+export const getEvaluationList = (staffID,managerID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getEvaluationList',
+            staffID,
+            managerID
+        }
+    });
+}
+
+//根据考核人得到月度考核列表 1210
+export const getAllMonthEvaluationList = (staffID,managerID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getAllMonthEvaluationList',
+            staffID,
+            managerID
+        }
+    });
+}
+
+//获得其他考核模板 1197
+export const getOtherEvaluationTemplate = () => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getOtherEvaluationTemplate',
+        }
+    });
+}
+
+//根据ID得到其他考核设置 1202
+export const getOtherEvaluationSet = (resultID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getOtherEvaluationSet',
+            resultID
+        }
+    });
+}
+
+//获得考核、非考核员工 1108
+export const getEvaluationStaff = (templateID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getEvaluationStaff',
+            templateID
+        }
+    });
+}
+
+//获得月度考核模板 1179
+export const getEvaluationTemplate = () => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getEvaluationTemplate'
+        }
+    });
+}
+
+//其他考核结果一览 1201
+export const getOtherEvaluationResult = (pageNo,pageSize,staffID,year,name,managerID,dateFrom,dateTo,isNew,isResult) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getOtherEvaluationResult',
+            pageNo,
+            pageSize,
+            staffID,
+            year,
+            name,
+            managerID,
+            dateFrom,
+            dateTo,
+            isNew,
+            isResult
+        }
+    });
+}
+
+//月度考核结果一览 1183
+export const getMonthEvaluationResult = (pageNo,pageSize,staffID,dateFrom,dateTo,managerID,isNew,isResult) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getMonthEvaluationResult',
+            pageNo,
+            pageSize,
+            staffID,
+            dateFrom,
+            dateTo,
+            managerID,
+            isNew,
+            isResult
+        }
+    });
+}
+
+//根据ID得到其他考核详情 1200
+export const getOtherEvaluationDetail = (resultID,staffID,managerID,state) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getOtherEvaluationDetail',
+            resultID,
+            staffID,
+            managerID,
+            state
+        }
+    });
+}
+
+//得到月度考核详情 1182
+export const getMonthEvaluationDetail = (staffID,managerID,isEvaluationOver,monthDate) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getMonthEvaluationDetail',
+            staffID,
+            managerID,
+            isEvaluationOver,
+            monthDate
+        }
+    });
+}
+
+//根据ResultID删除其他考核任务 2133
+export const deleteEvaluationByID = (id) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'deleteEvaluationByID',
+        },
+        data:{
+            id
+        },
+    });
+}
+
+//发起或修改其他考核 2131
+export const addEvaluationTemplate = (id,staffID,evaluationStaffID,beginDate,endDate,
+        tempName,needSelfCheck,templateID,staffID1,staffID2,staffID3) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'addEvaluationTemplate',
+        },
+        data:{
+            id,
+            staffID,
+            evaluationStaffID,
+            beginDate,
+            endDate,
+            tempName,
+            needSelfCheck,
+            templateID,
+            staffID1,
+            staffID2,
+            staffID3
+        },
+    });
+}
+
+//保存员工的考核模板 2108
+export const saveEvaluationTemplateForStaff = (staffID,templateID,evaluationManager1,evaluationManager2,evaluationManager3) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'saveEvaluationTemplateForStaff',
+        },
+        data:{
+            staffID,
+            templateID,
+            evaluationManager1,
+            evaluationManager2,
+            evaluationManager3
+        },
+    });
+}
+
+//其他考核 2132
+export const addOntherEvaluation = (resultID,staffID,managerID,points,strComment,state) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'addOntherEvaluation',
+        },
+        data:{
+            resultID,
+            staffID,
+            managerID,
+            points,
+            strComment,
+            state
+        },
+    });
+}
+
+//月度考核 2109
+export const addMonthEvaluation = (staffID,managerID,points,strComment) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'addMonthEvaluation',
+        },
+        data:{
+            staffID,
+            managerID,
+            points,
+            strComment
+        },
+    });
+}
+
+//获得赏罚管理列表 1335
+export const getRewardPunishmentRecord = (pageNo,pageSize,recordDate,staffID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getRewardPunishmentRecord',
+            pageNo,
+            pageSize,
+            recordDate,
+            staffID
+        }
+    });
+}
+
+//得到所有赏罚科目 1185 
+export const getRewardPunishmentSort = (pageNo,pageSize) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getRewardPunishmentSort',
+            pageNo,
+            pageSize,
+        }
+    });
+}
+
+//添加或修改赏罚记录 2114
+export const addRewardPunishmentRecord = ({id,staffIDs,titleID,title,createStaffID,times,recordDate,onceMoney}) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'addRewardPunishmentRecord',
+        },
+        data:{
+            id,
+            staffIDs,
+            titleID,
+            title,
+            createStaffID,
+            times,
+            recordDate,
+            onceMoney
+        },
+    });
+}
+
+//添加或修改赏罚科目 2113
+export const addRewardPunishmentSort = ({id,staffID,title,onceMoney,isReward}) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'addRewardPunishmentSort',
+        },
+        data:{
+            id,
+            staffID,
+            title,
+            onceMoney,
+            isReward
+        },
+    });
+}
+
+//删除赏罚记录 2115
+export const deleteRewardPunishmentRecord = (id) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'deleteRewardPunishmentRecord',
+        },
+        data:{
+            id
+        },
+    });
+}
+
+//删除赏罚科目 2112
+export const deleteRewardPunishmentSort = (id) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'deleteRewardPunishmentSort',
+        },
+        data:{
+            id
+        },
+    });
+}
+
+//获取交办任务列表 1186 
+export const getCommands = (pageNo,pageSize,staffID,status,state) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getCommands',
+            pageNo,
+            pageSize,
+            staffID,
+            status,
+            state
+        }
+    });
+}
+
+//获取交办任务ByID 1187 
+export const getCommandByID = (commandID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getCommandByID',
+            commandID
+        }
+    });
+}
+
+//获取交办任务评论列表 1336  
+export const getCommandRevertInfoes = (pageNo,pageSize,commandID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"get",
+        params: {
+            method: 'getCommandRevertInfoes',
+            pageNo,
+            pageSize,
+            commandID
+        }
+    });
+}
+
+//交办任务 确认处理结束 2117
+export const updateCommandByID = (commandID) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'updateCommandByID',
+        },
+        data:{
+            commandID
+        },
+    });
+}
+
+//增加交办任务 2118
+export const addCommand = (staffID,staffName,endDate,receiveStaffs,ccStaffs,content,remindTime) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'addCommand',
+        },
+        data:{
+            staffID,
+            staffName,
+            endDate,
+            receiveStaffs,
+            ccStaffs,
+            content,
+            remindTime
+        },
+    });
+}
+
+//提交交办任务的回复 2116
+export const addCommandRevertInfo = (staffID,staffName,commandID,content) => {
+    return axios({
+        urlTo:"CosApp",
+        method:"post",
+        params: {
+            method: 'addCommandRevertInfo',
+        },
+        data:{
+            staffID,
+            staffName,
+            commandID,
+            content
+        },
+    });
+}
+
 /**
  * CosCenter接口
  */
@@ -5311,6 +6781,100 @@ export const getGroupAllCos = (cosNum,acctID) => {
             method: 'getGroupAllCos',
             cosNum,
             acctID
+        }
+    });
+}
+
+/**
+ * CosStatistic接口
+ */
+
+//5019
+export const getCosStatisticByDay = (cosNum,acctID,startDate,endDate) => {
+    return axios({
+        urlTo:"CosStatistic",
+        method:"get",
+        params: {
+            method: 'getCosStatisticByDay',
+            cosNum,
+            acctID,
+            startDate,
+            endDate
+        }
+    });
+}
+
+//5020
+export const getCosStatisticByMonth = (cosNum,acctID,startDate,endDate) => {
+    return axios({
+        urlTo:"CosStatistic",
+        method:"get",
+        params: {
+            method: 'getCosStatisticByMonth',
+            cosNum,
+            acctID,
+            startDate,
+            endDate
+        }
+    });
+}
+
+//5021
+export const getCosStatisticByDate = (cosNum,acctID,startDate,endDate) => {
+    return axios({
+        urlTo:"CosStatistic",
+        method:"get",
+        params: {
+            method: 'getCosStatisticByDate',
+            cosNum,
+            acctID,
+            startDate,
+            endDate
+        }
+    });
+}
+
+//5016
+export const getCosStatisticByPaymentWay = (cosNum,acctID,startDate,endDate) => {
+    return axios({
+        urlTo:"CosStatistic",
+        method:"get",
+        params: {
+            method: 'getCosStatisticByPaymentWay',
+            cosNum,
+            acctID,
+            startDate,
+            endDate
+        }
+    });
+}
+
+//5017
+export const getCosStatisticByPaymentName = (cosNum,acctID,startDate,endDate) => {
+    return axios({
+        urlTo:"CosStatistic",
+        method:"get",
+        params: {
+            method: 'getCosStatisticByPaymentName',
+            cosNum,
+            acctID,
+            startDate,
+            endDate
+        }
+    });
+}
+
+//5018
+export const getCosStatisticByPaymentClass = (cosNum,acctID,startDate,endDate) => {
+    return axios({
+        urlTo:"CosStatistic",
+        method:"get",
+        params: {
+            method: 'getCosStatisticByPaymentClass',
+            cosNum,
+            acctID,
+            startDate,
+            endDate
         }
     });
 }

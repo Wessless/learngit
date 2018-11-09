@@ -2,8 +2,8 @@
     <div class="interestClass">
         <div class="headTitle">第{{ index+1 }}回</div>
         <div class="title">教师姓名：{{ item.TeacherName }}</div>
-        <div class="title">计费开始日期：{{ item.StartDate }}</div>
-        <div class="title">计费截止日期：{{ item.EndDate=="1900-01-01"?"":item.EndDate }}</div>
+        <div class="title">计费开始日期：{{ item.StartDate.split(" ")[0] }}</div>
+        <div class="title">计费截止日期：{{ item.EndDate=="1900-01-01"?"":item.EndDate.split(" ")[0] }}</div>
         <div class="title">课时费方式：{{ item.TeacherPayWay }}</div>
         <div class="title">课时费单价：{{ item.TeacherPrice }}</div>
         <div class="title">教师考勤：{{ item.StrAttend }}</div>
